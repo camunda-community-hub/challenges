@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_15lhjri" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.33.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+  <decision id="Decision_0p1e5t9" name="Risk calculation">
+    <decisionTable id="DecisionTable_0m42cng">
+      <input id="Input_1">
+        <inputExpression id="InputExpression_1" typeRef="number">
+          <text>score</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1dw4umg" label="age">
+        <inputExpression id="LiteralExpression_07kajv7" typeRef="number">
+          <text>age</text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="risk" name="risklevel" typeRef="string" />
+      <rule id="DecisionRule_11fqgof">
+        <inputEntry id="UnaryTests_0ffvxtz">
+          <text>&gt; 800</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1mugl9e">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0ikujcs">
+          <text>"green"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0hxnmpz">
+        <inputEntry id="UnaryTests_1ilgrny">
+          <text>&lt;= 800 and &gt;=500</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0sk0rt7">
+          <text>&gt;30</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_15e3m4c">
+          <text>"green"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_00v6jpj">
+        <inputEntry id="UnaryTests_1lj086b">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_029cx9j">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1vm45u3">
+          <text>"red"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Decision_0p1e5t9">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
