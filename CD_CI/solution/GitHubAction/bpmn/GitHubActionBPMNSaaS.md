@@ -58,7 +58,7 @@ At the end, you should have this:
 ![All Secrets](GitHubAllSecrets.png)
 
 
-# 3. Add a worflow
+# 3. Add a workflow
 
 Create a directory `.github`, then a folder `workflows` on the root of the project
 
@@ -66,7 +66,9 @@ Create a file name `deploy-bpmn.yaml` inside
 
 ![img.png](GitHubWorkflow.png)
 
-# 4. Change someting in the workflow and push it
+Use the [deploy-bpmn.yaml](deploy-bpmn.yaml) file provided.
+
+# 4. Change something in the workflow and push it
 
 On the desktop modeler, change something in the process (a label, an icon). Save and commit.
 
@@ -74,4 +76,9 @@ On the desktop modeler, change something in the process (a label, an icon). Save
 On the GitHub repository, the workflow should start. Go to `Actions` and check
 
 ![Start](GitHubWorkflowStart.png)
-2. 
+
+Action was exectued
+![Action executed](GitHubWorkflowExecuted.png)
+ 
+Check the last step, which deploy the artefact
+![Check action](GitHubWorkflowCheck.png)
