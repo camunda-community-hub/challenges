@@ -7,13 +7,13 @@ Note: check the Preparation in the README. A GitHub repository is ready
 # 1. Create a client 
 
 Create a client that has access to `Zeebe API`. Take note of the environment variables
-![ClientId-ClientSecret](SaaSClientIdClientSecret.png)
+![ClientId-ClientSecret](images/SaaSClientIdClientSecret.png)
 
 then
-![Create credential](SaaSCreateCredential.png)
+![Create credential](images/SaaSCreateCredential.png)
 
 Get the values
-![Get Credential](SaaSClientCredentials.png)
+![Get Credential](images/SaaSClientCredentials.png)
 
 For example
 
@@ -37,12 +37,12 @@ For example
 # 2. Create action secrets in the repository
 Go to `Settings`, then search `Secrets and Variables`. Click on `Actions`.
 
-![Access Secrets and Variables](GitHubSecretsAndVariables.png)
+![Access Secrets and Variables](images/GitHubSecretsAndVariables.png)
 
 Click on `New repository secrets`
 Give as `Name`: `CLUSTER_ID`  and for the value, `CAMUNDA_CLUSTER_ID` value
 
-![ClusterID Secret.png](GitHubSecretClusterId.png)
+![ClusterID Secret.png](images/GitHubSecretClusterId.png)
 
 Create these secrets:
 
@@ -55,7 +55,7 @@ Create these secrets:
 
 At the end, you should have this:
 
-![All Secrets](GitHubAllSecrets.png)
+![All Secrets](images/GitHubAllSecrets.png)
 
 
 # 3. Add a workflow
@@ -64,7 +64,7 @@ Create a directory `.github`, then a folder `workflows` on the root of the proje
 
 Create a file name `deploy-bpmn.yaml` inside
 
-![img.png](GitHubWorkflow.png)
+![img.png](images/GitHubWorkflow.png)
 
 Use the [deploy-bpmn.yaml](deploy-bpmn.yaml) file provided.
 
@@ -75,10 +75,10 @@ On the desktop modeler, change something in the process (a label, an icon). Save
 # 5. Check the workflow
 On the GitHub repository, the workflow should start. Go to `Actions` and check
 
-![Start](GitHubWorkflowStart.png)
+![Start](images/GitHubWorkflowStart.png)
 
 Action was exectued
-![Action executed](GitHubWorkflowExecuted.png)
+![Action executed](images/GitHubWorkflowExecuted.png)
  
 Check the last step, which deploy the artefact
-![Check action](GitHubWorkflowCheck.png)
+![Check action](images/GitHubWorkflowCheck.png)
