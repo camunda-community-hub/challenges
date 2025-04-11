@@ -19,16 +19,13 @@ For example
 
 | Variable                       | Value                                                                   |
 |--------------------------------|-------------------------------------------------------------------------| 
-| ZEEBE_ADDRESS                  | 5cc7a022-a4fb-4e33-9562-a287e8811ddd.dsm-1.zeebe.camunda.io:443         | 
-| ZEEBE_CLIENT_ID                | PC_N9w5rMzb~4iIsfCLbhz6zjDwksznw                                        |
-| ZEEBE_CLIENT_SECRET            | zPKg4ila7xeaHz6duv78tpU-8nAaUXHKYmmJ_6s6plhgQmFSER6hG8fxD9RahvNf        |
-| ZEEBE_AUTHORIZATION_SERVER_URL | https://login.cloud.camunda.io/oauth/token                              |
+| ZEEBE_CLIENT_ID                | PC_N9...ksznw                                                           |
+| ZEEBE_CLIENT_SECRET            | zPKg4....hvNf                                                           |
 | ZEEBE_REST_ADDRESS             | https://dsm-1.zeebe.camunda.io/5cc7a022-a4fb-4e33-9562-a287e8811ddd     |
-| ZEEBE_GRPC_ADDRESS             | grpcs://5cc7a022-a4fb-4e33-9562-a287e8811ddd.dsm-1.zeebe.camunda.io:443 | 
 | ZEEBE_TOKEN_AUDIENCE           | zeebe.camunda.io                                                        |                                   
-| CAMUNDA_CLUSTER_ID             | 5cc7a022-a4fb-4e33-9562-a287e8811ddd                                    |                                    
-| CAMUNDA_CLIENT_ID              | PC_N9w5rMzb~4iIsfCLbhz6zjDwksznw                                        |                                         
-| CAMUNDA_CLIENT_SECRET          | zPKg4ila7xeaHz6duv78tpU-8nAaUXHKYmmJ_6s6plhgQmFSER6hG8fxD9RahvNf        |     
+| CAMUNDA_CLUSTER_ID             | 5cc7a02......811ddd                                                     |                                    
+| CAMUNDA_CLIENT_ID              | PC_N9w5......jDwksznw                                                   |                                         
+| CAMUNDA_CLIENT_SECRET          | zPKg4il......D9RahvNf                                                   |     
 | CAMUNDA_CLUSTER_REGION         | dsm-1                                                                   |                             
 | CAMUNDA_CREDENTIALS_SCOPES     | Zeebe                                                                   |                              
 | CAMUNDA_OAUTH_URL              | https://login.cloud.camunda.io/oauth/token                              |                               
