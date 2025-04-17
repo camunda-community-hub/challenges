@@ -1,0 +1,399 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pa-creation
+  labels:
+    app: pa-creation
+spec:
+  selector:
+    matchLabels:
+      app: pa-creation
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pa-creation
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8088"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: pa-creation
+          image: ghcr.io/camunda-community-hub/process-execution-automator:latest
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >-
+                -Dautomator.startup.serverName=zeebeCloud
+                -Dautomator.servers.camunda8.name=zeebeCloud
+                -Dautomator.servers.camunda8.zeebeGatewayAddress=camunda-zeebe-gateway:26500
+                -Dautomator.servers.camunda8.zeebeGrpcAddress="http://camunda-zeebe-gateway:26500"
+                -Dautomator.servers.camunda8.operateUserName=demo
+                -Dautomator.servers.camunda8.operateUserPassword=demo
+                -Dautomator.servers.camunda8.operateUrl=http://camunda-operate:80
+                -Dautomator.servers.camunda8.taskListUrl=
+                -Dautomator.servers.camunda8.nbThreads=100
+                -Dautomator.startup.scenarioResourceAtStartup=file:SCN_BankOfAndora.json
+                -Dautomator.startup.policyExecution=WARMINGUP|CREATION
+                -Dautomator.startup.logLevel=DASHBOARD
+                -Dautomator.scenario.scenarioInfoLevel=DETAIL
+          resources:
+            limits:
+              cpu: "500m"
+              memory: 500Mi
+            requests:
+              cpu: "500m"
+              memory: 500Mi
+          volumeMounts:
+            - name: scenario
+              mountPath: SCN_BankOfAndora.json
+              subPath: SCN_BankOfAndora.json
+              readOnly: true
+      volumes:
+        - name: scenario
+          configMap:
+            name: bankscn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pa-check-identity
+  labels:
+    app: pa-check-identity
+spec:
+  selector:
+    matchLabels:
+      app: pa-check-identity
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pa-check-identity
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8088"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: pa-retrievework
+          image: ghcr.io/camunda-community-hub/process-execution-automator:latest
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >-
+                -Dautomator.startup.serverName=zeebeCloud
+                -Dautomator.serversList=
+                -Dautomator.servers.camunda8.name=zeebeCloud
+                -Dautomator.servers.camunda8.zeebeGatewayAddress=camunda-zeebe-gateway:26500
+                -Dautomator.servers.camunda8.zeebeGrpcAddress="http://camunda-zeebe-gateway:26500"
+                -Dautomator.servers.camunda8.operateUserName=demo
+                -Dautomator.servers.camunda8.operateUserPassword=demo
+                -Dautomator.servers.camunda8.operateUrl=http://camunda-operate:80
+                -Dautomator.servers.camunda8.taskListUrl=
+                -Dautomator.servers.camunda8.workerExecutionThreads=200
+                -Dautomator.startup.scenarioResourceAtStartup=file:/SCN_BankOfAndora.json
+                -Dautomator.startup.policyExecution=SERVICETASK
+                -Dautomator.startup.filterService=check-identity
+                -Dautomator.startup.logLevel=DASHBOARD
+          resources:
+            limits:
+              cpu: "500m"
+              memory: 500Mi
+            requests:
+              cpu: "500m"
+              memory: 500Mi
+          volumeMounts:
+            - name: scenario
+              mountPath: SCN_BankOfAndora.json
+              subPath: SCN_BankOfAndora.json
+              readOnly: true
+      volumes:
+        - name: scenario
+          configMap:
+            name: bankscn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pa-check-transaction
+  labels:
+    app: pa-check-transaction
+spec:
+  selector:
+    matchLabels:
+      app: pa-check-transaction
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pa-check-transaction
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8088"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: pa-check-transaction
+          image: ghcr.io/camunda-community-hub/process-execution-automator:latest
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >-
+                -Dautomator.startup.serverName=zeebeCloud
+                -Dautomator.servers.camunda8.name=zeebeCloud
+                -Dautomator.servers.camunda8.zeebeGatewayAddress=camunda-zeebe-gateway:26500
+                -Dautomator.servers.camunda8.zeebeGrpcAddress="http://camunda-zeebe-gateway:26500"
+                -Dautomator.servers.camunda8.operateUserName=demo
+                -Dautomator.servers.camunda8.operateUserPassword=demo
+                -Dautomator.servers.camunda8.operateUrl=http://camunda-operate:80
+                -Dautomator.servers.camunda8.taskListUrl=
+                -Dautomator.servers.camunda8.workerExecutionThreads=200
+                -Dautomator.startup.scenarioResourceAtStartup=file:/SCN_BankOfAndora.json
+                -Dautomator.startup.policyExecution=SERVICETASK
+                -Dautomator.startup.filterService=check-transaction
+                -Dautomator.startup.logLevel=DASHBOARD
+          resources:
+            limits:
+              cpu: "500m"
+              memory: 500Mi
+            requests:
+              cpu: "500m"
+              memory: 500Mi
+          volumeMounts:
+            - name: scenario
+              mountPath: SCN_BankOfAndora.json
+              subPath: SCN_BankOfAndora.json
+              readOnly: true
+      volumes:
+        - name: scenario
+          configMap:
+            name: bankscn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pa-validate-ue-bank
+  labels:
+    app: pa-validate-ue-bank
+spec:
+  selector:
+    matchLabels:
+      app: pa-validate-ue-bank
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pa-validate-ue-bank
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8088"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: pa-validate-ue-bank
+          image: ghcr.io/camunda-community-hub/process-execution-automator:latest
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >-
+                -Dautomator.startup.serverName=zeebeCloud
+                -Dautomator.servers.camunda8.name=zeebeCloud
+                -Dautomator.servers.camunda8.zeebeGatewayAddress=camunda-zeebe-gateway:26500
+                -Dautomator.servers.camunda8.zeebeGrpcAddress="http://camunda-zeebe-gateway:26500"
+                -Dautomator.servers.camunda8.operateUserName=demo
+                -Dautomator.servers.camunda8.operateUserPassword=demo
+                -Dautomator.servers.camunda8.operateUrl=http://camunda-operate:80
+                -Dautomator.servers.camunda8.taskListUrl=
+                -Dautomator.servers.camunda8.workerExecutionThreads=200
+                -Dautomator.startup.scenarioResourceAtStartup=file:/SCN_BankOfAndora.json
+                -Dautomator.startup.policyExecution=SERVICETASK
+                -Dautomator.startup.filterService=validate-UE-bank
+                -Dautomator.startup.logLevel=DASHBOARD
+          resources:
+            limits:
+              cpu: "500m"
+              memory: 500Mi
+            requests:
+              cpu: "500m"
+              memory: 500Mi
+          volumeMounts:
+            - name: scenario
+              mountPath: SCN_BankOfAndora.json
+              subPath: SCN_BankOfAndora.json
+              readOnly: true
+      volumes:
+        - name: scenario
+          configMap:
+            name: bankscn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pa-verify-accreditation-org
+  labels:
+    app: pa-verify-accreditation-org
+spec:
+  selector:
+    matchLabels:
+      app: pa-verify-accreditation-org
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: pa-verify-accreditation-org
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8088"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: pa-validate-ue-bank
+          image: ghcr.io/camunda-community-hub/process-execution-automator:latest
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >-
+                -Dautomator.startup.serverName=zeebeCloud
+                -Dautomator.servers.camunda8.name=zeebeCloud
+                -Dautomator.servers.camunda8.zeebeGatewayAddress=camunda-zeebe-gateway:26500
+                -Dautomator.servers.camunda8.zeebeGrpcAddress="http://camunda-zeebe-gateway:26500"
+                -Dautomator.servers.camunda8.operateUserName=demo
+                -Dautomator.servers.camunda8.operateUserPassword=demo
+                -Dautomator.servers.camunda8.operateUrl=http://camunda-operate:80
+                -Dautomator.servers.camunda8.taskListUrl=
+                -Dautomator.servers.camunda8.workerExecutionThreads=200
+                -Dautomator.startup.scenarioResourceAtStartup=file:/SCN_BankOfAndora.json
+                -Dautomator.startup.policyExecution=SERVICETASK
+                -Dautomator.startup.filterService=verify-accreditation-org
+                -Dautomator.startup.logLevel=DASHBOARD
+          resources:
+            limits:
+              cpu: "500m"
+              memory: 500Mi
+            requests:
+              cpu: "500m"
+              memory: 500Mi
+          volumeMounts:
+            - name: scenario
+              mountPath: SCN_BankOfAndora.json
+              subPath: SCN_BankOfAndora.json
+              readOnly: true
+      volumes:
+        - name: scenario
+          configMap:
+            name: bankscn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pa-ue-transaction
+  labels:
+    app: pa-ue-transaction
+spec:
+  selector:
+    matchLabels:
+      app: pa-ue-transaction
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pa-ue-transaction
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8088"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: pa-ue-transaction
+          image: ghcr.io/camunda-community-hub/process-execution-automator:latest
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >-
+                -Dautomator.startup.serverName=zeebeCloud
+                -Dautomator.servers.camunda8.name=zeebeCloud
+                -Dautomator.servers.camunda8.zeebeGatewayAddress=camunda-zeebe-gateway:26500
+                -Dautomator.servers.camunda8.zeebeGrpcAddress="http://camunda-zeebe-gateway:26500"
+                -Dautomator.servers.camunda8.operateUserName=demo
+                -Dautomator.servers.camunda8.operateUserPassword=demo
+                -Dautomator.servers.camunda8.operateUrl=http://camunda-operate:80
+                -Dautomator.servers.camunda8.taskListUrl=
+                -Dautomator.servers.camunda8.workerExecutionThreads=200
+                -Dautomator.startup.scenarioResourceAtStartup=file:/SCN_BankOfAndora.json
+                -Dautomator.startup.policyExecution=SERVICETASK
+                -Dautomator.startup.filterService=ue-transaction
+                -Dautomator.startup.logLevel=DASHBOARD
+          resources:
+            limits:
+              cpu: "500m"
+              memory: 500Mi
+            requests:
+              cpu: "500m"
+              memory: 500Mi
+          volumeMounts:
+            - name: scenario
+              mountPath: SCN_BankOfAndora.json
+              subPath: SCN_BankOfAndora.json
+              readOnly: true
+      volumes:
+        - name: scenario
+          configMap:
+            name: bankscn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pa-notify-customer
+  labels:
+    app: pa-notify-customer
+spec:
+  selector:
+    matchLabels:
+      app: pa-notify-customer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pa-notify-customer
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8088"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: pa-notify-customer
+          image: ghcr.io/camunda-community-hub/process-execution-automator:latest
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >-
+                -Dautomator.startup.serverName=zeebeCloud
+                -Dautomator.servers.camunda8.name=zeebeCloud
+                -Dautomator.servers.camunda8.zeebeGatewayAddress=camunda-zeebe-gateway:26500
+                -Dautomator.servers.camunda8.zeebeGrpcAddress="http://camunda-zeebe-gateway:26500"
+                -Dautomator.servers.camunda8.operateUserName=demo
+                -Dautomator.servers.camunda8.operateUserPassword=demo
+                -Dautomator.servers.camunda8.operateUrl=http://camunda-operate:80
+                -Dautomator.servers.camunda8.taskListUrl=
+                -Dautomator.servers.camunda8.workerExecutionThreads=200
+                -Dautomator.startup.scenarioResourceAtStartup=file:/SCN_BankOfAndora.json
+                -Dautomator.startup.policyExecution=SERVICETASK
+                -Dautomator.startup.filterService=notify-customer
+                -Dautomator.startup.logLevel=DASHBOARD
+          resources:
+            limits:
+              cpu: "500m"
+              memory: 500Mi
+            requests:
+              cpu: "500m"
+              memory: 500Mi
+          volumeMounts:
+            - name: scenario
+              mountPath: SCN_BankOfAndora.json
+              subPath: SCN_BankOfAndora.json
+              readOnly: true
+      volumes:
+        - name: scenario
+          configMap:
+            name: bankscn

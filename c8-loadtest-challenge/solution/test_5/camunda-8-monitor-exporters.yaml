@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camunda-8-monitor-exporters
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camunda-8-monitor-exporters
+  template:
+    metadata:
+      labels:
+        app: camunda-8-monitor-exporters
+    spec:
+      containers:
+        - name: ccamunda-8-monitor-exporters-container
+          image: ghcr.io/camunda-community-hub/camunda-8-monitor-exporters:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONITOR_ELASTICSEARCH_HOST
+              value: camunda-elasticsearch
+            - name: MONITOR_ELASTICSEARCH_PORT
+              value: "9200"
+            - name: MONITOR_ELASTICSEARCH_PROTOCOL
+              value: http
+            - name: MONITOR_LEVEL
+              value: OVERVIEW

@@ -1,0 +1,113 @@
+{
+  "name": "LoadTestScn",
+  "processId": "Tran_BOA",
+  "serverType": "Camunda_8",
+  "typeScenario": "FLOW",
+  "flowControl": {
+    "duration": "PT10M",
+    "objectives": [
+      {
+        "name": "X_53520",
+        "label": "Create PI Warmup+test",
+        "processId": "Tran_BOA",
+        "type": "CREATED",
+        "value": 53520,
+        "comment": "223 PI/s Duration=3mn,Warmup 1mn: 223 PI/S * 60 * (3+1) => 53520"
+      },
+      {
+        "name": "E_40140",
+        "label": "End_40140",
+        "processId": "Tran_BOA",
+        "type": "ENDED",
+        "value": 40140,
+        "comment": "Remove warmup, 223 PI/S * 60 * 3mn = 40140"
+      }
+    ]
+  },
+  "warmingUp": {
+    "duration": "PT1M",
+    "useServiceTasks": true,
+    "operations": [
+      {
+        "type": "STARTEVENT",
+        "taskId": "StartEvent",
+        "processId": "Tran_BOA",
+        "variables": {
+          "transaction": "UE",
+          "checkId": "111"
+        },
+        "variablesOperation": {
+          "listAccreditionsOrg": "generaterandomlist(2)"
+        },
+        "frequency": "PT10S",
+        "numberOfExecutions": "2223",
+        "realNumber": "2223",
+        "nbThreads": "103"
+      }
+    ]
+  },
+  "flows": [
+    {
+      "name": "Start event",
+      "type": "STARTEVENT",
+      "taskId": "StartEvent",
+      "processId": "Tran_BOA",
+      "frequency": "PT10S",
+      "numberOfExecutions": "2223",
+      "nbThreads": "100",
+      "variables": {
+        "transaction": "UE",
+        "checkId": "122"
+
+      },
+      "variablesOperation": {
+        "listAccreditionsOrg": "generaterandomlist(2)"
+      }
+    },
+    {
+      "type": "SERVICETASK",
+      "topic": "check-identity",
+      "streamEnabled": true,
+      "waitingTime": "PT0.03S",
+      "modeExecution": "CLASSICAL",
+      "variables": {
+        "checkId": "344"
+      }
+    },
+    {
+      "type": "SERVICETASK",
+      "topic": "check-transaction",
+      "streamEnabled": true,
+      "waitingTime": "PT0.1S",
+      "modeExecution": "CLASSICAL"
+    },
+    {
+      "type": "SERVICETASK",
+      "topic": "validate-UE-bank",
+      "streamEnabled": true,
+      "waitingTime": "PT0.3S",
+      "modeExecution": "CLASSICAL"
+    },
+    {
+      "type": "SERVICETASK",
+      "topic": "verify-accreditation-org",
+      "streamEnabled": true,
+      "waitingTime": "PT0.4S",
+      "modeExecution": "CLASSICAL"
+    },
+    {
+      "type": "SERVICETASK",
+      "topic": "ue-transaction",
+      "streamEnabled": true,
+      "waitingTime": "PT1.4S",
+      "modeExecution": "CLASSICAL"
+    },
+    {
+      "type": "SERVICETASK",
+      "topic": "notify-customer",
+      "streamEnabled": true,
+      "waitingTime": "PT0.08S",
+      "modeExecution": "CLASSICAL"
+    }
+  ]
+}

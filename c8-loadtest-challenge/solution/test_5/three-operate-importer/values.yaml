@@ -1,0 +1,130 @@
+global:
+  multitenancy:
+    enabled: false
+  ingress:
+    enabled: true
+    className: nginx
+    host: "dittmeister.de"
+    tls:
+      enabled: true
+      secretName: camunda-tls
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      ingress.kubernetes.io/rewrite-target: "/"
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  identity:
+    auth:
+      publicIssuerUrl: "https://dittmeister.de/auth/realms/camunda-platform"
+      operate:
+        redirectUrl: "https://dittmeister.de/operate"
+identity:
+  postgresql:
+    enabled: false
+  contextPath: "/identity"
+  fullURL: "https://dittmeister.de/identity"
+
+operate:
+  contextPath: "/operate"
+  env:
+  - name: CAMUNDA_OPERATE_IMPORTERENABLED
+    value: "false"
+  - name: CAMUNDA_OPERATE_ARCHIVERENABLED
+    value: "true"
+  - name: CAMUNDA_OPERATE_WEBAPPENABLED
+    value: "true"
+  - name: CAMUNDA_OPERATE_ELASTICSEARCH_NUMBEROFSHARDS
+    value: "5"
+  resources:
+    requests:
+      cpu: 7
+      memory: 2Gi
+    limits:
+      cpu: 7
+      memory: 4Gi
+
+optimize:
+  enabled: false
+
+tasklist:
+  enabled: false
+
+console:
+  enabled: false
+
+webModeler:
+  enabled: false
+
+postgresql:
+  enabled: false
+
+zeebe:
+  clusterSize: "10"
+  ## @param zeebe.partitionCount defines how many zeebe partitions are set up in the cluster
+  partitionCount: "60"
+  ## @param zeebe.replicationFactor defines how each partition is replicated, the value defines the number of nodes
+  replicationFactor: "3"
+  cpuThreadCount: 12
+  ioThreadCount: 12
+  env:
+  - name: ZEEBE_BROKER_EXECUTION_METRICS_EXPORTER_ENABLED
+    value: "true"
+  resources:
+        limits:
+          cpu: 7
+          memory: 10Gi
+        requests:
+          cpu: 7
+          memory: 10Gi
+
+zeebeGateway:
+  resources:
+        limits:
+          cpu: 2
+          memory: 4Gi
+        requests:
+          cpu: 1
+          memory: 2Gi
+  env:
+  - name: ZEEBE_GATEWAY_SECURITY_AUTHENTICATION_MODE
+    value: "none"
+  - name: ZEEBE_GATEWAY_MONITORING_ENABLED
+    value: "true"
+
+elasticsearch:
+  master:
+    resources:
+        limits:
+          cpu: 4
+          memory: 4Gi
+        requests:
+          cpu: 4
+          memory: 4Gi
+  data:
+    replicaCount: 5
+    resources:
+        limits:
+          cpu: 4
+          memory: 4Gi
+        requests:
+          cpu: 4
+          memory: 4Gi
+    persistence:
+      size: 32Gi
+    
+  global:
+   kibanaEnabled: true
+  kibana:
+    image:
+      tag: 8.12.2
+    ingress:
+      tls: true
+      ingressClassName: nginx
+      enabled: true
+      hostname: "kibana.dittmeister.de"
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-prod"
+        ingress.kubernetes.io/rewrite-target: "/"
+        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+
+prometheusServiceMonitor:
+  enabled: true
