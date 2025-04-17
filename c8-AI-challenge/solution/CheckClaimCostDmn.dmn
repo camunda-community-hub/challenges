@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="CheckClaimCost" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Web Modeler" exporterVersion="1c3791b" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+  <decision id="Decision_0l6nhsm" name="Check Claim Cost">
+    <decisionTable id="DecisionTable_1714nl0">
+      <input id="Input_1" label="Vehicle Type">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text>mistral.vehicleType</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0wt7g51" label="Cost">
+        <inputExpression id="LiteralExpression_0j16vuv" typeRef="string">
+          <text>mistral.estimateCost</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0sjh0hy" label="Coverage">
+        <inputExpression id="LiteralExpression_1bibz29" typeRef="string">
+          <text>coverage</text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Status" name="statusReimbursement" typeRef="string" />
+      <rule id="DecisionRule_0o2or1l">
+        <inputEntry id="UnaryTests_0lftqi6">
+          <text>"car"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0yb0znb">
+          <text>&lt;1000</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_12sqjno">
+          <text>"basic"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0x1rgbc">
+          <text>"accepted"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_121h382">
+        <inputEntry id="UnaryTests_1l86y3m">
+          <text>"boat"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0l6217b">
+          <text>&lt;1000</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_07o3lg6">
+          <text>"basic"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0vzhf2e">
+          <text>"accepted"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0ra8h4f">
+        <inputEntry id="UnaryTests_14zfhtf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1gm7epq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1duc7x3">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1vqqocq">
+          <text>"verify"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Decision_0l6nhsm">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
