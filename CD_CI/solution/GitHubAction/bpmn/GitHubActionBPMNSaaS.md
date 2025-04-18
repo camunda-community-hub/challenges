@@ -1,4 +1,4 @@
-# GitHub action
+# GitHub action: deploy BPMN on SaaS
 
 # Introduction
 
@@ -34,12 +34,12 @@ For example
 # 2. Create action secrets in the repository
 Go to `Settings`, then search `Secrets and Variables`. Click on `Actions`.
 
-![Access Secrets and Variables](images/GitHubSecretsAndVariables.png)
+![Access Secrets and Variables](images/SaaS-GitHub-SecretsAndVariables.png)
 
 Click on `New repository secrets`
 Give as `Name`: `CLUSTER_ID`  and for the value, `CAMUNDA_CLUSTER_ID` value
 
-![ClusterID Secret.png](images/GitHubSecretClusterId.png)
+![ClusterID Secret.png](images/SaaS-GitHub-SecretClusterId.png)
 
 Create these secrets:
 
@@ -52,18 +52,18 @@ Create these secrets:
 
 At the end, you should have this:
 
-![All Secrets](images/GitHubAllSecrets.png)
+![All Secrets](images/SaaS-GitHub-AllSecrets.png)
 
 
 # 3. Add a workflow
 
 Create a directory `.github`, then a folder `workflows` on the root of the project
 
-Create a file name `deploy-bpmn.yaml` inside
+Create a file name `saas-deploy-bpmn.yaml` inside
 
-![img.png](images/GitHubWorkflow.png)
+![img.png](images/SaaS-GitHub-Workflow.png)
 
-Use the [deploy-bpmn.yaml](deploy-bpmn.yaml) file provided.
+Use the [saas-deploy-bpmn.yaml](saas-deploy-bpmn.yaml) file provided.
 
 # 4. Change something in the workflow and push it
 
@@ -72,10 +72,10 @@ On the desktop modeler, change something in the process (a label, an icon). Save
 # 5. Check the workflow
 On the GitHub repository, the workflow should start. Go to `Actions` and check
 
-![Start](images/GitHubWorkflowStart.png)
+![Start](images/SaaS-GitHub-WorkflowStart.png)
 
 Action was exectued
-![Action executed](images/GitHubWorkflowExecuted.png)
+![Action executed](images/SaaS-GitHub-WorkflowExecuted.png)
  
 Check the last step, which deploy the artefact
-![Check action](images/GitHubWorkflowCheck.png)
+![Check action](images/SaaS-GitHub-WorkflowCheck.png)
