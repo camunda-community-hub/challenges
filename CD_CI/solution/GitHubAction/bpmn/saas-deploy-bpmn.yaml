@@ -60,7 +60,7 @@ jobs:
         with:
           files: ${{ matrix.file }}
 
-      - name: Get Bearer Toker
+      - name: Get Bearer Token
         uses: fjogeleit/http-request-action@v1.16.4
         id: zeebeBearer
         with:
