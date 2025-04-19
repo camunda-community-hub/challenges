@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loanscore
+  labels:
+    app: loanscore
+spec:
+  selector:
+    matchLabels:
+      app: loanscore
+  # 34
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: loanscore
+    spec:
+      containers:
+        - name: loanscore
+          image: ghcr.io/pierre-yves-monnet/c8-automate-test:latest
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >-
+                -Dautomator.servers.camunda8.zeebeGatewayAddress=camunda-zeebe-gateway:26500
+                -Dautomator.servers.camunda8.operateUserName=demo
+                -Dautomator.servers.camunda8.operateUserPassword=demo
+                -Dautomator.servers.camunda8.operateUrl=http://camunda-operate:80
+                -Dautomator.servers.camunda8.taskListUrl=
+                -Dautomator.servers.camunda8.workerExecutionThreads=50
+                -Dautomator.startup.scenarioPath=/app/scenarii/loadtest
+                -Dautomator.startup.scenarioAtStartup=Verification.json
+                -Dautomator.startup.policyExecution=SERVICETASK|USERTASK
+                -Dautomator.startup.filterService=verification-retrieve
+                -Dautomator.startup.logLevel=MAIN
+          resources:
+            limits:
+              cpu: 1
+              memory: 1Gi
+            requests:
+              cpu: 1
+              memory: 1Gi

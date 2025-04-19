@@ -9,12 +9,13 @@ Then, second, a CI can be set up.
 
 # Preparation
 
-Create a GitHub repository from this repository.
+Create a GitHub repository, and use the content of the directory `loadapplication`
 The repository contains:
+* src/main/java contains the code for the worker.
 * src/main/resources/RiskCalculation.bpmn: the process to deploy
 * src/main/resources/RiskCalculation.dmn : the DMN table used in the process
 * pom.xml is the pom used to compile the project, which contains a worker
-* src/main/java contains the code for the worker.
+* Dockerfile is used to rebuild the image
 
 
 Result is

@@ -34,7 +34,7 @@ For example
 # 2. Create action secrets in the repository
 Go to `Settings`, then search `Secrets and Variables`. Click on `Actions`.
 
-![Access Secrets and Variables](images/SaaS-GitHub-SecretsAndVariables.png)
+![Access Secrets and Variables](images/GitHub-SecretsAndVariables.png)
 
 Click on `New repository secrets`
 Give as `Name`: `CLUSTER_ID`  and for the value, `CAMUNDA_CLUSTER_ID` value

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: camunda-zeebe-gateway-public
+  name: camunda-grpc-zeebe-gateway-public
 spec:
   type: LoadBalancer
   selector:
@@ -11,3 +11,17 @@ spec:
   ports:
     - port: 26500
       targetPort: 26500
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: camunda-rest-zeebe-gateway-public
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/component: zeebe-gateway
+    app.kubernetes.io/instance: camunda
+
+  ports:
+    - port: 8080
+      targetPort: 8080
