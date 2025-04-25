@@ -1,10 +1,12 @@
  # Different solution
  
-Different solution are explained here, based on different tool. Each solution explore two target: a SaaS environment and a Self Manage environment
+Different solution are explained here, based on different tool. Each solution explore two targets: a SaaS environment and a Self Manage environment
 
 # Different tool
 ## GitHub action
 A GitHub repository contains an internal mechanism call GitAction. Via this method, an action can be trigger on an event. The event may be a push in the repository, or the creation of a new release.
+
+![CD/CI with GihubAction](images/GitHubAction-CDCI.png)
 
 Two flavors:
 * [GitHubActionSaaS](GitHubAction/bpmn/GitHubActionBPMNSaaS.md) to deploy using a SaaS

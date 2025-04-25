@@ -13,7 +13,7 @@ Create a directory .github, and inside a directory workflows
 Add the docker-build.yaml file
 
 ```yaml
-name: Build and Push Docker Image
+name: worker-1-build-publish-image
 
 on:
   push:
@@ -56,7 +56,6 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ghcr.io/${{ github.repository }}:latest
-
 ```
 
 With this configuration, Docker recompile the project to build the image.
@@ -81,7 +80,12 @@ In the file `deployment-worker.yaml`, reference this name on the `image` line:
 
 ```
           image: ghcr.io/pierre-yves-monnet/c8-automate-test:latest
+          # must be set to always: then any kubectl apply will reload the latest image
+          imagePullPolicy: Always
 ```
+
+> Attention: the `imagePullPolicy` but be set to Always. The workflow will run a kubectl apply, and to be sure to create the last version, it must pull systematically the image  
+ 
 
 ## Collect the connection
 
@@ -91,10 +95,10 @@ For Google Cloud, create a service account.
 
 Access to IAM, and select `service account`
 
-![img.png](Google-IAMServiceAccount.png)
+![img.png](images/Google-IAMServiceAccount.png)
 
 Click on `Create service account`
-![img.png](Google-ServiceAccount-name.png)
+![img.png](images/Google-ServiceAccount-name.png)
 
 Click Create and continue
 
@@ -106,11 +110,11 @@ Click on Done.
 
 On the list of all service account, find the new service, and click on it. On the first page, click on `Keys`
 
-![img.png](Google-SerciceAccount-Keys.png)
+![img.png](images/Google-SerciceAccount-Keys.png)
 
 Click on `Create New key` and select `Json`
 
-![img.png](Google-ServiceAccount-AddJsonKey.png)
+![img.png](images/Google-ServiceAccount-AddJsonKey.png)
 
 A key is generated, and downloaded on your machine.
 
@@ -122,15 +126,15 @@ On GitHub go to `Settings`, then `Secrets and variables` and
 
 Click on `New repository secret`, and add the variable `GCP_SA_KEY` and the value generated before.
 
-![img_1.png](GitHub-Google-AddGCPKey.png)
+![img_1.png](images/GitHub-Google-AddGCPKey.png)
 
 Add a variable `GCP_REGION` and give the region of the cluster
 
-![img.png](GithHub-Google-Region.png)
+![img.png](images/GithHub-Google-Region.png)
 
 Add a variable `GCP_CLUSTERNAME` and give the name of the cluster
 
-![img.png](GithHub-Google-ClusterName.png)
+![img.png](images/GithHub-Google-ClusterName.png)
 ## Create a new workflow
 Create this workflow in the repository (under .github/worklows). Name it `publish worker on cluster`
 
@@ -139,7 +143,7 @@ name: Deploy In Cluster
 
 on:
   workflow_run:
-    workflows: ["Build and Push Docker Image"]  # Name of the workflow to depend on
+    workflows: ["worker-1-build-publish-image"]  # Name of the workflow to depend on
     types:
       - completed
 
@@ -148,16 +152,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Set up Kubeconfig
+      - name: install GKE
         run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > $HOME/.kube/config
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+          sudo apt update
+          sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin kubectl
+          export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: your-gcp-project-id
+
+      - name: Get GKE credentials
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GCP_CLUSTERNAME }} --region ${{ secrets.GCP_REGION }}
       - name: Deploy to Kubernetes
         run: |
-          kubectl delete -f deployment-worker.yaml
-          kubectl apply -f deployment-worker.yaml
+          kubectl apply -f deployment-worker.yaml -n camunda
 ```
+
+Note: 
+* This workflow depends on the first step, which build the worker.
+* The GitHub action must log to your cluster. The image must install the gCloud CLI to do that.
+

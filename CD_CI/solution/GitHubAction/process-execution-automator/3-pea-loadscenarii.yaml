@@ -1,10 +1,11 @@
-name: 'Deploy updated BPMNs to Zeebe'
+name: '3-pea-loadscenarii'
 
 on:
   push:
     paths:
-      - 'src/main/resources/*.bpmn' # match '*.bpmn' files (created or updated)
-      - 'src/main/resources/*.dmn' # match '*.bpmn' files (created or updated)
+      - 'src/main/resources/pea/*.json' # match '*.json' files (created or updated)
+      - 'src/test/resources/pea/*.json' # match '*.json' files (created or updated)
+
 
 jobs:
   prepare-files:
@@ -34,9 +35,9 @@ jobs:
           echo ${{ matrix.file }} # to test if the correct file was passed
 
 
-      - name: Deploy to Zeebe
+      - name: Deploy to pea
         run: |
-          curl -X POST "${{ secrets.ZEEBE_REST_ADDRESS }}/v2/deployments" -F "resources=@${{ github.workspace }}/${{ matrix.file }}"
+          curl -X POST "${{ secrets.PEA_REST_ADDRESS }}/pea/api/content/add" -F "scenarioFiles=@${{ github.workspace }}/${{ matrix.file }}"
 
   deploy-new-files:
     if: ${{ needs.prepare-files.outputs.matrix-added != '[]' }}
@@ -51,6 +52,10 @@ jobs:
         with:
           files: ${{ matrix.file }}
 
-      - name: Deploy to Zeebe
+      - name: Echo file
         run: |
-          curl -X POST "${{ secrets.ZEEBE_REST_ADDRESS}}/v2/deployments" -F "resources=@${{ github.workspace }}/${{ matrix.file }}"
+          echo ${{ matrix.file }} # to test if the correct file was passed
+
+      - name: Deploy to Pea
+        run: |
+          curl -X POST ${{ secrets.PEA_REST_ADDRESS }}/pea/api/content/add -F "scenarioFile=@${{ github.workspace }}/${{ matrix.file }}"

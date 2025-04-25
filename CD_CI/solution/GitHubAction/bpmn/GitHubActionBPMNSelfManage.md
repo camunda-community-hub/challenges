@@ -69,7 +69,12 @@ Go to `Settings`, then search `Secrets and Variables`. Click on `Actions`.
 ![Access Secrets and Variables](images/GitHub-SecretsAndVariables.png)
 
 Click on `New repository secrets`
-Give as `Name`: `ZEEBE_GRPC_ADDRESS` and for the value, the IP address you created
+Give as `Name`: `ZEEBE_REST_ADDRESS` and for the value, the IP address you created plus the protocol and `8080` as port (we access the REST port)
+
+```
+http://34.23.115.65:8080
+
+```
 
 
 ![GrpcAddress_Secret](images/SM-GitHub-Secret.png)
