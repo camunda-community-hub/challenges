@@ -28,13 +28,13 @@ pea-public                          LoadBalancer   34.118.231.236   35.229.70.3 
 
 In the GitHub project, navigate to `Settings`  / `Secrets and variables` / `Actions`
 
-![img.png](GitHub-SecretsAndVariables.png)
+![img.png](images/GitHub-SecretsAndVariables.png)
 
 Then click on `New repository secret`
 
 Add the key `PEA_REST_ADDRESS`  and the value from the public address. Use `http`or `https` and the port number is 8381
 
-![img.png](GitHub-Add-PEA_REST_ADDRESS.png)
+![img.png](images/GitHub-Add-PEA_REST_ADDRESS.png)
 
 # Deploy workflows on the project
 
@@ -144,14 +144,14 @@ Go to `src/main/resources/pea/LoanApplication-accepted.json` and change somethin
 
 Check on the GitHub Action: the workflow started
 
-![Workflow Started](GitHubAction-Start.png)
+![Workflow Started](images/GitHubAction-Start.png)
 
 After some seconds, a status is visible
 
-![img.png](GitHubAction-status.png)
+![img.png](images/GitHubAction-status.png)
 
 Check the first action (Load Scenarii)
-![img.png](GitHubAction-LoadScenarii.png)
+![img.png](images/GitHubAction-LoadScenarii.png)
 All scenarii are loaded. 
 It's possible to check the PEA server to see the result.
 
@@ -159,11 +159,11 @@ It's possible to check the PEA server to see the result.
  
 The scenario are loaded. This scenario does not specify any server type.
 
-![PEA Get Content List](Pea-GetContentList.png)
+![PEA Get Content List](images/Pea-GetContentList.png)
 
 Check the second action (Run All Scenarii)
 
-![Check All Scenario](GitHubAction-RunAllTestSuccess.png)
+![Check All Scenario](images/GitHubAction-RunAllTestSuccess.png)
 
 > Process-Execution-Automator connects a Camunda Engine to execute the scenario. Multiple engine defintion are pre-positionned in the server. 
 > Camunda8Topaz is the server to use when Process-execution-automator are deployed in the same cluster. 
@@ -172,12 +172,12 @@ The url return a status 200.
 
 It is possible to ask the PEA server for the result. The URL is http://35.229.70.3:8381/pea/api/unittest/list
 
-![List of result.png](Pea-GetTestListSuccess.png)
+![List of result.png](images/Pea-GetTestListSuccess.png)
 
 Using the test ID `"id": "1745610463742.LoanApplication"` and the URL http://35.229.70.3:8381/pea/api/unittest/get?id=1745610463742.LoanApplication
 the result is accessible.
 
-![Detail of one test](Pea-GetDetailOneTest.png)
+![Detail of one test](images/Pea-GetDetailOneTest.png)
 
 # Change the process
 
@@ -187,7 +187,7 @@ score > 2800
 ```
 
 
-![Change the condition](BPMN-ChangeCondition.png)
+![Change the condition](images/BPMN-ChangeCondition.png)
 
 Commit and push
 
