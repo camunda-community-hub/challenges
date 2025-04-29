@@ -15,7 +15,7 @@ jobs:
     steps:
 
       - name: run all scenarii
-        run: |          
+        run: |
           STATUS=$(curl -s -o response.txt -w "%{http_code}" -X POST "${{ secrets.PEA_REST_ADDRESS }}/pea/api/unittest/runall?wait=true&failonerror=true&server=Camunda8Topaz")
           echo "HTTP Status: $STATUS"
           

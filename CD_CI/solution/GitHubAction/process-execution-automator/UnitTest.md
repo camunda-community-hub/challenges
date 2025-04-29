@@ -18,13 +18,15 @@ Check the command on the project https://github.com/camunda-community-hub/proces
 ```shell
 $ kubectl create -f k8s/process-execution-automator.yaml
 ```
-This command deploy a service with a public address
+This command deploys a service with a public address. THis is mandatory then GitHub can access PEA to deploy and execute scenario
 ```shell
 $ kubectl get svc
 pea-public                          LoadBalancer   34.118.231.236   35.229.70.3       8381:30440/TCP                 4m31s
 ```
 
 # Add the pea address
+
+The goal of this action is to allow 
 
 In the GitHub project, navigate to `Settings`  / `Secrets and variables` / `Actions`
 
@@ -35,6 +37,12 @@ Then click on `New repository secret`
 Add the key `PEA_REST_ADDRESS`  and the value from the public address. Use `http`or `https` and the port number is 8381
 
 ![img.png](images/GitHub-Add-PEA_REST_ADDRESS.png)
+
+# Access the PEA UI
+Using the PEA public address, the UI can be accessed
+Access `http://35.229.70.3:8381/`
+
+![PEA Home page](images/PeaUI-home.png)
 
 # Deploy workflows on the project
 
@@ -106,9 +114,11 @@ jobs:
       - name: Deploy to Pea
         run: |
           curl -X POST ${{ secrets.PEA_REST_ADDRESS }}/pea/api/content/add -F "scenarioFile=@${{ github.workspace }}/${{ matrix.file }}"
+
 ```
 
-The second action run all tests present on the server
+
+The second action runs all tests present on the server
 ````yaml
 name: '4-pea-run-scenarii'
 
@@ -127,10 +137,10 @@ jobs:
     steps:
 
       - name: run all scenarii
-        run: |          
+        run: |
           STATUS=$(curl -s -o response.txt -w "%{http_code}" -X POST "${{ secrets.PEA_REST_ADDRESS }}/pea/api/unittest/runall?wait=true&failonerror=true&server=Camunda8Topaz")
           echo "HTTP Status: $STATUS"
-          
+
           if [[ "$STATUS" -ge 400 ]]; then
             echo "❌ API call failed with status $STATUS"
             cat response.txt
@@ -142,7 +152,7 @@ jobs:
 
 Go to `src/main/resources/pea/LoanApplication-accepted.json` and change something in the file. Commit/push the change.
 
-Check on the GitHub Action: the workflow started
+Check out the GitHub Action: the workflow started:
 
 ![Workflow Started](images/GitHubAction-Start.png)
 
@@ -155,11 +165,16 @@ Check the first action (Load Scenarii)
 All scenarii are loaded. 
 It's possible to check the PEA server to see the result.
 
-> Process-Execution-Automator (PEA) offer a public REST API, so it is accessible via a brower or via postman
- 
-The scenario are loaded. This scenario does not specify any server type.
+> Process-Execution-Automator (PEA) offers a public REST API, so it is accessible via a browser or via postman, or an UI
+
+
+The scenario is loaded. This scenario does not specify any server type.
 
 ![PEA Get Content List](images/Pea-GetContentList.png)
+
+Via the PEA-UI, it's possible to check the deployment
+![Scenario is deployed](images/PeaUI-ScenarioDeploy.png)
+
 
 Check the second action (Run All Scenarii)
 
@@ -168,7 +183,7 @@ Check the second action (Run All Scenarii)
 > Process-Execution-Automator connects a Camunda Engine to execute the scenario. Multiple engine defintion are pre-positionned in the server. 
 > Camunda8Topaz is the server to use when Process-execution-automator are deployed in the same cluster. 
 
-The url return a status 200.
+The url returns a status 200.
 
 It is possible to ask the PEA server for the result. The URL is http://35.229.70.3:8381/pea/api/unittest/list
 
@@ -178,6 +193,14 @@ Using the test ID `"id": "1745610463742.LoanApplication"` and the URL http://35.
 the result is accessible.
 
 ![Detail of one test](images/Pea-GetDetailOneTest.png)
+
+
+Via the Pea UI, the test is visible, mark as started
+
+![img.png](images/PeaUI-FirstTest.png)
+
+When it's finished, the content can be accessed
+![img.png](images/PeaUI-FirstTestResult.png)
 
 # Change the process
 
@@ -190,4 +213,40 @@ score > 2800
 ![Change the condition](images/BPMN-ChangeCondition.png)
 
 Commit and push
+
+GitHub action detects the change, and runs
+![img.png](images/ChangeConditions-action.png)
+
+TODO To continue: the execution should have an error now, test too
+
+# Change the worker
+
+In the worker get-score, change the sleep time
+
+```
+  try {
+        Thread.sleep(2000);
+    } catch (InterruptedException e) {
+        logger.error("Ask to interrupt the sleep");
+        Thread.currentThread().interrupt();
+    }
+```
+from 150 to 2000. The worker needs now 2 seconds to complete. The performance test will failed.
+
+Commit and push
+
+The action deploys the new worker, and the test failed
+![Failed task](images/Pea_FailedActionTask.png)
+
+
+Check in the Pea application for the result: the performance test failed!
+![Failed worker](images/Pea_FailedWorker.png)
+
+
+TODO
+
+# Add a new test
+
+Create this file
+
 
