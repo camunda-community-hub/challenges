@@ -3,18 +3,25 @@ name: 'sm-deploy-bpmn'
 on:
   push:
     paths:
-      - 'src/main/resources/*.bpmn' # match '*.bpmn' files (created or updated)
-      - 'src/main/resources/*.dmn' # match '*.bpmn' files (created or updated)
+      - 'src/main/resources/*.bpmn'
+      - 'src/main/resources/*.dmn'
+      - 'src/main/resources/*.form'
+
 
 jobs:
   prepare-files:
     runs-on: ubuntu-latest
     outputs:
-      matrix-added: ${{ steps.file-changes.outputs.files_added }}
-      matrix-modified: ${{ steps.file-changes.outputs.files_modified }}
+      matrix-modified: ${{ steps.file-changes.outputs.files }}
     steps:
-      - id: file-changes
-        uses: trilom/file-changes-action@v1.2.4
+      - name: Select added and changed resources to deploy
+        uses: yumemi-inc/changed-files@v3
+        id: file-changes
+        with:
+          statuses: added|modified
+          format: 'json'
+          patterns: |
+            src/main/resources/*.{bpmn,dmn,form}
 
   deploy-modified-files:
     if: ${{ needs.prepare-files.outputs.matrix-modified != '[]' }}
@@ -33,29 +40,17 @@ jobs:
         run: |
           echo file[${{ matrix.file }}] from workspace[${{ github.workspace }}] to server[${{ secrets.ZEEBE_REST_ADDRESS }}] # to verify if the correct file was passed
           echo trick_2  ${{secrets.ZEEBE_REST_ADDRESS}} | sed 's/./& /g'
-          ls ${{ github.workspace }}/${{ matrix.file }}
+          ls -al ${{ github.workspace }}/${{ matrix.file }}
+
+#     - name: Get Bearer Token
+#        id: get-bearer-token
+#          run: |
+#          token=$(curl -s ""${{ secrets.OAUTH_TOKEN_URL }}"" --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'grant_type=client_credentials' --data-urlencode "client_id=${{ secrets.ZEEBE_CLIENT_ID}}" --data-urlencode "client_secret=${{ secrets.ZEEBE_CLIENT_SECRET }}" --data-urlencode 'audience=zeebe.camunda.io' | jq -r '.access_token')
+#          echo $token
+#          echo "token=$token" >> $GITHUB_OUTPUT
+
 
       - name: Deploy to Zeebe
         run: |
           curl -X POST "${{ secrets.ZEEBE_REST_ADDRESS }}/v2/deployments" -F "resources=@${{ github.workspace }}/${{ matrix.file }}"
 
-  deploy-new-files:
-    if: ${{ needs.prepare-files.outputs.matrix-added != '[]' }}
-    needs: [prepare-files]
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        file: ${{ fromJSON(needs.prepare-files.outputs.matrix-added) }}
-    steps:
-      - name: Check Out Reference File
-        uses: Bhacaz/checkout-files@v2
-        with:
-          files: ${{ matrix.file }}
-
-      - name: Display files to deploy
-        run: |
-          echo file[${{ matrix.file }}] from workspace[${{ github.workspace }}} to server[${{ secrets.ZEEBE_REST_ADDRESS }}] # to verify if the correct file was passed
-
-      - name: Deploy to Zeebe
-        run: |
-          curl -X POST "${{ secrets.ZEEBE_REST_ADDRESS}}/v2/deployments" -F "resources=@${{ github.workspace }}/${{ matrix.file }}"

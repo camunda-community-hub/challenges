@@ -77,5 +77,5 @@ On the GitHub repository, the workflow should start. Go to `Actions` and check
 Action was exectued
 ![Action executed](images/SaaS-GitHub-WorkflowExecuted.png)
  
-Check the last step, which deploy the artefact
+Check the last step, which deploy the artifact
 ![Check action](images/SaaS-GitHub-WorkflowCheck.png)

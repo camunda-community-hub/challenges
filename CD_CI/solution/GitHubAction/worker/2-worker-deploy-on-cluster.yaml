@@ -40,6 +40,7 @@ jobs:
       - name: Get GKE credentials
         run: |
           gcloud container clusters get-credentials ${{ secrets.GCP_CLUSTERNAME }} --region ${{ secrets.GCP_REGION }}
+
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f deployment-worker.yaml -n camunda

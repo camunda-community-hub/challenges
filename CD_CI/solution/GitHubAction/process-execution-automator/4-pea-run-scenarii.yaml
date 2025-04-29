@@ -2,10 +2,7 @@ name: '4-pea-run-scenarii'
 
 on:
   workflow_run:
-    workflows:
-      - sm-deploy-bpmn
-      - 2-worker-deploy-on-cluster
-      - 3-pea-loadscenarii
+    workflows: ["sm-deploy-bpmn", "2-worker-deploy_on-cluster", "3-pea-loadscenarii" ]
     types:
       - completed
 

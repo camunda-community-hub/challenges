@@ -202,7 +202,7 @@ Via the Pea UI, the test is visible, mark as started
 When it's finished, the content can be accessed
 ![img.png](images/PeaUI-FirstTestResult.png)
 
-# Change the process
+# Change the process: Unit test detects and fail
 
 Open the process and change the condition.
 ```
@@ -215,9 +215,23 @@ score > 2800
 Commit and push
 
 GitHub action detects the change, and runs
-![img.png](images/ChangeConditions-action.png)
+![Action](images/ChangeConditions-action.png)
 
-TODO To continue: the execution should have an error now, test too
+The action fail:
+
+![Action overview](images/ChangeCondition_ActionPeaOverview.png)
+
+Check the detail
+![Action Detail.png](images/ChangeCondition_PeaActionDetail.png)
+
+Access the Pea UI: the first test failed, because the task `AcceptLoan` never show up. 
+
+![PEA UI](images/ChangeCondition_PeaUI.png)
+
+Take advantage of the fact PEA display the process instance, to have a look in Operate: the process instance moved in the human task.
+
+![Operate view.png](images/ChangeCondition_PeaOperate.png)
+
 
 # Change the worker
 
@@ -231,7 +245,9 @@ In the worker get-score, change the sleep time
         Thread.currentThread().interrupt();
     }
 ```
-from 150 to 2000. The worker needs now 2 seconds to complete. The performance test will failed.
+
+
+From 150 to 2000. The worker needs now 2 seconds to complete. The performance test will fail.
 
 Commit and push
 
@@ -243,10 +259,9 @@ Check in the Pea application for the result: the performance test failed!
 ![Failed worker](images/Pea_FailedWorker.png)
 
 
-TODO
 
 # Add a new test
 
-Create this file
+In progress
 
 

@@ -101,13 +101,21 @@ Create a directory `.github`, then a folder `workflows` on the root of the proje
 
 Create a file name `sm-deploy-bpmn.yaml` inside
 
-
 ![img.png](images/SM-GitHub-Workflow.png)
 
 Use the [sm-deploy-bpmn.yaml](saas-deploy-bpmn.yaml) file provided.
 
 Adapt the file if you used a Client ID / CLient Secret
-TODO
+Uncomment the section
+```yaml
+  - name: Get Bearer Token
+        id: get-bearer-token
+        run: |
+          token=$(curl -s ""${{ secrets.OAUTH_TOKEN_URL }}"" --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'grant_type=client_credentials' --data-urlencode "client_id=${{ secrets.ZEEBE_CLIENT_ID}}" --data-urlencode "client_secret=${{ secrets.ZEEBE_CLIENT_SECRET }}" --data-urlencode 'audience=zeebe.camunda.io' | jq -r '.access_token')
+          echo $token
+          echo "token=$token" >> $GITHUB_OUTPUT
+
+```
 
 # 4. Change something in a process and push it
 
