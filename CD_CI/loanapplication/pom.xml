@@ -5,43 +5,137 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.camunda.challenge</groupId>
-    <artifactId>score</artifactId>
+    <groupId>com.camunda.automatetest</groupId>
+    <artifactId>automatetest</artifactId>
     <version>1.0.0</version>
 
-    <name>score</name>
-
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>21</java.version>
+        <spring-boot.version>3.4.4</spring-boot.version>
+        <camunda.version>8.7.0</camunda.version>
+        <camunda-process-test-coverage.version>2.8.0</camunda-process-test-coverage.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
 
+
+
+    <dependencyManagement>
+        <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>${spring-boot.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>io.camunda</groupId>
             <artifactId>spring-boot-starter-camunda-sdk</artifactId>
-            <version>8.6.5</version>
+            <version>${camunda.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
-            <version>3.3.5</version>
+            <version>${spring-boot.version}</version>
         </dependency>
 
-    </dependencies>
+        <!-- CPT -->
+        <!--
+        <dependency>
+            <groupId>io.camunda</groupId>
+            <artifactId>camunda-process-test-spring</artifactId>
+            <version>8.7.0</version>
+            <scope>test</scope>
+        </dependency>
+        -->
 
+        <!-- ZPT for JUnit Test -->
+        <dependency>
+            <groupId>io.camunda</groupId>
+            <artifactId>zeebe-process-test-extension</artifactId>
+            <version>${camunda.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.camunda</groupId>
+            <artifactId>spring-boot-starter-camunda-test</artifactId>
+            <version>${camunda.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.community.process_test_coverage</groupId>
+            <artifactId>camunda-process-test-coverage-junit5-platform-8</artifactId>
+            <version>${camunda-process-test-coverage.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+-->
+
+    </dependencies>
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.2</version>
+            </plugin>
+
+
+            <plugin>
+                <!-- see https://github.com/camunda-community-hub/spring-zeebe?tab=readme-ov-file#configuring-camunda-8
+                -connection -->
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
                 <configuration>
+                    <source>21</source>
+                    <target>21</target>
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
+
+            <!-- allow mvn spring-boot:run -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.0.6</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <classifier>exec</classifier>
+                    <mainClass>io.camunda.score.LoanApplication</mainClass>
+                    <image>
+                        <name>ghcr.io/pierre-yves-monnet/waitforresult:latest</name>
+                    </image>
+                </configuration>
+            </plugin>
+
+
         </plugins>
     </build>
 </project>
