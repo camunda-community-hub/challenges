@@ -89,7 +89,7 @@ Create these secrets:
 
 > Note 1: the protocol (http or https) is included in the address, to address more use cases.
 
-> Note 2: add the CLIENT_ID and CLIENT_SECRET in the secret, if you defined one.
+> Note 2: add the CLIENT_ID and CLIENT_SECRET in the secret if you defined one.
 
 At the end, you should have this:
 
@@ -105,16 +105,25 @@ Create a file name `sm-deploy-bpmn.yaml` inside
 
 Use the [sm-deploy-bpmn.yaml](saas-deploy-bpmn.yaml) file provided.
 
-Adapt the file if you used a Client ID / CLient Secret
-Uncomment the section
-```yaml
-  - name: Get Bearer Token
-        id: get-bearer-token
-        run: |
-          token=$(curl -s ""${{ secrets.OAUTH_TOKEN_URL }}"" --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'grant_type=client_credentials' --data-urlencode "client_id=${{ secrets.ZEEBE_CLIENT_ID}}" --data-urlencode "client_secret=${{ secrets.ZEEBE_CLIENT_SECRET }}" --data-urlencode 'audience=zeebe.camunda.io' | jq -r '.access_token')
-          echo $token
-          echo "token=$token" >> $GITHUB_OUTPUT
+Adapt the file if you use a Client ID / CLient Secret
 
+There are two sections in the file. Uncomment / comment the section, according to your platform
+
+```yaml
+ # cluster with Identity + Client Secret/ClientID
+ #      - name: Get Bearer Token
+ #        id: get-bearer-token
+ #        run: |
+ #          token=$(curl -s ""${{ secrets.OAUTH_TOKEN_URL }}"" --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'grant_type=client_credentials' --data-urlencode "client_id=${{ secrets.ZEEBE_CLIENT_ID}}" --data-urlencode "client_secret=${{ secrets.ZEEBE_CLIENT_SECRET }}" --data-urlencode 'audience=zeebe.camunda.io' | jq -r '.access_token')
+ #          echo $token
+ #          echo "token=$token" >> $GITHUB_OUTPUT
+
+ #      - name: Deploy to Zeebe
+ #        id: deploy-to-zeebe
+ #        run: |
+ #          response=$(curl -s -X POST "${{ secrets.ZEEBE_URL }}/v2/deployments" -H "Authorization: Bearer ${{ steps.get-bearer-token.outputs.token }}" -F "resources=@${{ github.workspace }}/${{ matrix.file }}")
+ #          echo "$response"
+ #          echo "response=$response" >> $GITHUB_OUTPUT
 ```
 
 # 4. Change something in a process and push it
@@ -128,6 +137,6 @@ On the GitHub repository, the workflow should start. Go to `Actions` and check
 
 Action was executed.
 
-Check the last step, which deploy the artefact
+Check the last step, which deploy the artifact.
 
 ![img.png](images/SM-GitHub-WorkflowCheck.png)
