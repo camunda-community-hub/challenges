@@ -28,9 +28,9 @@ camunda-zeebe-gateway               ClusterIP      34.118.226.231   <none>      
 camunda-rest-zeebe-gateway-public   LoadBalancer   34.118.227.68    34.23.115.65      8080:31276/TCP                 17m
 camunda-grpc-zeebe-gateway-public   LoadBalancer   34.118.239.224   104.196.165.146   26500:30198/TCP                17m
 ```
-Two public service are accessible. One for REST and one for GRPC.
+Two public services are accessible. One for REST and one for GRPC.
 
-The yaml file is
+The YAML file is
 
 ```yaml
 apiVersion: v1
@@ -61,9 +61,58 @@ spec:
     - port: 8080
       targetPort: 8080
 ```
+# 2. Keycloak must be accessible (only if using a protected cluster)
+
+If your cluster uses Identity and enables the identification, Keycloak must be accessible
+
+1. Create a public access
+```shell
+kubectl create -f PublicKeycloak.yaml
+```
+2. Get the IP address
+
+```shell
+kubectl  k get svc | grep camunda-keycloak-public
+camunda-keycloak-public             LoadBalancer   34.118.236.103   35.237.139.124   8080:30687/TCP                 45s
+````
+3. Retrieve the Keycloak `admin` password:
+Execute:
+```shell
+kubectl get secret --namespace $(namespace) "camunda-keycloak" -o jsonpath="{.data.admin-password}" | base64 --decode
+```
+
+4. Access Keycloak by the url `http://<publicAdress>:8080` like http://35.237.139.124:8080
+The administration page is visible
+![Keycloak](AccessKeycloakPage.png)
+
+5. To connect to Keycloak, use the user `admin` and the password
+
+6. Check the token issuer
+Access the URL:
+http://35.237.139.124:8080/auth/realms/camunda-platform/.well-known/openid-configuration
+You should have a JSON answer.
+![KeycloakAnswer](KeycloakIssuerAnswer.png)
+
+7. Check the `token_endpoint`answer: this is the OAUTH_TOKEN_URL. In this example,
+it's http://35.237.139.124:8080/auth/realms/camunda-platform/protocol/openid-connect/token
 
 
-# 2. Create action secrets in the repository
+7. Access Identity. 
+It may be necessary to `port-forward` identity.  
+
+```shell
+kubectl port-forward svc/camunda-identity 8080:80 -n camunda
+```
+![Identity Application](IdentityApplications.png)
+
+8. Get the Client ID / Client Secret
+
+The Client ID is `zeebe`and the client secret is `FsWEvP8S96` 
+![ClientId / Client Secret](IdentityClientIdClientSecret.png)
+
+8. In Application, click on the list
+
+# 3. Create action secrets in the repository
 Go to `Settings`, then search `Secrets and Variables`. Click on `Actions`.
 
 ![Access Secrets and Variables](images/GitHub-SecretsAndVariables.png)
@@ -73,19 +122,19 @@ Give as `Name`: `ZEEBE_REST_ADDRESS` and for the value, the IP address you creat
 
 ```
 http://34.23.115.65:8080
-
 ```
 
 
 ![GrpcAddress_Secret](images/SM-GitHub-Secret.png)
 Create these secrets:
 
-| name                | Value from                  |
-|---------------------|-----------------------------| 
-| ZEEBE_CLIENT_ID     | <CLIENT_ID>                 |
-| ZEEBE_CLIENT_SECRET | <CLIENT_SECRET>             | 
-| ZEEBE_REST_ADDRESS  | http://34.23.115.65:8080    | 
-| ZEEBE_GRPC_ADDRESS  | http://34.118.239.224:26500 | 
+| name                | Value from                   |
+|---------------------|------------------------------| 
+| ZEEBE_CLIENT_ID     | <CLIENT_ID: zeebe>           |
+| ZEEBE_CLIENT_SECRET | <CLIENT_SECRET: FsWEvP8S96>  | 
+| OAUTH_TOKEN_URL     | <URL from Keycloak>          | 
+| ZEEBE_REST_ADDRESS  | http://34.23.115.65:8080     | 
+| ZEEBE_GRPC_ADDRESS  | http://34.118.239.224:26500  | 
 
 > Note 1: the protocol (http or https) is included in the address, to address more use cases.
 

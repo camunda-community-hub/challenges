@@ -15,9 +15,65 @@ The process execution automator tool must be deployed on the cluster.
 
 Check the command on the project https://github.com/camunda-community-hub/process-execution-automator?tab=readme-ov-file#simple-usage
 
+> PEA access different component: Zeebe, Operate, Tasklist. Component may need a ClientId/Client Secret access. Check the PEA configuration to configure the UI correctly
+
+## Simple access
+By default, the pea.yaml contains the default configuration to access components in the same cluster.
+
 ```shell
-$ kubectl create -f k8s/process-execution-automator.yaml
+$ kubectl create -f k8s/pea.yaml
 ```
+
+## ClientId/ClientSecret
+
+Use the `pea-identity.yaml`file to access component using client Id / Client secret. This file must be adapted to contain the correct information
+
+Check the section [GitHubActionBPMNSelfManage.md](../bpmn/GitHubActionBPMNSelfManage.md) to see how to access ClientId, ClientSecret and Authorization URL 
+```shell
+$ kubectl create -f k8s/pea-identity.yaml
+```
+Access in the same way the Operate ClientID/ Client Secret
+![img.png](IdentityOperateClientIdClientSecret.png)
+
+And the TaskList ClientId/ClientSecret
+![img_1.png](IdentityTaskListClientIdClientSecret.png)
+
+The PEA-identity.yaml is something like
+
+```
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >-
+                -Dautomator.startup.serverName=Camunda8Calcair
+                -Dautomator.servers.camunda8.name=Camunda8Calcair
+                -Dautomator.servers.camunda8.zeebeGrpcAddress=http://camunda-zeebe-gateway:26500
+                -Dautomator.servers.camunda8.zeebeClientId=zeebe
+                -Dautomator.servers.camunda8.zeebeClientSecret=FsWEvP8S96
+                -Dautomator.servers.camunda8.zeebeAudience=zeebe
+                -Dautomator.servers.camunda8.zeebePlainText=true
+                -Dautomator.servers.camunda8.authenticationUrl=http://35.237.139.124:8080/auth/realms/camunda-platform/protocol/openid-connect/token
+                -Dautomator.servers.camunda8.operateUrl=http://camunda-operate:80
+                -Dautomator.servers.camunda8.operateUserName=demo
+                -Dautomator.servers.camunda8.operateUserPassword=demo
+                -Dautomator.servers.camunda8.operateClientId=operate
+                -Dautomator.servers.camunda8.operateClientSecret=XhB0HZub9B
+                -Dautomator.servers.camunda8.taskListUrl=http://camunda-tasklist:80
+                -Dautomator.servers.camunda8.taskListUserName=demo
+                -Dautomator.servers.camunda8.taskListUserPassword=demo
+                -Dautomator.servers.camunda8.taskListClientId=tasklist
+                -Dautomator.servers.camunda8.taskListClientSecret=yrsX5qkt5z
+                -Dautomator.servers.camunda8.workerExecutionThreads=2000
+                -Dautomator.startup.logLevel=MAIN
+```
+
+## Open the Pea to GitHub
+
+GitHub action accesses the PEA from the outside of the cluster. Connection information is not shared at this level.
+
+```shell
+$ kubectl create -f k8s/pea-public-loadbalancer.yaml
+```
+
 This command deploys a service with a public address. THis is mandatory then GitHub can access PEA to deploy and execute scenario
 ```shell
 $ kubectl get svc
@@ -262,6 +318,6 @@ Check in the Pea application for the result: the performance test failed!
 
 # Add a new test
 
-In progress
+
 
 
