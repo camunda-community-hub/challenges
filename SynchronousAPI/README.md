@@ -47,3 +47,5 @@ How can we implement a mechanism that:
 
 This challenge must be solved to bring synchronous workflows into a fundamentally asynchronous engine like Camunda 8.
 
+# Material
+An application in React and Spring Boot is provided. The integration between the application and Camunda 8 are empty: it's up to you to do that integration!
