@@ -65,7 +65,7 @@ spec:
 
 If your cluster uses Identity and enables the identification, Keycloak must be accessible
 
-1. Create a public access
+1. Create public access
 ```shell
 kubectl create -f PublicKeycloak.yaml
 ```
@@ -83,7 +83,7 @@ kubectl get secret --namespace $(namespace) "camunda-keycloak" -o jsonpath="{.da
 
 4. Access Keycloak by the url `http://<publicAdress>:8080` like http://35.237.139.124:8080
 The administration page is visible
-![Keycloak](AccessKeycloakPage.png)
+![Keycloak](images/AccessKeycloakPage.png)
 
 5. To connect to Keycloak, use the user `admin` and the password
 
@@ -91,7 +91,7 @@ The administration page is visible
 Access the URL:
 http://35.237.139.124:8080/auth/realms/camunda-platform/.well-known/openid-configuration
 You should have a JSON answer.
-![KeycloakAnswer](KeycloakIssuerAnswer.png)
+![KeycloakAnswer](images/KeycloakIssuerAnswer.png)
 
 7. Check the `token_endpoint`answer: this is the OAUTH_TOKEN_URL. In this example,
 it's http://35.237.139.124:8080/auth/realms/camunda-platform/protocol/openid-connect/token
@@ -103,12 +103,12 @@ It may be necessary to `port-forward` identity.
 ```shell
 kubectl port-forward svc/camunda-identity 8080:80 -n camunda
 ```
-![Identity Application](IdentityApplications.png)
+![Identity Application](images/IdentityApplications.png)
 
 8. Get the Client ID / Client Secret
 
 The Client ID is `zeebe`and the client secret is `FsWEvP8S96` 
-![ClientId / Client Secret](IdentityClientIdClientSecret.png)
+![ClientId / Client Secret](images/IdentityClientIdClientSecret.png)
 
 8. In Application, click on the list
 

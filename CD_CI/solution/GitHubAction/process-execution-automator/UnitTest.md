@@ -318,6 +318,24 @@ Check in the Pea application for the result: the performance test failed!
 
 # Add a new test
 
+1. Create a new scenario
+
+Build a new scenario test, or rename the file `src/main/resources/pea/LoadApplication-user.txt` to `src/main/resources/pea/LoadApplication-user.json|.
+
+2. Commit and push it
+
+3. Check Actions
+In GitHub, action "load" is started.
+ 
+![Load is started on GitHub](images/NewScenario_GitHub_Started.png)
+
+4. Check in PEA: the new scenario must be loaded
+![Scenario is loaded](images/NewScenario_PEA_Scenario.png)
 
 
+5. After a while, Action is executed with success on GitHub
+![Action on GitHub](images/NewScenario_GitHub_Executed.png)
 
+5. Check on the PEA page, on test results
+
+![Test Result](images/NewScenario_PEA_Executed.png)

@@ -62,7 +62,12 @@ A connector is part of the GitHub under `src/main/java` . When a piece of code i
 
 When a new process is deployed, it must be deployed and a test must run on it.
 
-Different tool can be used to run this time.
+Different tools can be used to run this time.
 
 As an option: if the test is successful, then deploy the process on a second cluster, simulating a UA cluster when you run the test, and a productive cluster where you deploy it if the test is successfull.
 
+# Chapter 4: use different branches
+
+The Github repository contains two branches: main and development name `chicago`
+The `chigago` contains a Github deployment to push on the validation project.
+Web Modeler is connected to `chicago`. At a moment, development is finish, and the version is merge in the `main`.
