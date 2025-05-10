@@ -104,7 +104,7 @@ Click Create and continue
 
 Give roles `Kubernetes Engine Developer` and `Kubernetes Engine Cluster Viewer`
 
-![img.png](Google-ServiceAccount-Roles.png)
+![img.png](images/Google-ServiceAccount-Roles.png)
 
 Click on Done.
 

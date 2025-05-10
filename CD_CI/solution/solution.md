@@ -1,6 +1,6 @@
  # Different solution
  
-Different solution are explained here, based on different tool. Each solution explore two targets: a SaaS environment and a Self Manage environment
+Different solutions are explained here, based on different tools. Each solution explore two targets: a SaaS environment and a Self Manage environment
 
 # Different tool
 ## GitHub action

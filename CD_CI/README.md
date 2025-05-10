@@ -18,7 +18,7 @@ The repository contains:
 * Dockerfile is used to rebuild the image
 
 
-Result is
+The Result is
 ![img.png](doc/LocalGitRepository.png)
 
 
@@ -37,22 +37,30 @@ When you push a new version of a BPMN process, or a new process, this process is
 ### Build a solution based on a Jenkins server
 
 ### Build a solution on GitHub action
+Two flavors of the deployment are available
+
+* one based on [Saas](solution/GitHubAction/bpmn/GitHubActionBPMNSaaS.md)
+* one based on a [Self Manage](solution/GitHubAction/bpmn/GitHubActionBPMNSelfManage.md)
 
 ### Build a solution based on a different product
 
 ### Build a solution based on a process.
 
-# Chapter 2: Connector Continuous deployment
+
+# Chapter 2: Worker Continuous deployment
 
 ## Operation
 
-A connector is part of the GitHub under `src/main/java` . When a piece of code is pushed, then the environemnt
-* compile the new version and create a JAR file. The jar car be savec under the GitHub release.
-* deploy it on a Connector runtime (maybe the ConnectorRuntime or Cherry Runtime)
+A worker is part of the GitHub under `src/main/java` . When a piece of code is pushed, then the environment
+* compile the new version and create a JAR file. The jar car be saved under the GitHub release.
+* deploy it on a Connector runtime (maybe the Connector Runtime or Cherry Runtime)
 
 ## Different solutions
 
+### Using GitHub action
 
+The worker is deployed on a Cluster. The image is rebuild, push on a Docker image repository, and then the image is deployed on a cluster. 
+[SelfManage](solution/GitHubAction/worker/GitHubActionWorkerSelfManage.md)
 
 
 
@@ -60,14 +68,21 @@ A connector is part of the GitHub under `src/main/java` . When a piece of code i
 
 ## Operation
 
-When a new process is deployed, it must be deployed and a test must run on it.
+When something changed (new process, new worker), tests must run on it.
 
-Different tools can be used to run this time.
+The Process Execution Automator (PEA) is used to run scenarii on the platorm.
 
-As an option: if the test is successful, then deploy the process on a second cluster, simulating a UA cluster when you run the test, and a productive cluster where you deploy it if the test is successfull.
+The Process Execution Automator (PEA) must be deployed first somewhere.
+The action will 
+* deploy any PEA scenario
+* ask Process Execution Automator (PEA) to execute them
+
+
+[PEA execution](solution/GitHubAction/process-execution-automator/UnitTest.md)
+
 
 # Chapter 4: use different branches
 
-The Github repository contains two branches: main and development name `chicago`
-The `chigago` contains a Github deployment to push on the validation project.
+The GitHub repository contains two branches: main and development name `chicago`
+The `chigago` contains a GitHub deployment to push on the validation project.
 Web Modeler is connected to `chicago`. At a moment, development is finish, and the version is merge in the `main`.
