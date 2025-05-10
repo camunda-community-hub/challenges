@@ -30,11 +30,11 @@ When you push a new version of a BPMN process, or a new process, this process is
 
 
 
-| Solution      | Saas                                                       | Self Manage                                                             |
-|---------------|------------------------------------------------------------|-------------------------------------------------------------------------|
-| GitHub action | [Saas](solution/GitHubAction/bpmn/GitHubActionBPMNSaaS.md) | [Self Manage](solution/GitHubAction/bpmn/GitHubActionBPMNSelfManage.md) |
-| Jenkins       |                                                            |                                                                         |
-| Process       |                                                            |                                                                         |
+| Solution      | Saas                                               | Self Manage                                                     |
+|---------------|----------------------------------------------------|-----------------------------------------------------------------|
+| GitHub action | [Saas](GitHubAction/bpmn/GitHubActionBPMNSaaS.md)  | [Self Manage](GitHubAction/bpmn/GitHubActionBPMNSelfManage.md)  |
+| Jenkins       |                                                    |                                                                 |
+| Process       |                                                    |                                                                 |
 
 
 # Chapter 2: Worker Continuous deployment
@@ -44,11 +44,11 @@ A worker is part of the GitHub under `src/main/java` . When a piece of code is p
 * deploy it on a Connector runtime (maybe the Connector Runtime or Cherry Runtime)
 
 
-| Solution      | Self Manage                                                                 |
-|---------------|-----------------------------------------------------------------------------|
-| GitHub action | [SelfManage](solution/GitHubAction/worker/GitHubActionWorkerSelfManage.md)  |
-| Jenkins       |                                                                             |                                                                         
-| Process       |                                                                             |                                                                         
+| Solution      | Self Manage                                                        |
+|---------------|--------------------------------------------------------------------|
+| GitHub action | [SelfManage](GitHubAction/worker/GitHubActionWorkerSelfManage.md)  |
+| Jenkins       |                                                                    |                                                                         
+| Process       |                                                                    |                                                                         
 
 
 # Chapter 3: Continuous Integration
@@ -63,11 +63,11 @@ The action will
 * deploy any PEA scenario
 * ask Process Execution Automator (PEA) to execute them
 
-| Solution      | Self Manage                                                                     |
-|---------------|---------------------------------------------------------------------------------|
-| GitHub action | [PEA execution](solution/GitHubAction/process-execution-automator/UnitTest.md)  |
-| Jenkins       |                                                                                 |                                                                         
-| Process       |                                                                                 |                                                                         
+| Solution      | Self Manage                                                            |
+|---------------|------------------------------------------------------------------------|
+| GitHub action | [PEA execution](GitHubAction/process-execution-automator/UnitTest.md)  |
+| Jenkins       |                                                                        |                                                                         
+| Process       |                                                                        |                                                                         
 
 
 # Chapter 4: use different branches
