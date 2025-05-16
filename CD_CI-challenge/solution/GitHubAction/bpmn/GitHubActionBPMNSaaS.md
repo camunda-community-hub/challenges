@@ -17,18 +17,18 @@ Get the values
 
 For example
 
-| Variable                       | Value                                                                   |
-|--------------------------------|-------------------------------------------------------------------------| 
-| ZEEBE_CLIENT_ID                | PC_N9...ksznw                                                           |
-| ZEEBE_CLIENT_SECRET            | zPKg4....hvNf                                                           |
-| ZEEBE_REST_ADDRESS             | https://dsm-1.zeebe.camunda.io/5cc7a022-a4fb-4e33-9562-a287e8811ddd     |
-| ZEEBE_TOKEN_AUDIENCE           | zeebe.camunda.io                                                        |                                   
-| CAMUNDA_CLUSTER_ID             | 5cc7a02......811ddd                                                     |                                    
-| CAMUNDA_CLIENT_ID              | PC_N9w5......jDwksznw                                                   |                                         
-| CAMUNDA_CLIENT_SECRET          | zPKg4il......D9RahvNf                                                   |     
-| CAMUNDA_CLUSTER_REGION         | dsm-1                                                                   |                             
-| CAMUNDA_CREDENTIALS_SCOPES     | Zeebe                                                                   |                              
-| CAMUNDA_OAUTH_URL              | https://login.cloud.camunda.io/oauth/token                              |                               
+| Variable                       | Value                                      |
+|--------------------------------|--------------------------------------------| 
+| ZEEBE_CLIENT_ID                | P...w                                      |
+| ZEEBE_CLIENT_SECRET            | z...f                                      |
+| ZEEBE_REST_ADDRESS             | https://dsm-1.zeebe.camunda.io/5..         |
+| ZEEBE_TOKEN_AUDIENCE           | zeebe.camunda.io                           |                                   
+| CAMUNDA_CLUSTER_ID             | 5...d                                      |                                    
+| CAMUNDA_CLIENT_ID              | P...w                                      |                                         
+| CAMUNDA_CLIENT_SECRET          | z...f                                      |     
+| CAMUNDA_CLUSTER_REGION         | dsm-1                                      |                             
+| CAMUNDA_CREDENTIALS_SCOPES     | Zeebe                                      |                              
+| CAMUNDA_OAUTH_URL              | https://login.cloud.camunda.io/oauth/token |                               
 
 
 # 2. Create action secrets in the repository
