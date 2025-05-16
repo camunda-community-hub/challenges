@@ -1,0 +1,55 @@
+{
+  "components": [
+    {
+      "label": "customerId",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1v4sdma",
+        "columns": null
+      },
+      "id": "Field_15g2f2v",
+      "key": "customerId",
+      "readonly": true
+    },
+    {
+      "label": "Score",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1v4sdma",
+        "columns": null
+      },
+      "id": "Field_1h18t7m",
+      "key": "score",
+      "readonly": "on"
+    },
+    {
+      "label": "Decision on loan",
+      "values": [
+        {
+          "label": "Accept",
+          "value": "true"
+        },
+        {
+          "label": "Reject",
+          "value": "false"
+        }
+      ],
+      "type": "radio",
+      "layout": {
+        "row": "Row_1n2lk8p",
+        "columns": null
+      },
+      "id": "Field_1yamc30",
+      "key": "acceptLoan"
+    }
+  ],
+  "type": "default",
+  "id": "LoanCheck",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.34.0"
+  },
+  "schemaVersion": 18
+}
