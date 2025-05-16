@@ -1,0 +1,61 @@
+name: '3-pea-loadscenarii'
+
+on:
+  push:
+    paths:
+      - 'src/main/resources/pea/*.json' # match '*.json' files (created or updated)
+      - 'src/test/resources/pea/*.json' # match '*.json' files (created or updated)
+
+
+jobs:
+  prepare-files:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix-added: ${{ steps.file-changes.outputs.files_added }}
+      matrix-modified: ${{ steps.file-changes.outputs.files_modified }}
+    steps:
+      - id: file-changes
+        uses: trilom/file-changes-action@v1.2.4
+
+  deploy-modified-files:
+    if: ${{ needs.prepare-files.outputs.matrix-modified != '[]' }}
+    needs: [prepare-files]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        file: ${{ fromJSON(needs.prepare-files.outputs.matrix-modified) }}
+    steps:
+      - name: Check Out Reference File
+        uses: Bhacaz/checkout-files@v2
+        with:
+          files: ${{ matrix.file }}
+
+      - name: Echo file
+        run: |
+          echo ${{ matrix.file }} # to test if the correct file was passed
+
+
+      - name: Deploy to pea
+        run: |
+          curl -X POST "${{ secrets.PEA_REST_ADDRESS }}/pea/api/content/add" -F "scenarioFiles=@${{ github.workspace }}/${{ matrix.file }}"
+
+  deploy-new-files:
+    if: ${{ needs.prepare-files.outputs.matrix-added != '[]' }}
+    needs: [prepare-files]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        file: ${{ fromJSON(needs.prepare-files.outputs.matrix-added) }}
+    steps:
+      - name: Check Out Reference File
+        uses: Bhacaz/checkout-files@v2
+        with:
+          files: ${{ matrix.file }}
+
+      - name: Echo file
+        run: |
+          echo ${{ matrix.file }} # to test if the correct file was passed
+
+      - name: Deploy to Pea
+        run: |
+          curl -X POST ${{ secrets.PEA_REST_ADDRESS }}/pea/api/content/add -F "scenarioFile=@${{ github.workspace }}/${{ matrix.file }}"

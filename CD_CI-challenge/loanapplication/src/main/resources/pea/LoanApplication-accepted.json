@@ -1,0 +1,128 @@
+{
+  "name": "LoanApplication",
+  "processId": "LoanApplication",
+  "serverType": "Camunda_8",
+  "typeScenario": "UNIT",
+  "executions": [
+    {
+      "name": "Loan accepted",
+      "policy": "STOPATFIRSTERROR",
+      "description" : "Accepted application",
+      "numberProcessInstances": 1,
+      "numberOfThreads": 1,
+      "steps": [
+        {
+          "name": "Start event",
+          "type": "STARTEVENT",
+          "taskId": "StartEvent",
+          "processId": "LoanApplication",
+          "variables": {"customerId": "Customer987"}
+        }
+      ],
+      "verifications": {
+        "activities": [
+          {
+            "type": "TASK",
+            "taskId": "GetScore"
+          },
+          {
+            "description": "we accepted the application with this amount",
+            "type": "TASK",
+            "taskId": "AcceptLoan"
+          },
+          {
+            "type": "ENDEVENT",
+            "taskId": "LoanAccepted"
+          }
+        ],
+        "variables": [
+          {
+            "description": "Score is correctly calculated",
+            "name": "score",
+            "value": "987"
+          }
+        ],
+        "performances": [
+          {
+            "description": "From getScore to the End Event, less than 1 second ",
+            "fromFlowNode": "GetScore",
+            "fromMarker": "begin",
+            "toFlowNode": "LoanAccepted",
+            "toMarker": "end",
+            "duration": "PT1S"
+          },
+          {
+            "description": "GetScore must be performed in less than 100 ms",
+            "fromFlowNode": "GetScore",
+            "fromMarker": "begin",
+            "toFlowNode": "GetScore",
+            "toMarker": "end",
+            "duration": "PT0.2S"
+          }
+
+        ]
+      }
+    },
+
+    {
+      "name": "Loan rejected",
+      "policy": "STOPATFIRSTERROR",
+      "description" : "Rejected application",
+      "numberProcessInstances": 1,
+      "numberOfThreads": 1,
+      "steps": [
+        {
+          "name": "Start event",
+          "type": "STARTEVENT",
+          "taskId": "StartEvent",
+          "processId": "LoanApplication",
+          "variables": {"customerId": "Customer34"}
+        }
+      ],
+      "verifications": {
+        "activities": [
+          {
+            "type": "TASK",
+            "taskId": "GetScore"
+          },
+          {
+            "description": "Loan is rejected",
+            "type": "TASK",
+            "taskId": "RejectLoan"
+          },
+          {
+            "type": "ENDEVENT",
+            "taskId": "LoanRejected"
+          }
+        ],
+        "variables": [
+          {
+            "description": "Score is correctly calculated",
+            "name": "score",
+            "value": "34"
+          }
+        ],
+        "performances": [
+          {
+            "description": "From getScore to the End Event, less than 1 second ",
+            "fromFlowNode": "GetScore",
+            "fromMarker": "begin",
+            "toFlowNode": "LoanRejected",
+            "toMarker": "end",
+            "duration": "PT1S"
+          },
+          {
+            "description": "GetScore must be performed in less than 100 ms",
+            "fromFlowNode": "GetScore",
+            "fromMarker": "begin",
+            "toFlowNode": "GetScore",
+            "toMarker": "end",
+            "duration": "PT0.2S"
+          }
+
+        ]
+      }
+    }
+  ]
+}
+
