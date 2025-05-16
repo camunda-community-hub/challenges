@@ -19,7 +19,7 @@ Learn how to work with Camunda 8's backup and restore functionality:
 - Prepare Kubernetes manifests for the restore process.
 - Perform a full restore and validate the recovery.
 
-Go to [Backup and restore](Backup-Restore/README.md) challenge.
+Go to [Backup and restore](Backup-Restore-challenge/README.md) challenge.
 
 ---
 
@@ -60,7 +60,7 @@ Implement a robust **CI/CD pipeline** for Camunda 8:
 - Integrate tests to run nightly or on push.
 - Ensure platform consistency across all environments.
 
-Visit immediately the [CD CI](CD_CI/README.md) path
+Visit immediately the [CD CI](CD_CI-challenge/README.md) path
 
 
 ---
