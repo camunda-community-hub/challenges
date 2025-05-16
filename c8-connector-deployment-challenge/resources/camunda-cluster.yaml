@@ -1,0 +1,87 @@
+# Chart values for the Camunda Platform 8 Helm chart.
+# This file deliberately contains only the values that differ from the defaults.
+# For changes and documentation, use your favorite diff tool to compare it with:
+# https://github.com/camunda/camunda-platform-helm/blob/main/charts/camunda-platform/values.yaml
+
+
+global:
+  identity:
+    auth:
+      # Disable the Identity authentication
+      # it will fall back to basic-auth: demo/demo as default user
+      enabled: false
+  multitenancy:
+    enabled: false
+
+identity:
+  enabled: false
+  postgresql:
+    enabled: true
+
+identityKeycloak:
+  enabled: false
+
+
+operate:
+  enabled: true
+optimize:
+  enabled: false
+
+connectors:
+  enabled: true
+  env:
+    - name: CAMUNDA_OPERATE_CLIENT_USERNAME
+      value: demo
+    - name: CAMUNDA_OPERATE_CLIENT_PASSWORD
+      value: demo
+
+
+
+zeebe:
+  clusterSize: 3
+  partitionCount: 3
+  replicationFactor: 3
+  resources:
+    requests:
+      cpu: "1"
+      memory: "512M"
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+
+
+zeebe-gateway:
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "512m"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+
+elasticsearch:
+  enabled: true
+  # imageTag: 7.17.3
+  master:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "512M"
+      limits:
+        cpu: "1000m"
+        memory: "2Gi"
+  data:
+    replicaCount: 0
+  coordinating:
+    replicaCount: 0
+  ingest:
+    replicaCount: 0
+
+  # data:
+  #   replicaCount: 1
+  minimumMasterNodes: 1
+  # Allow no backup for single node setups
+  clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
