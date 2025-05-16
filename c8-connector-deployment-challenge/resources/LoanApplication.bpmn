@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1bvi78j" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.30.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1bvi78j" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.34.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
   <bpmn:process id="loanApplication" name="loanApplication" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_02tr0gn</bpmn:outgoing>
@@ -26,7 +26,7 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="c-pdf-convert-to" />
         <zeebe:ioMapping>
-          <zeebe:input source="=&#34;{ \&#34;storageDefinition\&#34;: \&#34;URL\&#34;, \&#34;content\&#34;: \&#34;https://github.com/pierre-yves-monnet/c8-connector-deployment-challenge/blob/main/resources/Congratulations.docx\&#34;}&#34;" target="sourceFileVariable" />
+          <zeebe:input source="=&#34;{ \&#34;storageDefinition\&#34;: \&#34;URL\&#34;, \&#34;content\&#34;: \&#34;https://github.com/camunda-community-hub/challenges/blob/main/c8-connector-deployment-challenge/resources/resources/Congratulations.docx\&#34;}&#34;" target="sourceFileVariable" />
           <zeebe:input source="Congratulations" target="destinationFileName" />
           <zeebe:input source="true" target="destinationStorageDefinition_optional" />
           <zeebe:input source="TEMPFOLDER" target="destinationStorageDefinition" />
