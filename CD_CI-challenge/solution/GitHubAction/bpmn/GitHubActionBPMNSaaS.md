@@ -7,25 +7,31 @@ Note: check the Preparation in the README. A GitHub repository is ready
 # 1. Create a client 
 
 Create a client that has access to `Zeebe API`. Take note of the environment variables
+
 ![ClientId-ClientSecret](images/SaaSClientIdClientSecret.png)
 
 then
+
 ![Create credential](images/SaaSCreateCredential.png)
 
 Get the values
+
 ![Get Credential](images/SaaSClientCredentials.png)
 
 For example
 
+
+
+
 | Variable                       | Value                                      |
 |--------------------------------|--------------------------------------------| 
-| ZEEBE_CLIENT_ID                | <ZeebeId                                   |
-| ZEEBE_CLIENT_SECRET            | <ZeebeSecret>                              |
+| ZEEBE_CLIENT_ID                | &lt;Zeebe_Id&gt;                           |
+| ZEEBE_CLIENT_SECRET            | &lt;ZeebeSecret&gt;                        |
 | ZEEBE_REST_ADDRESS             | https://dsm-1.zeebe.camunda.io/5..         |
 | ZEEBE_TOKEN_AUDIENCE           | zeebe.camunda.io                           |                                   
-| CAMUNDA_CLUSTER_ID             | <ClusterId>                                |                                    
-| CAMUNDA_CLIENT_ID              | <ClientId>                                 |                                         
-| CAMUNDA_CLIENT_SECRET          | <ClientSecret>                             |     
+| CAMUNDA_CLUSTER_ID             | &lt;ClusterId&gt;                          |                                    
+| CAMUNDA_CLIENT_ID              | &lt;ClientId&gt;                           |                                         
+| CAMUNDA_CLIENT_SECRET          | &lt;ClientSecret                           |     
 | CAMUNDA_CLUSTER_REGION         | dsm-1                                      |                             
 | CAMUNDA_CREDENTIALS_SCOPES     | Zeebe                                      |                              
 | CAMUNDA_OAUTH_URL              | https://login.cloud.camunda.io/oauth/token |                               
@@ -74,8 +80,10 @@ On the GitHub repository, the workflow should start. Go to `Actions` and check
 
 ![Start](images/SaaS-GitHub-WorkflowStart.png)
 
-Action was exectued
+Action was executed
+
 ![Action executed](images/SaaS-GitHub-WorkflowExecuted.png)
  
 Check the last step, which deploy the artifact
+
 ![Check action](images/SaaS-GitHub-WorkflowCheck.png)
