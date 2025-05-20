@@ -26,6 +26,6 @@ spec:
                 -Dcamunda.client.zeebe.grpc-address=http://camunda-zeebe-gateway:26500
                 -Dcamunda.client.mode=self-managed
                 -Dcamunda.client.auth.client-id=zeebe
-                -Dcamunda.client.auth.client-secret=FsWEvP8S96
+                -Dcamunda.client.auth.client-secret=<ClientSecret>
                 -Dcamunda.client.auth.token-url=http://35.237.139.124:8080/auth/realms/camunda-platform/protocol/openid-connect/token
                 -Dautomator.startup.logLevel=MAIN
