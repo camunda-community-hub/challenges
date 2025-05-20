@@ -19,13 +19,13 @@ For example
 
 | Variable                       | Value                                      |
 |--------------------------------|--------------------------------------------| 
-| ZEEBE_CLIENT_ID                | P...w                                      |
-| ZEEBE_CLIENT_SECRET            | z...f                                      |
+| ZEEBE_CLIENT_ID                | <ZeebeId                                   |
+| ZEEBE_CLIENT_SECRET            | <ZeebeSecret>                              |
 | ZEEBE_REST_ADDRESS             | https://dsm-1.zeebe.camunda.io/5..         |
 | ZEEBE_TOKEN_AUDIENCE           | zeebe.camunda.io                           |                                   
-| CAMUNDA_CLUSTER_ID             | 5...d                                      |                                    
-| CAMUNDA_CLIENT_ID              | P...w                                      |                                         
-| CAMUNDA_CLIENT_SECRET          | z...f                                      |     
+| CAMUNDA_CLUSTER_ID             | <ClusterId>                                |                                    
+| CAMUNDA_CLIENT_ID              | <ClientId>                                 |                                         
+| CAMUNDA_CLIENT_SECRET          | <ClientSecret>                             |     
 | CAMUNDA_CLUSTER_REGION         | dsm-1                                      |                             
 | CAMUNDA_CREDENTIALS_SCOPES     | Zeebe                                      |                              
 | CAMUNDA_OAUTH_URL              | https://login.cloud.camunda.io/oauth/token |                               
