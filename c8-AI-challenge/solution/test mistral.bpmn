@@ -14,7 +14,7 @@
         <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
         <zeebe:ioMapping>
           <zeebe:input source="=&#34;https://api.mistral.ai/&#34;" target="baseUrl" />
-          <zeebe:input source="rUzpByePZkSgiSq1eiw35JJpeQGngIzE" target="authorization" />
+          <zeebe:input source="Place_Here_The_Mistral_Password" target="authorization" />
           <zeebe:input source="v1" target="apiVersion" />
           <zeebe:input source="operation__vision_simple" target="operationId" />
           <zeebe:input source="pixtral-large-latest" target="mistralModelId" />
