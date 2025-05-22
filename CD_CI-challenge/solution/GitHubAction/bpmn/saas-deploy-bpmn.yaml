@@ -1,0 +1,74 @@
+name: 'Deploy updated BPMNs to Zeebe'
+
+on:
+  push:
+    paths:
+      - 'src/main/resources/*.bpmn' # match '*.bpmn' files (created or updated)
+      - 'src/main/resources/*.dmn' # match '*.bpmn' files (created or updated)
+
+jobs:
+  prepare-files:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix-added: ${{ steps.file-changes.outputs.files_added }}
+      matrix-modified: ${{ steps.file-changes.outputs.files_modified }}
+    steps:
+      - id: file-changes
+        uses: trilom/file-changes-action@v1.2.4
+
+  deploy-modified-files:
+    if: ${{ needs.prepare-files.outputs.matrix-modified != '[]' }}
+    needs: [prepare-files]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        file: ${{ fromJSON(needs.prepare-files.outputs.matrix-modified) }}
+    steps:
+      - name: Check Out Reference File
+        uses: Bhacaz/checkout-files@v2
+        with:
+          files: ${{ matrix.file }}
+
+      - name: Echo file
+        run: |
+          echo ${{ matrix.file }} # to test if the correct file was passed
+
+      - name: Get Bearer Toker
+        uses: fjogeleit/http-request-action@v1.16.4
+        id: zeebeBearer
+        with:
+          url: 'https://login.cloud.camunda.io/oauth/token'
+          method: 'POST'
+          customHeaders: '{"Content-Type": "application/x-www-form-urlencoded"}'
+          data: 'grant_type=client_credentials&audience=zeebe.camunda.io&client_id=${{ secrets.ZEEBE_CLIENT_ID }}&client_secret=${{ secrets.ZEEBE_CLIENT_SECRET }}'
+
+
+      - name: Deploy to Zeebe
+        run: |
+          curl -X POST "https://${{ secrets.CLUSTER_REGION }}.zeebe.camunda.io/${{ secrets.CLUSTER_ID }}/v2/deployments" -H "Authorization: Bearer ${{ fromJson(steps.zeebeBearer.outputs.response).access_token }}" -F "resources=@${{ github.workspace }}/${{ matrix.file }}"
+
+  deploy-new-files:
+    if: ${{ needs.prepare-files.outputs.matrix-added != '[]' }}
+    needs: [prepare-files]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        file: ${{ fromJSON(needs.prepare-files.outputs.matrix-added) }}
+    steps:
+      - name: Check Out Reference File
+        uses: Bhacaz/checkout-files@v2
+        with:
+          files: ${{ matrix.file }}
+
+      - name: Get Bearer Token
+        uses: fjogeleit/http-request-action@v1.16.4
+        id: zeebeBearer
+        with:
+          url: 'https://login.cloud.camunda.io/oauth/token'
+          method: 'POST'
+          customHeaders: '{"Content-Type": "application/x-www-form-urlencoded"}'
+          data: 'grant_type=client_credentials&audience=zeebe.camunda.io&client_id=${{ secrets.ZEEBE_CLIENT_ID }}&client_secret=${{ secrets.ZEEBE_CLIENT_SECRET }}'
+
+      - name: Deploy to Zeebe
+        run: |
+          curl -X POST "https://${{ secrets.CLUSTER_REGION }}.zeebe.camunda.io/${{ secrets.CLUSTER_ID }}/v2/deployments" -H "Authorization: Bearer ${{ fromJson(steps.zeebeBearer.outputs.response).access_token }}" -F "resources=@${{ github.workspace }}/${{ matrix.file }}"
