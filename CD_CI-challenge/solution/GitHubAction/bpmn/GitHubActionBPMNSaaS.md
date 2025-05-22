@@ -8,6 +8,7 @@ Note: check the Preparation in the README. A GitHub repository is ready
 
 Create a client that has access to `Zeebe API`. Take note of the environment variables
 
+
 ![ClientId-ClientSecret](images/SaaSClientIdClientSecret.png)
 
 then
@@ -16,9 +17,11 @@ then
 
 Get the values
 
+
 ![Get Credential](images/SaaSClientCredentials.png)
 
 For example
+
 
 
 
@@ -35,6 +38,7 @@ For example
 | CAMUNDA_CLUSTER_REGION         | dsm-1                                      |                             
 | CAMUNDA_CREDENTIALS_SCOPES     | Zeebe                                      |                              
 | CAMUNDA_OAUTH_URL              | https://login.cloud.camunda.io/oauth/token |                               
+
 
 
 # 2. Create action secrets in the repository
@@ -79,6 +83,7 @@ On the desktop modeler, change something in the process (a label, an icon). Save
 On the GitHub repository, the workflow should start. Go to `Actions` and check
 
 ![Start](images/SaaS-GitHub-WorkflowStart.png)
+
 
 Action was executed
 
