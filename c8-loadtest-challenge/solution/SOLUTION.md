@@ -2,8 +2,7 @@
 
 # Introduction
 
-This challenge aims t
-o find the correct configuration to handle the load test of Bank Of Andorra.
+This challenge aims to find the correct configuration to handle the load test of the Bank of Andorra.
 
 # Estimate the load
 
@@ -110,7 +109,7 @@ For an average, we use the value of 250 threads per worker.
 # Goal
 We want to run a small test:
 
-Running a 3 mn test, and warmup 1 mn, we expect
+Running a 3-minute test, and a warmup 1 mn, we expect
 * To create 223*60*(3+1)=53520
 * To process 223*60*3=40140 PI
 * To reach 1561 tasks/s
@@ -258,7 +257,7 @@ There is a lot of backpressure, and the task `checkTransition` is a bottleneck, 
 
 # Test 2
 To avoid backpressure, let's increase the number of partitions to 15. 
-The number of workers behind `checkTransition` is increase to 3.
+The number of workers behind `checkTransition` has increased to 3.
 
 ````shell
 kubectl create namespace camunda
@@ -293,11 +292,11 @@ Result
 | Process    | 40140 |   5792 |
 | Throughput |  1561 |   1200 |
 
-There is still some backpressure. The `checkTransition` is not anymore a bottleneck, but now next task appears as bottleneck
+There is still some backpressure. The `checkTransition` is no longer a bottleneck, but now the next task appears as bottleneck
 
 
 # Test 3
-Still some backpressure: increase the number of partition to 18. Increase the ES CPU to 5
+Still some backpressure: increase the number of partitions to 18. Increase the ES CPU to 5
 
 Increase the number of workers:
 
@@ -331,13 +330,13 @@ Have some overload during the creation
 ![test_3_Grafana_backpressure.png](images/test_3_Grafana_backpressure.png)
 
 
-The backpressure is now tackle, but the number of process instance created does not follow correctly now.
-Still some tasks stay in the process.
+The backpressure is now tackled, but the number of process instances created does not follow correctly now.
+Still, some tasks stay in the process.
 
 # Test 4
 
 Update
-Creation: set the number of thread to 120 (+20)
+Creation: set the number of threads to 120 (+20)
 check-transaction to 4 (+1)
 Validate-ue-bank to 4 (+2)
 Verify-acreditation to 4 (+2)
@@ -426,11 +425,11 @@ The second parameter is the backlog: it's only 125, 327 at this moment, but it w
 
 This is acceptable if Zeebe face a peak, and after a while, stop to export. Then Operate importer can speed up the throughput. We know this should be the standard througput for multiple hour, so actions must be taken here.
 
-## Multi threads the operate importer
+## Multi-threaded the operate importer
 
 Change the Operate configuration:
 
-````json
+````yaml
 operate:
   env:
     - name: CAMUNDA_OPERATE_IMPORTER_THREADSCOUNT
@@ -440,7 +439,7 @@ operate:
 
 ````
 
-Run again the same test.
+Run the same test again.
 
 
 Operations are better: the delta at the end of the execution is about -193654783973520529 records (which is negative, which make no sense)
@@ -454,11 +453,11 @@ Operations are better: the delta at the end of the execution is about -193654783
 ````
 
 
-## Deploy multiple operate pods
+## Deploy multiple Operate pods
 
 Use the `C8_BankOfAndora-5.2.yaml`
 
-This environment start an Operate, without the importer
+This environment starts an Operate, without the importer
 
 ````
 operate:
@@ -469,14 +468,15 @@ operate:
 
 Start the three importers
 
-Run manual Operate deployment, with 3 Operate imports. There is 18 partitions, running 3 importers means each Operate will deal with 18/3=6 partitions.
+Run manual Operate deployment with 3 Operate imports. Since there are 18 partitions, running 3 importers means each Operate will deal with 18/3=6 partitions.
 
 ```
 kubectl apply -f operate-importer-0.yaml -n camunda
 kubectl apply -f operate-importer-1.yaml -n camunda
 kubectl apply -f operate-importer-2.yaml -n camunda
 ```
-Note: this step does not work.
+
+> Note: this step does not work.
 
 
 Check the logs on one importer
@@ -488,13 +488,13 @@ Check the logs on one importer
 # Test 6 - Check ElasticSearch shard
 
 Run the test for 10 minutes,
-Estimate the size of the data for one month, assuming the customer want to keep the history to 1 months
-Check if the sharding will be enough. The guildeline from ElasticSearch is to keep a shard from 10 to 50 Gb
+Estimate the size of the data for one month, assuming the customer wants to keep the history for 1 month
+Check if the sharding will be enough. The guideline from ElasticSearch is to keep a shard from 10 to 50 Gb
 
-## Run a 10 mn load test
+## Run a 10-minute load test
 This is necessary to populate the different indexes in ElasticSearch.
 
-## Check the size on each indexes
+## Check the size on each index
 
 6.1 Port forward the ElasticSearch port
 
@@ -522,16 +522,16 @@ For this exercise, we choose the first index, `operate-flownode-instance-8.3.1_`
 
 363.8 Mb was generated in 10 minutes. For one hour, it's 363/10*60.
 
-The business said we have to run 10 hours a day, and a process instance live 5 days before completion.
+The business said we have to run 10 hours a day, and a process instance lives 5 days before completion.
 The calculation is 
 ```
   Size = 363 / 10 * 60 (1 h) * 10 (10 h/day) * 5 (days)= 108900 Mb =106 Gb
 ```
-The best is to create minimum 3 shards for this index.
+The best is to create a minimum of 3 shards for this index.
 
 ## Change the sharding
 
-Stop the importer on Operate. For a 200 Gb index, it may take 2 hours to proceed. So, in that situation, it's better to stop the importer and let operate run.
+Stop the importer from operating. For a 200 Gb index, it may take 2 hours to proceed. So, in that situation, it's better to stop the importer and let operate run.
 
 To stop the importer, update the environment variable, and run a Helm upgrade.
 ```
@@ -547,7 +547,7 @@ Operate is a deployment, so scale it to 0.
 kubectl scale deployment camunda-operate --replicas=0
 ```
 
-6.4 Get the detail of the index
+6.4 Get the details of the index
 
 
 ```shell
@@ -655,7 +655,7 @@ Save the response on the main parameters
 | Number of shards    | `number_of_shards`    |                                      1 |
 | Number of replicas  | `number_of_replicas`  |                                      0 |
 
-6.5 Move the index as readonly
+6.5 Move the index as read-only
 
 ```shell
 $ curl -X PUT localhost:9200/operate-flownode-instance-8.3.1_/_settings \
@@ -668,7 +668,8 @@ $ curl -X PUT localhost:9200/operate-flownode-instance-8.3.1_/_settings \
 }
 '
 ```
-Response should be
+The response should be
+
 ```
 {"acknowledged":true}
 ```
@@ -678,7 +679,7 @@ Response should be
 > Note: this information must be strictly identical on this index, not the moment to change the sharding
  
 
-`Aliases`, `Number of shards` and `Number of replicas` come from values saved before
+`Aliases`, `Number of shards`, and `Number of replicas` come from values saved before
 
 ```shell
 $ curl -X PUT localhost:9200/operate-flownode-instance-8.3.1_/_clone/tmp_operate-flownode-instance-8.3.1 \
@@ -702,15 +703,15 @@ Response is
 ```
 
 
-6.7 Wait the end of the operation
+6.7 Wait until the end of the operation
 
-> Note Attention, this is an asynchronous command. Monitor the end of the execution
+> Note: Attention, this is an asynchronous command. Monitor the end of the execution
 
 ```shell
 $ curl -X GET "localhost:9200/_cat/recovery/tmp_operate-flownode-instance-8.3.1/?format=json&s=target_node&active_only=true&pretty=true"
 ```
 
-Wait that the result returns an empty array
+Wait, the result returns an empty array
 
 ```
 [ ]
@@ -732,9 +733,9 @@ must return
 
 6.9 Split the index
 
-In the Split command, give the target number of shards
+In the Split command, give the target number of shards.
 
-> Note: use the aliases name in the command, and the number of replica must match.
+> Note: Use the alias name in the command, and the number of replicas must match.
 
 ```shell
 $ curl -X POST http://localhost:9200/tmp_operate-flownode-instance-8.3.1/_split/operate-flownode-instance-8.3.1_ \
@@ -758,7 +759,7 @@ Response is
 {"acknowledged":true,"shards_acknowledged":true,"index":"operate-flownode-instance-8.3.1_"}
 ```
 
-but the command is asynchronous.
+But the command is asynchronous.
 
 6.10 Monitor the advancement 
 
@@ -807,4 +808,4 @@ The `pri` column is the number of shards
 ```shell
 kubectl scale deployment camunda-operate --replicas=1
 ```
-Check the log, and verify if Operate is up and running. 
+Check the log and verify if Operate is up and running. 
