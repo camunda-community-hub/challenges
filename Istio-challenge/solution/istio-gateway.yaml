@@ -1,0 +1,29 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: camunda-gateway
+  annotations:
+    networking.istio.io/managed-certificates: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod-1
+  namespace: camunda-platform
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    # HTTP server for easy testing without TLS
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "joeyazureistio.eastus.cloudapp.azure.com"
+    # HTTPS server with TLS
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: tls-secret
+      hosts:
+        - "joeyazureistio.eastus.cloudapp.azure.com"
