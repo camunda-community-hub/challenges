@@ -1,0 +1,139 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: camunda-virtualservice
+  namespace: camunda-platform
+spec:
+  hosts:
+    - joeyazureistio.eastus.cloudapp.azure.com
+  gateways:
+    - camunda-gateway
+  http:
+    - name: "console-service"
+      match:
+        - uri:
+            prefix: "/console"
+      route:
+        - destination:
+            host: camunda-console
+            port:
+              number: 80
+    - name: "keycloak-service"
+      match:
+        - uri:
+            prefix: "/auth"
+      route:
+        - destination:
+            host: camunda-keycloak
+            port:
+              number: 80
+
+    - name: "operate-service"
+      match:
+        - uri:
+            prefix: "/operate"
+      route:
+        - destination:
+            host: camunda-operate
+            port:
+              number: 80
+
+    - name: "tasklist-service"
+      match:
+        - uri:
+            prefix: "/tasklist"
+      route:
+        - destination:
+            host: camunda-tasklist
+            port:
+              number: 80
+
+    - name: "identity-service"
+      match:
+        - uri:
+            prefix: "/identity"
+      route:
+        - destination:
+            host: camunda-identity
+            port:
+              number: 80
+
+    - name: "web-modeler-webapp"
+      match:
+        - uri:
+            prefix: "/modeler"
+      route:
+        - destination:
+            host: camunda-web-modeler-webapp
+            port:
+              number: 80
+      timeout: 60s
+
+    - name: "zeebe-service"
+      match:
+        - uri:
+            prefix: "/zeebe"
+      rewrite:
+        uri: "/zeebe"
+      route:
+        - destination:
+            host: camunda-zeebe-gateway.camunda-platform.svc.cluster.local
+            port:
+              number: 8080
+
+    - name: "optimize-service"
+      match:
+        - uri:
+            prefix: "/optimize"
+      route:
+        - destination:
+            host: camunda-optimize
+            port:
+              number: 80
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: camunda-zeebe-grpc
+  namespace: camunda-platform
+spec:
+  hosts:
+    - joeyazureistio.eastus.cloudapp.azure.com
+  gateways:
+    - camunda-grpc-gateway
+  tcp:
+    - match:
+        - port: 26500
+      route:
+        - destination:
+            host: camunda-zeebe-gateway.camunda-platform.svc.cluster.local
+            port:
+              number: 26500
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: grafana-prometheus
+  namespace: default
+spec:
+  hosts:
+    - joeyazureistio.eastus.cloudapp.azure.com
+  gateways:
+    - istio-system/istio-ingressgateway
+  http:
+    - match:
+        - uri:
+            prefix: /grafana
+      route:
+        - destination:
+            host: metrics-grafana.default.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /prometheus
+      route:
+        - destination:
+            host: metrics-kube-prometheus-st-prometheus.default.svc.cluster.local
+            port:
+              number: 9090

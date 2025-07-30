@@ -1,0 +1,180 @@
+global:
+  ingress:
+    enabled: true
+    className: istio
+    host: "joeyazureistio.eastus.cloudapp.azure.com"
+    tls:
+      enabled: true
+      secretName: tls-secret
+  identity:
+    auth:
+      enabled: true
+      publicIssuerUrl: "https://joeyazureistio.eastus.cloudapp.azure.com/auth/realms/camunda-platform"
+      connectors:
+        clientId: connectors
+        existingSecret:
+          name: identity-secret-for-components
+      identity:
+        clientId: camunda-identity
+        audience: camunda-identity-resource-server
+        existingSecretKey: identity-secret
+        redirectUrl: "https://joeyazureistio.eastus.cloudapp.azure.com/identity"
+      operate:
+        clientId: operate
+        audience: operate-api
+        existingSecret:
+          name: identity-secret-for-components
+        redirectUrl: "https://joeyazureistio.eastus.cloudapp.azure.com/operate"
+      tasklist:
+        clientId: tasklist
+        audience: tasklist-api
+        existingSecret:
+          name: identity-secret-for-components
+        redirectUrl: "https://joeyazureistio.eastus.cloudapp.azure.com/tasklist"
+      optimize:
+        clientId: optimize
+        audience: optimize-api
+        existingSecret:
+          name: identity-secret-for-components
+        redirectUrl: "https://joeyazureistio.eastus.cloudapp.azure.com/optimize"
+      webModeler:
+        clientId: web-modeler
+        clientApiAudience: web-modeler-api
+        publicApiAudience: web-modeler-public-api
+        redirectUrl: "https://joeyazureistio.eastus.cloudapp.azure.com/modeler"
+      console:
+        existingSecret:
+          name: identity-secret-for-components
+        redirectUrl: "https://joeyazureistio.eastus.cloudapp.azure.com/console"
+      zeebe:
+        clientId: zeebe
+        existingSecret:
+          name: identity-secret-for-components
+        audience: zeebe-api
+
+console:
+  enabled: false
+  contextPath: "/console"
+
+zeebe:
+  clusterSize: 1
+  partitionCount: 1
+  replicationFactor: 1
+  pvcSize: 10Gi
+prometheusServiceMonitor:
+  enabled: true
+
+zeebeGateway:
+  contextPath: "/zeebe"
+  replicas: 1
+  service:
+    grpcName: "grpc"
+  ingress:
+    grpc:
+      enabled: true
+      className: "istio"
+      host: "joeyazureistio.eastus.cloudapp.azure.com"
+      tls:
+        enabled: true
+        secretName: camunda-platform
+
+operate:
+  enabled: true
+  contextPath: "/operate"
+
+tasklist:
+  enabled: true
+  contextPath: "/tasklist"
+
+optimize:
+  enabled: false
+  contextPath: "/optimize"
+
+identity:
+  enabled: true
+  firstUser:
+    enabled: true
+    username: demo
+    password: demo
+    email: camunda@demo.com
+    firstName: Demo
+    lastName: User
+    existingSecret: "identity-secret-for-components"
+    existingSecretKey: "identity-firstuser-password"
+  contextPath: "/identity"
+  fullURL: "https://joeyazureistio.eastus.cloudapp.azure.com/identity"
+
+identityKeycloak:
+  enabled: true
+  postgresql:
+    auth:
+      existingSecret: "identity-secret-for-components"
+      secretKeys:
+        adminPasswordKey: "postgres-admin-password"
+        userPasswordKey: "postgres-user-password"
+  proxy: edge # edge, passthrough, or none
+  extraEnvVars:
+    - name: KC_HOSTNAME
+      value: "https://joeyazureistio.eastus.cloudapp.azure.com/auth"
+    - name: KC_PROXY_HEADERS
+      value: "xforwarded"
+    - name: KC_HOSTNAME_STRICT
+      value: "true"
+  auth:
+    adminUser: admin
+    existingSecret: "identity-secret-for-components"
+    passwordSecretKey: "kc-admin-password"
+
+webModeler:
+  enabled: true
+  contextPath: "/modeler"
+  restapi:
+    mail:
+      smtpHost: "demo.com"
+      smtpPort: 587
+      smtpUser: "Camunda-user"
+      smtpPassword: ""
+      smtpTlsEnabled: true
+      existingSecret:
+        name: identity-secret-for-components
+      fromAddress: "camunda@demo.com"
+      fromName: "Camunda 8"
+  webapp:
+    image:
+      repository: camunda/web-modeler-webapp
+    env:
+      - name: "SERVER_HTTPS_ONLY"
+        value: "false"
+
+  websockets:
+    image:
+      repository: camunda/web-modeler-websockets
+
+postgresql:
+  enabled: true
+  auth:
+    username: web-modeler
+    password: ""
+    database: web-modeler
+    existingSecret: "identity-secret-for-components"
+    secretKeys:
+      adminPasswordKey: "postgres-admin-password"
+      userPasswordKey: "postgres-user-password"
+
+connectors:
+  enabled: false
+  contextPath: "/connectors"
+  inbound:
+    mode: oauth
+    auth:
+      existingSecret: identity-secret-for-components
+      existingSecretKey: "connectors-secret"
+  replicas: 1
+
+
+elasticsearch:
+  # Request a single node with a persistent volume
+  master:
+    replicaCount: 1
+    persistence:
+      size: 15Gi
