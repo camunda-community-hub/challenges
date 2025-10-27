@@ -1,0 +1,17 @@
+---
+# https://istio.io/latest/docs/reference/config/networking/destination-rule/
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: camunda-zeebe-gateway-dr
+  namespace: camunda-platform
+spec:
+  host: camunda-zeebe-gateway.camunda-platform.svc.cluster.local
+  trafficPolicy:
+    portLevelSettings:
+      - port:
+          number: 26500
+        connectionPool:
+          http:
+            h2UpgradePolicy: UPGRADE
+            # https://istio.io/latest/docs/reference/config/networking/destination-rule/#ConnectionPoolSettings-HTTPSettings-H2UpgradePolicy

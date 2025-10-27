@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: itsjoey-cert
+  namespace: istio-system # Ensure this is the same namespace as your Istio Ingress Gateway
+spec:
+  secretName: itsjoey-cert # <--- CHANGE THIS LINE to match your Gateway's credentialName
+  commonName: joeyazureistio.eastus.cloudapp.azure.com
+  dnsNames:
+    - joeyazureistio.eastus.cloudapp.azure.com
+    - www.joeyazureistio.eastus.cloudapp.azure.com
+  issuerRef:
+    name: letsencrypt-prod-01
+    kind: ClusterIssuer
+  duration: 2160h  # 90 days
+  renewBefore: 360h  # 15 days
