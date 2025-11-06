@@ -110,3 +110,30 @@ spec:
             port:
               number: 26500
 ---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: grafana-prometheus
+  namespace: default
+spec:
+  hosts:
+    - joeyazureistio.eastus.cloudapp.azure.com
+  gateways:
+    - istio-system/istio-ingressgateway
+  http:
+    - match:
+        - uri:
+            prefix: /grafana
+      route:
+        - destination:
+            host: metrics-grafana.default.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /prometheus
+      route:
+        - destination:
+            host: metrics-kube-prometheus-st-prometheus.default.svc.cluster.local
+            port:
+              number: 9090

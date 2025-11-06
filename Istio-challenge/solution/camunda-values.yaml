@@ -61,7 +61,8 @@ zeebe:
   partitionCount: 1
   replicationFactor: 1
   pvcSize: 10Gi
-
+prometheusServiceMonitor:
+  enabled: true
 
 zeebeGateway:
   contextPath: "/zeebe"
