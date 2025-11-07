@@ -1,0 +1,176 @@
+global:
+  identity:
+    auth:
+      enabled: false
+
+identity:
+  enabled: false
+
+identityKeycloak:
+  enabled: false
+
+tasklist:
+  enabled: true
+  env:
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_ENABLED
+      value: "true"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_HOST
+      value: "datadog-agent.default.svc.cluster.local"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_PORT
+      value: "8125"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_FLAVOR
+      value: "datadog"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_PROTOCOL
+      value: "udp"
+    - name: LOGGING_LEVEL_IO_MICROMETER
+      value: "DEBUG"
+    - name: LOGGING_LEVEL_IO_MICROMETER_STATSD
+      value: "DEBUG"
+
+operate:
+  enabled: true
+  env:
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_ENABLED
+      value: "true"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_HOST
+      value: "datadog-agent.default.svc.cluster.local"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_PORT
+      value: "8125"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_FLAVOR
+      value: "datadog"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_PROTOCOL
+      value: "udp"
+    - name: LOGGING_LEVEL_IO_MICROMETER
+      value: "DEBUG"
+    - name: LOGGING_LEVEL_IO_MICROMETER_STATSD
+      value: "DEBUG"
+
+optimize:
+  enabled: true
+  env:
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_ENABLED
+      value: "true"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_HOST
+      value: "datadog-agent.default.svc.cluster.local"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_PORT
+      value: "8125"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_FLAVOR
+      value: "datadog"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_PROTOCOL
+      value: "udp"
+    - name: LOGGING_LEVEL_IO_MICROMETER
+      value: "DEBUG"
+    - name: LOGGING_LEVEL_IO_MICROMETER_STATSD
+      value: "DEBUG"
+
+connectors:
+  enabled: false
+
+zeebe:
+  clusterSize: 3
+  partitionCount: 3
+  replicationFactor: 3
+  pvcSize: 10Gi
+
+  initContainers:
+    - name: download-statsd-exporter
+      image: maven:3.9-eclipse-temurin-21-alpine
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 0
+      command:
+        - sh
+        - -c
+        - |
+          mkdir -p /lib/micrometer /root/.m2 && \
+          mvn -Dmaven.repo.local=/root/.m2 dependency:copy \
+            -Dartifact=io.micrometer:micrometer-registry-statsd:1.14.10 \
+            -Dtransitive=false \
+            -DoutputDirectory=/lib/micrometer && \
+          echo "Downloaded:" && ls -lh /lib/micrometer
+      volumeMounts:
+        - name: statsd-exporter-volume
+          mountPath: /lib/micrometer
+
+  extraVolumes:
+    - name: statsd-exporter-volume
+      emptyDir: {}
+
+  extraVolumeMounts:
+    - name: statsd-exporter-volume
+      mountPath: /usr/local/zeebe/lib/micrometer-registry-statsd-1.14.10.jar
+      subPath: micrometer-registry-statsd-1.14.10.jar
+
+  env:
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_ENABLED
+      value: "true"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_HOST
+      value: "datadog-agent.default.svc.cluster.local"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_PORT
+      value: "8125"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_FLAVOR
+      value: "datadog"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_PROTOCOL
+      value: "udp"
+    - name: LOGGING_LEVEL_IO_MICROMETER
+      value: "DEBUG"
+    - name: LOGGING_LEVEL_IO_MICROMETER_STATSD
+      value: "DEBUG"
+    - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT_ACTUATE_METRICS
+      value: "DEBUG"
+
+zeebe-gateway:
+  replicas: 2
+
+  initContainers:
+    - name: download-statsd-exporter
+      image: maven:3.9-eclipse-temurin-21-alpine
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 0
+      command:
+        - sh
+        - -c
+        - |
+          mkdir -p /lib/micrometer /root/.m2 && \
+          mvn -Dmaven.repo.local=/root/.m2 dependency:copy \
+            -Dartifact=io.micrometer:micrometer-registry-statsd:1.14.10 \
+            -Dtransitive=false \
+            -DoutputDirectory=/lib/micrometer && \
+          echo "Downloaded:" && ls -lh /lib/micrometer
+      volumeMounts:
+        - name: statsd-exporter-volume
+          mountPath: /lib/micrometer
+
+  extraVolumes:
+    - name: statsd-exporter-volume
+      emptyDir: {}
+
+  extraVolumeMounts:
+    - name: statsd-exporter-volume
+      mountPath: /usr/local/zeebe/lib/micrometer-registry-statsd-1.14.10.jar
+      subPath: micrometer-registry-statsd-1.14.10.jar
+
+  env:
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_ENABLED
+      value: "true"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_HOST
+      value: "datadog-agent.default.svc.cluster.local"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_PORT
+      value: "8125"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_FLAVOR
+      value: "datadog"
+    - name: MANAGEMENT_STATSD_METRICS_EXPORT_PROTOCOL
+      value: "udp"
+    - name: LOGGING_LEVEL_IO_MICROMETER
+      value: "DEBUG"
+    - name: LOGGING_LEVEL_IO_MICROMETER_STATSD
+      value: "DEBUG"
+    - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT_ACTUATE_METRICS
+      value: "DEBUG"
+
+elasticsearch:
+  enabled: true
+
+prometheusServiceMonitor:
+  enabled: true
