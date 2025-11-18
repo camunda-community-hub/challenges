@@ -5,6 +5,7 @@ Configure Helm
 Copy the Helm from the template in the documentation
 https://docs.camunda.io/docs/8.7/self-managed/identity/configuration/connect-to-an-oidc-provider/
 
+## helm 13.0.0
 ```yaml
 global:
   identity:
@@ -16,33 +17,6 @@ global:
       jwksUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/discovery/v2.0/keys
       type: "MICROSOFT"
       publicIssuerUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
-      identity:
-        clientId: <Client ID from Step 2>
-        existingSecret: <Client secret from Step 5>
-        audience: <Audience from Step 2>
-        # This is the object ID of the first user. A role mapping in Identity will automatically be generated for this user.
-        initialClaimValue: <Initial claim value>
-        redirectUrl: <See the Helm value in the table below>
-      operate:
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        existingSecret: <Client secret from Step 5>
-        redirectUrl: <See the Helm value in the table below>
-      tasklist:
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        existingSecret: <Client secret from Step 5>
-        redirectUrl: <See the Helm value in the table below>
-      optimize:
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        existingSecret: <Client secret from Step 5>
-        redirectUrl: <See the Helm value in the table below>
-      zeebe:
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        existingSecret: <Client secret from Step 5>
-        tokenScope: "<Client ID from Step 2>/.default"
       webModeler:
         clientId: <Client ID of Web Modeler's UI from Step 2>
         clientApiAudience: <Client ID of Web Modeler's UI from Step 2>
@@ -78,27 +52,74 @@ orchestration:
 
 ```
 
+## helm 13.1.2
+```yaml
+global:
+  identity:
+    auth:
+      issuer: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
+      # this is used for container to container communication
+      issuerBackendUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
+      tokenUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/oauth2/v2.0/token
+      jwksUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/discovery/v2.0/keys
+      type: "MICROSOFT"
+      publicIssuerUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
+
+      webModeler:
+        clientId: <Client ID of Web Modeler's UI from Step 2>
+        clientApiAudience: <Client ID of Web Modeler's UI from Step 2>
+        publicApiAudience: <Client ID of Web Modeler's API from Step 2>
+        redirectUrl: <See the Helm value in the table below>
+      console:
+        clientId: <Client ID from Step 2>
+        audience: <Client ID from Step 2>
+        redirectUrl: <See the Helm value in the table below>
+        wellKnown: <Found in the "Endpoints" section of the app registrations page>
+      connectors:
+        clientId: <Client ID from Step 2>
+        existingSecret: <Client secret from Step 5>
+
+orchestration:
+  clusterSize: "1"
+  partitionCount: "1"
+  replicationFactor: "1"
+
+  security:
+    authorizations:
+      enabled: true
+      oidc:
+        secret:
+          inlineSecret: <Client secret from Step 5>
+
+        redirectUrl: http://localhost:8080
+        usernameClaim: oid
+        groupsClaim: groups
+        clientId: <Client ID from Step 2>
+        audience: <Client ID from Step 2>            
+```
+
+
 Replace all values
 
-| Value                                        | Origin              | Value               |
-|----------------------------------------------|---------------------|---------------------|
-| <Microsoft Entra tenant ID>                  | TenantId            | cbd...ba9           |
-| <Audience from Step 2>                       | is the ClientId     | 026...1c9           |
-| <Initial claim value>                        | ObjectId of user    | ef6...312           |
-| <Client ID from Step 2>                      | Client Id           | 026...1c9           |
-| <Client secret from Step 5>                  | Value of the secret | fzR...ueP.apy_Kc.7  |
-| <Client ID of Web Modeler's API from Step 2> | ClientId            | 026...1c9           |
-| <Client ID of Web Modeler's UI from Step 2>  | Value of the secret | fzR...ueP.apy_Kc.7  |
+| Value                                        | Origin               | Value               |
+|----------------------------------------------|----------------------|---------------------|
+| <Microsoft Entra tenant ID>                  | TenantId             | cbd...ba9           |
+| <Audience from Step 2>                       | is the ClientId      | 026...1c9           |
+| <Initial claim value>                        | ObjectId of user     | ef6...312           |
+| <Client ID from Step 2>                      | ClientId             | 026...1c9           |
+| <Client secret from Step 5>                  | Value of the secret  | fzR...ueP.apy_Kc.7  |
+| <Client ID of Web Modeler's API from Step 2> | ClientId             | 026...1c9           |
+| <Client ID of Web Modeler's UI from Step 2>  | Value of the secret  | fzR...ueP.apy_Kc.7  |
 
 
 
 # Start the cluster
 
-in 8.8 (helm 13.0.0)
+in 8.8 (helm 13.1.2)
 
 
 ```shell
-helm upgrade --install --namespace camunda camunda camunda/camunda-platform -f camunda-values_entraid_87.yaml --skip-crds --version 12.6.2
+helm upgrade --install --namespace camunda camunda camunda/camunda-platform -f camunda-values_entraid_87.yaml --skip-crds --version 13.1.2
 ```
 
 
@@ -113,7 +134,7 @@ Try to access Operate via `localhost:8080`
 
 # Identify users in applications
 
-To allow a user in the application (tasklist or operate), two options are possible
+To allow a user in the application (Tasklist or Operate), two options are possible
 * directly map a user
 * map a EntraID group where the user is registered
 

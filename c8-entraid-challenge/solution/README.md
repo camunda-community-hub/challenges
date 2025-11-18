@@ -12,5 +12,5 @@ See [EntraID.md](EntraID.md)
 [Install87.md](Install87.md)
 
 # 8.8.x installation
-
+[Install88.md](Install88.md)
 
