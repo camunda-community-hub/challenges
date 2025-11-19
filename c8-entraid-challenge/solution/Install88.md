@@ -163,36 +163,40 @@ Connect to Operate works.
 
 ## Role mapping for a group
 
-> In progress - not working at this moment
 
 
 First, add the Security check in the application
 
-In the application registration, access `manage/token configuration`
+1. In the application registration, access `manage/token configuration`
 
 ![img.png](images/RoleMappingAppRegistrationToken.png)
 
-Click on `Add groups claim` and select `Security groups`
+2. Click on `Add groups claim` and select `Security groups`
 
 ![img.png](images/RoleMappingAddGroupsClaim.png)
 
-Find a group ID. in `Groups`, search a group like `Postsales consulting`
+3. Find a group ID. in `Groups`, search a group like `Postsales consulting`
+
 ![img_1.png](images/RoleMappingSearchGroup.png)
 
-Identify the ObjectId
+4. Identify the ObjectId
+
 ![img.png](images/RoleMappingGroupObjectId.png)
 
 | Value           | Value      |
 |-----------------|------------|
 | Group ObjectId  | 646...c68  |
 
-Create a role mapping based on the groupId
+5. Create an authorization on components based on the groupId. Go to Identity, in Authorization, select `COMPONENTS`
 
+![img.png](images/AuthorizationComponent.png)
 
-> In progress
+7. Add an authorization on component. `*` gives access to all components, else give `operate` or `tasklist` 
 
+![Authorize](images/AuthorizationComponentGroupObjectid.png)
 
-<<< see https://camunda.slack.com/archives/C08MRKHJ0CD/p1761870705602369>>
+Visit https://docs.camunda.io/docs/components/concepts/access-control/authorizations/#resources-and-permissions
+
 
 ## Use a group as Candidate group
 
@@ -203,6 +207,7 @@ https://docs.camunda.io/docs/components/tasklist/api-versions/#candidate-groups-
 # Desktop Modeler
 
 > In progress
+> https://camunda.slack.com/archives/C0693F1NFK5/p1763508881754619
 
 
 Connect via the desktop modeler using the `OAuth` authentication.
