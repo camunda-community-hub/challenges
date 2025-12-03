@@ -337,3 +337,166 @@ Copy the token in https://www.jwt.io/. See the detail in terms of object used by
 ![img.png](images/MultiTenancyDebug.png)
 
 
+# Management identity / Web Modeler / Optimize
+
+```yaml
+global:
+  ingress:
+    enabled: true
+    tls:
+      enabled: true
+      secretName: camunda-platform
+  security:
+    authentication:
+      method: oidc
+  identity:
+    auth:
+      enabled: true
+      issuer: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
+      issuerBackendUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
+      tokenUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/oauth2/v2.0/token
+      jwksUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/discovery/v2.0/keys
+      authUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/oauth2/v2.0/authorize
+      publicIssuerUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
+      type: "MICROSOFT"
+      identity:
+        clientId: <Client ID from Step 2>
+        audience: <Audience from Step 2>
+        secret:
+          existingSecret: camunda-client-credentials
+          existingSecretKey: client-secret
+        # emma oid
+        initialClaimValue: <Initial claim value>
+        initialClaimName: "oid"
+        redirectUrl: <See the Helm value in the table below>
+      optimize:
+        clientId: <Client ID from Step 2>
+        audience: <Client ID from Step 2>
+        secret:
+          existingSecret: camunda-client-credentials
+          existingSecretKey: client-secret
+        redirectUrl: <See the Helm value in the table below>
+      webModeler:
+        clientId: <Client ID of Web Modeler's UI from Step 2>
+        clientApiAudience: <Client ID of Web Modeler's UI from Step 2>
+        publicApiAudience: <Client ID of Web Modeler's API from Step 2>
+        redirectUrl: <See the Helm value in the table below>
+      console:
+        wellKnown: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0/.well-known/openid-configuration
+        clientId: <Client ID from Step 2>
+        audience: <Client ID from Step 2>
+        secret:
+          existingSecret: camunda-client-credentials
+          existingSecretKey: client-secret
+        tokenScope: <Client ID from Step 2>/.default
+        redirectUrl: <See the Helm value in the table below>
+      orchestration:
+        clientId: <Client ID from Step 2>
+        audience: <Client ID from Step 2>
+        secret:
+          existingSecret: camunda-client-credentials
+          existingSecretKey: client-secret
+        redirectUrl: <See the Helm value in the table below>
+
+identity:
+  contextPath: "/identity"
+  enabled: true
+  env:
+    - name: CAMUNDA_IDENTITY_AUDIENCE
+      value: <Client ID from Step 2>
+
+identityPostgresql:
+  enabled: true
+  auth:
+    existingSecret: camunda-client-credentials
+    secretKeys:
+      userPasswordKey: postgres-password
+      adminPasswordKey: postgres-password
+
+console:
+  enabled: false
+  env:
+    - name: CAMUNDA_IDENTITY_JWKS_URL
+      value: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/discovery/v2.0/keys
+
+webModeler:
+  contextPath: "/modeler"
+  enabled: true
+  restapi:
+    mail:
+      # This value is required, otherwise the restapi pod wouldn't start.
+      fromAddress: noreply@example.com
+    env:
+      - name: CAMUNDA_MODELER_CLUSTERS_0_ID
+        value: "local-cluster"
+      - name: CAMUNDA_MODELER_CLUSTERS_0_NAME
+        value: "Local Cluster"
+      - name: CAMUNDA_MODELER_CLUSTERS_0_VERSION
+        value: "8.8.0"
+      - name: CAMUNDA_MODELER_CLUSTERS_0_AUTHENTICATION
+        value: "BEARER_TOKEN"
+        # Might be able to omit the .svc.local
+      - name: CAMUNDA_MODELER_CLUSTERS_0_URL_GRPC
+        value: "grpc://camunda-zeebe-gateway.orchestration.svc.cluster.local:26500"
+        # Internal cluster REST reference
+      - name: CAMUNDA_MODELER_CLUSTERS_0_URL_REST
+        value: "http://camunda-zeebe-gateway.orchestration.svc.cluster.local"
+        # External REST reference for example
+      #      - name: CAMUNDA_MODELER_CLUSTERS_0_URL_REST
+      #        value: "http://local.distro.ultrawombat.com/orchestration"
+      - name: CAMUNDA_MODELER_CLUSTERS_0_URL_WEBAPP
+        value: "http://local.distro.ultrawombat.com/orchestration"
+      - name: CAMUNDA_MODELER_CLUSTERS_0_AUTHORIZATIONS_ENABLED
+        value: "true"
+      - name: LOGGING_LEVEL_IO_GRPC
+        value: "TRACE"
+      - name: LOGGING_LEVEL_IO_CAMUNDA_MODELER
+        value: "DEBUG"
+      - name: SPRING_PROFILES_INCLUDE
+        value: "default-logging"
+
+# WebModeler Database.
+webModelerPostgresql:
+  enabled: true
+  auth:
+    existingSecret: "camunda-client-credentials"
+    secretKeys:
+      adminPasswordKey: postgres-password
+      userPasswordKey: postgres-password
+
+orchestration:
+  enabled: false
+optimize:
+  enabled: false
+elasticsearch:
+  enabled: false
+connectors:
+  enabled: false
+```
+
+
+Replace all values
+
+| Value                                        | Origin              | Value               |
+|----------------------------------------------|---------------------|---------------------|
+| <Microsoft Entra tenant ID>                  | TenantId            | cbd...ba9           |
+| <Audience from Step 2>                       | is the ClientId     | 026...1c9           |
+| <Initial claim value>                        | ObjectId of user    | ef6...312           |
+| <Client ID from Step 2>                      | Client Id           | 026...1c9           |
+| <Client secret from Step 5>                  | Value of the secret | fzR...ueP.apy_Kc.7  |
+| <Client ID of Web Modeler's API from Step 2> | ClientId            | 026...1c9           |
+| <Client ID of Web Modeler's UI from Step 2>  | Value of the secret | fzR...ueP.apy_Kc.7  |
+
+Secrets are store in a Secret file
+
+```yaml
+# kubectl apply -f em_camunda-client-credentials.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: camunda-client-credentials
+type: Opaque
+stringData:
+  client-secret:  <Client secret from Step 5>
+  postgres-password: postgres
+```
