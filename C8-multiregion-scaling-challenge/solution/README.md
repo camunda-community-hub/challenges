@@ -477,11 +477,20 @@ curl --request GET 'http://localhost:9600/actuator/cluster'
 # Scale up
 
 
-Four new brokers will be added in the cluster, one in each region
+two new brokers will be added in the cluster, one in each region
 
-All regions
+1. Scale the first region
 
-1. Add initial contacts points in the helm chart
+```shell
+$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
+$ kubectl scale statefulset camunda-zeebe --replicas=3
+```
+
+> The new pod is created and will not be "ready". it will be ready when it will be added in the cluster via the REST API.
+ 
+> It's a good idea to update the YAML with the new version if the scale is definitif, in order to have a value.yaml synchronized with the cluster. It's possible to use a helm upgrade to scale the cluster too.
+
+**Upgrade the value.yaml (not mandatory)**
 
 Add in both value.yaml the corresponding initial contact point, pod 3 and 4
 
@@ -492,63 +501,24 @@ Add in both value.yaml the corresponding initial contact point, pod 3 and 4
       camunda-zeebe-2.camunda-zeebe.green-east.svc.cluster.local:26502,  
       camunda-zeebe-0.camunda-zeebe.blue-west.svc.cluster.local:26502,
       camunda-zeebe-1.camunda-zeebe.blue-west.svc.cluster.local:26502,
-      camunda-zeebe-2.camunda-zeebe.blue-west.svc.cluster.local:26502,
-      camunda-zeebe-3.camunda-zeebe.blue-west.svc.cluster.local:26502"
+      camunda-zeebe-2.camunda-zeebe.blue-west.svc.cluster.local:26502"
 ``
 
-2. Move the cluster size to 8
+Move the cluster size to 8
+
 ```yaml
 orchestration:
-  clusterSize: "8"
+  clusterSize: "6"
 ```
 
-3. Upgrade the first region (blue)
-
-
-```shell
-$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
-$ helm upgrade --namespace blue-west camunda camunda/camunda-platform -f region0/camunda-value-88.yaml --skip-crds --version 13.1.2
-$ kubectl get pods 
-NAME                             READY   STATUS    RESTARTS   AGE
-camunda-elasticsearch-master-0   1/1     Running   0          98m
-camunda-zeebe-0                  1/1     Running   0          86m
-camunda-zeebe-1                  1/1     Running   0          98m
-camunda-zeebe-2                  0/1     Pending   0          14s
-camunda-zeebe-3                  0/1     Pending   0          14s
-````
-
-Check via a `kubectl describe pod camunda-zeebe-0` that the INITIALCONTACTPOINTS are correctly updated. They must contains the new names
-
-```
-  ZEEBE_BROKER_CLUSTER_INITIALCONTACTPOINTS: "camunda-zeebe-0.camunda-zeebe.green-east.svc.cluster.local:26502, 
-     camunda-zeebe-1.camunda-zeebe.green-east.svc.cluster.local:26502, 
-     camunda-zeebe-2.camunda-zeebe.green-east.svc.cluster.local:26502, 
-     camunda-zeebe-3.camunda-zeebe.green-east.svc.cluster.local:26502, 
-     camunda-zeebe-0.camunda-zeebe.blue-west.svc.cluster.local:26502, 
-     camunda-zeebe-1.camunda-zeebe.blue-west.svc.cluster.local:26502, 
-     camunda-zeebe-2.camunda-zeebe.blue-west.svc.cluster.local:26502, 
-     camunda-zeebe-3.camunda-zeebe.blue-west.svc.cluster.local:26502"
-
-```
-
-Two pods will start
-When the pods are running, they are in Kubernetes, but not in the Camunda cluster.
-
-4. Upgrade the second region ()
+2. Scale the second region
 
 ```shell
 $ kubectl config use-context gke_pierre-yves_us-east1_green-east
-$ helm upgrade --namespace green-east camunda camunda/camunda-platform -f region1/camunda-value-88.yaml --skip-crds --version 13.1.2
-$ kubectl get pods 
-NAME                             READY   STATUS    RESTARTS   AGE
-
+$ kubectl scale statefulset camunda-zeebe --replicas=3
 ```
 
-At this moment, message are visible, because brokers are added in the Initial point, but not in the Camunda cluster.
-
-5. Add brokers in the Camunda cluster
-
-
+3. Add brokers in the Camunda cluster
 
 
 ```shell
@@ -558,7 +528,7 @@ $ curl -X 'PATCH' \
   -H 'Content-Type: application/json' \
   -d '{
        "brokers": {
-         "add": [4,5,6,7]
+         "add": [4,5]
        }
      }'
 ```
@@ -588,7 +558,6 @@ Result is under `pendingChange`, under section `completed` and `pending`
         "brokers": [],
         "completedAt": "2025-11-21T23:28:33.000+0000"
       }
-      .....
     ],
     "pending": [
       {
