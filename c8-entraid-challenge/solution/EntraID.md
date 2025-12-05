@@ -1,6 +1,17 @@
 # Entra ID
 
-This section is common on each installation (8.7 or 8.8)
+This section is common on each installation (8.7 or 8.8).
+
+You need to collect at the end of the installation these parameters
+
+
+| Name                        | Description                                             |
+|-----------------------------|---------------------------------------------------------| 
+| Microsoft Entra tenant ID   | Tenant ID in EntraId                                    |                                          
+| Client ID                   | Objectid of the Application registration                |          
+| Client secret               | Client Secret associate to the Application Registration |
+| ObjectId of the first user  | To access the first user to access                      |
+| ObjectId of the first group | To access, a groupd may be used instead of a user       | 
 
 
 # Use an existing EntraId, or create a new one - check
@@ -60,6 +71,9 @@ Access the user
 | Name         | Value      |
 |--------------|------------|
 | UserObjectId | ef6...312  |
+
+> Note: it's possible to configure the application to accept not a user as initial connection, but a group. Then, this access is needed to access identity and configure all other authorization. 
+
 
 # Application Registration
 

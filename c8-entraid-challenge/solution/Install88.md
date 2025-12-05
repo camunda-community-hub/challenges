@@ -5,10 +5,13 @@ Configure Helm
 Copy the Helm from the template in the documentation
 https://docs.camunda.io/docs/8.7/self-managed/identity/configuration/connect-to-an-oidc-provider/
 
+> Note: this section is use to connect the orchestration server. The Management Identity is after. 
+ 
 ```yaml
 global:
   identity:
     auth:
+      enabled: true
       issuer: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
       # this is used for container to container communication
       issuerBackendUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
@@ -16,47 +19,7 @@ global:
       jwksUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/discovery/v2.0/keys
       type: "MICROSOFT"
       publicIssuerUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
-      identity:
-        clientId: <Client ID from Step 2>
-        existingSecret: <Client secret from Step 5>
-        audience: <Audience from Step 2>
-        # This is the object ID of the first user. A role mapping in Identity will automatically be generated for this user.
-        initialClaimValue: <Initial claim value>
-        redirectUrl: <See the Helm value in the table below>
-      operate:
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        existingSecret: <Client secret from Step 5>
-        redirectUrl: <See the Helm value in the table below>
-      tasklist:
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        existingSecret: <Client secret from Step 5>
-        redirectUrl: <See the Helm value in the table below>
-      optimize:
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        existingSecret: <Client secret from Step 5>
-        redirectUrl: <See the Helm value in the table below>
-      zeebe:
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        existingSecret: <Client secret from Step 5>
-        tokenScope: "<Client ID from Step 2>/.default"
-      webModeler:
-        clientId: <Client ID of Web Modeler's UI from Step 2>
-        clientApiAudience: <Client ID of Web Modeler's UI from Step 2>
-        publicApiAudience: <Client ID of Web Modeler's API from Step 2>
-        redirectUrl: <See the Helm value in the table below>
-      console:
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        redirectUrl: <See the Helm value in the table below>
-        wellKnown: <Found in the "Endpoints" section of the app registrations page>
-      connectors:
-        clientId: <Client ID from Step 2>
-        existingSecret: <Client secret from Step 5>
-
+      
 orchestration:
   clusterSize: "1"
   partitionCount: "1"
@@ -74,8 +37,16 @@ orchestration:
         tokenScope: "<Client ID from Step 2>/.default"
         clientId: <Client ID from Step 2>
         redirectUrl: http://localhost:8080
-        secret: <Client secret from Step 5>
+        secret:
+          existingSecret: camunda-client-credentials
+          existingSecretKey: client-secret
+```
 
+To give directly the secret in the `value.yaml` (not recommended)
+
+```yaml
+        secret:
+          inlineSecret: <Client secret from Step 5> 
 ```
 
 Replace all values
@@ -87,18 +58,13 @@ Replace all values
 | <Initial claim value>                        | ObjectId of user    | ef6...312           |
 | <Client ID from Step 2>                      | Client Id           | 026...1c9           |
 | <Client secret from Step 5>                  | Value of the secret | fzR...ueP.apy_Kc.7  |
-| <Client ID of Web Modeler's API from Step 2> | ClientId            | 026...1c9           |
-| <Client ID of Web Modeler's UI from Step 2>  | Value of the secret | fzR...ueP.apy_Kc.7  |
 
 
 
 # Start the cluster
 
-in 8.8 (helm 13.0.0)
-
-
 ```shell
-helm upgrade --install --namespace camunda camunda camunda/camunda-platform -f camunda-values_entraid_87.yaml --skip-crds --version 12.6.2
+helm upgrade --install --namespace camunda camunda camunda/camunda-platform -f camunda-values_entraid_88.yaml --skip-crds --version 13.2.1
 ```
 
 
@@ -497,6 +463,6 @@ metadata:
   name: camunda-client-credentials
 type: Opaque
 stringData:
-  client-secret:  <Client secret from Step 5>
-  postgres-password: postgres
+  client-secret: "<Client secret from Step 5>"
+  postgres-password: "postgres"
 ```
