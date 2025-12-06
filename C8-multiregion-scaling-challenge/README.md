@@ -16,3 +16,5 @@ Initial parameters:
 
 * Scale down the cluster to have 2 pods on each region (cluster size=4)
 
+
+Solution are available [solution/README.md](solution/README.md)

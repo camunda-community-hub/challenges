@@ -41,7 +41,6 @@ $ kubectl get svc -n kube-system
 kube-dns-lb            LoadBalancer   34.118.235.184   35.237.32.136   53:30624/UDP    22h
 ```
 
-
 Get the list of IP
 
 | region     | Public IP      |
@@ -173,7 +172,7 @@ Set
 
 
 Result is 
-![img.png](images/GKE_FirewallConfiguration.png)
+![Firewall Configuration](images/GKE_FirewallConfiguration.png)
 
 Click on `Create`
 
@@ -268,7 +267,7 @@ orchestration:
       value: 10s
 ```
 
-Create the cluster in Region 0/ `blue-west`. The name blue-west is used in the INITIAL_CONTACT point so, this is the name of the namespace.
+Create the cluster in Region 0 `blue-west`. The name blue-west is used in the INITIAL_CONTACT point so, this is the name of the namespace.
 
 ```shell
 $ kubectl config use-context gke_pierre-yves_us-east1_blue-west
@@ -288,7 +287,7 @@ $ helm upgrade --install --namespace green-east camunda camunda/camunda-platform
 
 # Check health
 
-1. Port forward port 8080 and 26500 
+1. Port forward port 8080; 9600 and 26500 
 
 Technically, 26500 is needed only if you want to deploy a BPMN process and start a process instance
 
@@ -428,22 +427,22 @@ We analyse the cluster
 
 | Parameter  | Value | Status                    |
 |------------|-------|---------------------------| 
-| Partitions | 3     | 3 partitions as expected  |
+| Partitions | 5     | 3 partitions as expected  |
 
 Distribution:
 
 | Partition | 0/blue | 1/green | 2/blue | 3/green |
-|-----------|--------|---------|--------|---------|
-| 1         | F      | F       | F      | L       |
-| 2         | F      | F       | F      | L       |     
-| 3         | F      | F       | F      | L       |
+|-----------|:-------|:--------|:-------|:--------|
+| 1         | L      |  F      | F       | F      |
+| 2         | F      | L       | F       | F      |     
+| 3         | L      | F       | F       | F      |
+| 4         | F      | L       | F       | F      |
+| 5         | L      | F       | F       | F      |
 
 
-> On a cluster 2, one pod may have all Leaders. Investigation in progress.
-
-
-> Why all leaders are on the same node?
+> Leaders may be not very well distributed, due to the lattency on startup between region.
  
+
 
 # Add partition
 
@@ -456,7 +455,7 @@ curl -X 'PATCH' \
    -H 'Content-Type: application/json' \
    -d '{
         "partitions": {
-          "count": 5
+          "count": 7
         }
       }'
 ```
@@ -474,8 +473,28 @@ then query the status
 curl --request GET 'http://localhost:9600/actuator/cluster'
 ```
 
-# Scale up
 
+Execute again a topology:
+
+```shell
+$ curl -b cookies.txt http://localhost:8080/v2/topology
+```
+
+| Partition | 0/blue | 1/green | 2/blue | 3/green |
+|-----------|:-------|:--------|:-------|:--------|
+| 1         | L      | F       | F      | F       |
+| 2         | F      | L       | F      | F       |     
+| 3         | L      | F       | F      | F       |
+| 4         | F      | L       | F      | F       |
+| 5         | L      | F       | F      | F       |
+| 6         | F      | L       | F      | F       |
+| 7         | F      | F       | L      | F       |
+
+
+
+
+
+# Scale up
 
 two new brokers will be added in the cluster, one in each region
 
@@ -504,7 +523,7 @@ Add in both value.yaml the corresponding initial contact point, pod 3 and 4
       camunda-zeebe-2.camunda-zeebe.blue-west.svc.cluster.local:26502"
 ``
 
-Move the cluster size to 8
+Move the cluster size to 6
 
 ```yaml
 orchestration:
@@ -517,6 +536,20 @@ orchestration:
 $ kubectl config use-context gke_pierre-yves_us-east1_green-east
 $ kubectl scale statefulset camunda-zeebe --replicas=3
 ```
+
+At this moment, both cluster contains 3 pods, but the last one is Running / Not ready.
+
+```shell
+
+$ kubectl get pods
+NAME                             READY   STATUS    RESTARTS   AGE
+camunda-elasticsearch-master-0   1/1     Running   0          30m
+camunda-zeebe-0                  1/1     Running   0          30m
+camunda-zeebe-1                  1/1     Running   0          30m
+camunda-zeebe-2                  0/1     Running   0          2m55s
+```
+
+
 
 3. Add brokers in the Camunda cluster
 
@@ -570,6 +603,80 @@ Result is under `pendingChange`, under section `completed` and `pending`
 
 ```
 
+
+After a moment, all changes are applied
+
+
+Execute again a topology:
+```shell
+$ curl -b cookies.txt http://localhost:8080/v2/topology
+```
+
+
+| Partition | 0/blue | 1/green | 2/blue | 3/green | 4/blue | 5/green |
+|-----------|:-------|:--------|:-------|:--------|--------|---------|
+| 1         | L      | F       | F       | F      |         |        |
+| 2         |        | L       | F       | F      | F       |        |
+| 3         |        |         | L       | F      | F       | F      |
+| 4         | F      |         |         | L      | F       | F      |
+| 5         | L      | F       |         |        | F       | F      |
+| 6         | F      | L       | F       |        |         | F      |
+| 7         | F      | F       | L       | F      |         |        |
+
+# Scale down
+
+Remove brokers in the Camunda cluster
+
+
+```shell
+$ curl -X 'PATCH' \
+  'http://localhost:9600/actuator/cluster' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+       "brokers": {
+         "remove": [4,5]
+       }
+     }'
+```
+
+Using the actuator request to get the status of progress
+
+```shell
+curl --request GET http://localhost:9600/actuator/cluster
+```
+
+When no pending change are present, run a topology command
+
+
+Execute again a topology:
+```shell
+$ curl -b cookies.txt http://localhost:8080/v2/topology
+```
+
+
+| Partition | 0/blue  | 1/green | 2/blue   | 3/green | 4/blue | 5/green |
+|-----------|:--------|:--------|:---------|:--------|--------|---------|
+| 1         | L       | F       | F        | F       |        |         |
+| 2         | F       | L       | F        | F       |        |         | 
+| 3         | F       | F       | L        | F       |        |         | 
+| 4         | F       | F       | F        | L       |        |         | 
+| 5         | L       | F       | F        | F       |        |         | 
+| 6         | F       | L       | F        | F       |        |         | 
+| 7         | F       | F       | L        | F       |        |         | 
+
+
+At this moment, it's possible to scale down brokers on both cluster
+
+
+```shell
+$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
+$ kubectl scale statefulset camunda-zeebe --replicas=2
+```
+```shell
+$ kubectl config use-context gke_pierre-yves_us-east1_green-east
+$ kubectl scale statefulset camunda-zeebe --replicas=2
+```
 # Uninstall
 
 ```shell
