@@ -53,6 +53,7 @@ orchestration:
 ```
 
 ## helm 13.1.2
+
 ```yaml
 global:
   identity:
@@ -99,7 +100,7 @@ orchestration:
 ```
 
 
-Replace all values
+Replace all values:
 
 | Value                                        | Origin               | Value               |
 |----------------------------------------------|----------------------|---------------------|
