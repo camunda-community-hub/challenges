@@ -88,50 +88,56 @@ Both are via the Role Mapping function in Identity
 
 ## Role mapping for a user
 
-Identify the Object ID of the User in EntraID
+1. Identify the Object ID of the User in EntraID
 ![img.png](images/RoleMappingUserObjectId.png)
 
 | Value         | Value      |
 |---------------|------------|
 | User ObjectId | ef6...312  |
 
-Create a role mapping
-
+2. Create a role mapping
 
 ![img.png](images/RoleMappingCreateUserMapping88.png)
 
-then give the authorisation to the role mapping
+3. Give the authorisation to the role mapping
 
 ![img.png](images/RoleMappingCreateUserAuthorisation88.png)
 
-Connect to Operate works.
+4. Connect to Operate works.
 
 ## Role mapping for a group
-
-> In progress - not working at this moment
 
 
 First, add the Security check in the application
 
-In the application registration, access `manage/token configuration`
+1. In the application registration, access `manage/token configuration`
 
 ![img.png](images/RoleMappingAppRegistrationToken.png)
 
-Click on `Add groups claim` and select `Security groups`
+2. Click on `Add groups claim` and select `Security groups`
 
 ![img.png](images/RoleMappingAddGroupsClaim.png)
 
-Find a group ID. in `Groups`, search a group like `Postsales consulting`
+3. Find a group ID. in `Groups`, search a group like `Postsales consulting`
 ![img_1.png](images/RoleMappingSearchGroup.png)
 
-Identify the ObjectId
+4. Identify the ObjectId
 ![img.png](images/RoleMappingGroupObjectId.png)
 
 | Value           | Value      |
 |-----------------|------------|
 | Group ObjectId  | 646...c68  |
 
-Create a role mapping based on the groupId
+5. In the role, register the group
+
+![img.png](RolemappingGroupRegister.png)
+
+6. Register the role in the authorisation
+
+![img.png](RoleMappingCreateAuthorization.png)
+
+7. Access the application with your user
+
 
 
 > In progress
@@ -144,11 +150,114 @@ Create a role mapping based on the groupId
 The candidate group has no impact on tasklist
 https://docs.camunda.io/docs/components/tasklist/api-versions/#candidate-groups-and-users
 
+# Token and client
+To authorize the REST API or the desktop modeler access the cluster, the object behind the token must be accepted.
+
+Check the token generated:
+
+
+```shell
+curl --location --request POST 'https://login.microsoftonline.com/<Microsoft Entra Tenant ID>/oauth2/v2.0/token' 
+  --header 'Content-Type: application/x-www-form-urlencoded' 
+  --data-urlencode "client_id=<ClientID>" 
+  --data-urlencode "client_secret=<ClientSecret>" 
+  --data-urlencode "scope=<ClientID>/.default" 
+  --data-urlencode 'grant_type=client_credentials'
+
+
+```
+
+Replace variables
+
+| Name                       | Origin                    | Value              |
+|----------------------------|---------------------------|--------------------|
+| Microsoft Entra tenant ID  | Tenand ID                 | cbd...a9f          |           
+| ClientID                   | App Registration.ClientId | 026...1c9          |
+| ClientSecret               | App Registration.Value    | fzR...ueP.apy_Kc.7 |
+
+result is
+
+```
+{"token_type":"Bearer","expires_in":3599,"ext_expires_in":3599,"access_token":"eyJ0eXAiO...flmA"}
+
+```
+Set the token in a variable
+```shell
+$ ACCESS_TOKEN="eyJ0eXAiO...flmA"
+```
+
+or use
+```shell
+ACCESS_TOKEN=$(curl -s curl --location --request POST 'https://login.microsoftonline.com/<Microsoft Entra Tenant ID>/oauth2/v2.0/token' 
+  --header 'Content-Type: application/x-www-form-urlencoded' 
+  --data-urlencode "client_id=<ClientID>" 
+  --data-urlencode "client_secret=<ClientSecret>" 
+  --data-urlencode "scope=<ClientID>/.default" 
+  --data-urlencode 'grant_type=client_credentials' | jq -r '.access_token')
+```
+Use jwt.io to get a full description of the token
+
+1. use jwt to decode the token
+```yaml
+{
+  "aud": "fa...789c0",
+  "iss": "https://login.microsoftonline.com/cbd4...a9f/v2.0",
+  "iat": 1765825135,
+  "nbf": 1765825135,
+  "exp": 1765829035,
+  "aio": "k2J...zcA",
+  "azp": "fa78...39c0",
+  "azpacr": "1",
+  "oid": "4a71...8f4",
+  "rh": "1.AYE...AA.",
+  "sub": "4a71...b8f4",
+  "tid": "cbd...ba9f",
+  "uti": "iNn...86AA",
+  "ver": "2.0",
+  "xms_ftd": "mM292...1kc21z"
+}
+```
+Is this token is considered as a user or as a client?  Run
+```shell
+ curl -s \
+  -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+  http://localhost:8080/v2/authentication/me | jq
+{
+  "username": "4a71...b8f4",
+  "authorizedComponents": [],
+  "tenants": [],
+  "groups": [],
+  "roles": [],
+  "salesPlanType": "",
+  "c8Links": {},
+  "canLogout": true
+}
+```
+
+This token is identified as user (username).The username is retrieved from the "sub" attributes. It's possible to configure Identity to resolve this as a Client
+The token as an OID and a AZP attribute. 
+Add this configuration.
+
+```yaml
+orchestration:
+  security:
+    authentication:
+      oidc:
+        clientIdClaim: azp                  # Entra puts client ID here
+        preferUsernameClaim: true           # user tokens win if both present
+```
+> In progress: still consider as a username
+
+
+If the object is a username, add it in a role, like the role admin
+
+![img.png](images/ReferenceClientAsUserInRole.png)
+
+Now, it's possible to deploy a process via the desktop modeler or the REST API
+
+https://docs.camunda.io/docs/apis-tools/orchestration-cluster-api-rest/orchestration-cluster-api-rest-authentication/#using-a-token-oidcjwt
 
 # Desktop Modeler
-
-> In progress
-
 
 Connect via the desktop modeler using the `OAuth` authentication.
 The ClientID and Client Secret come from the App Registration.
@@ -165,14 +274,43 @@ The OAuthScope comes from the camunda-value.yaml
 
 ![img.png](images/DesktopModeler.png)
 
+
+This is not egnout: the object behind the token need to be authorized.
+
+
 Deploy a process, and create a process instance. Verify both are visible in Operate.
 
 # Worker
 
-> In progress
+Use this value.yaml to connect the worker
 
 
-Use the scope
+```yaml
+camunda:
+  client:
+    mode: self-managed
+#    tenant-ids:
+#      - blue
+
+    auth:
+      client-id: <ClientID>
+      client-secret: <ClientSecret>
+      token-url: <OAuthTokenUrk>>
+
+    zeebe:
+      scope: <ClientID>/.default
+      enabled: true
+      preferRestOverGrpc: false
+
+      audience: zeebe-api
+      gatewayUrl: http://localhost:26500
+      # restAddress: http://localhost:8088
+      request-timeout: PT25S
+
+```
+
+
+Replace variables
 
 | Name           | Origin                                | Value                                                                                    |
 |----------------|---------------------------------------|------------------------------------------------------------------------------------------|
@@ -181,12 +319,11 @@ Use the scope
 | OAuthTokentURL | global.identity.auth.tokenUrl         | https://login.microsoftonline.com/cbd...ba9f/oauth2/v2.0/token |
 | OAuthScope     | global.identity.auth.zeebe.tokenScope | 026...1c9/.default                                            |
 
-
+for example:
 ```
 camunda:
   client:
     mode: self-managed
-    # tenant-id: <default>
 
     auth:
       client-id: 026...1c9
@@ -197,7 +334,17 @@ camunda:
       scope: 026...1c9/.default
 ```
 
+# REST API
 
+Get the access token
+
+Then call any API
+
+```shell
+curl --header "Authorization: Bearer ${ACCESS_TOKEN}" localhost:8080/v2/topology
+```
+
+*
 # Multi tenancy
 
 > In progress
@@ -208,6 +355,11 @@ global:
     enabled: true
   
 ```
+
+
+
+==> Multi tenancy is not enable, but it is visible in Idenity and possible to create a tenant!
+
 
 ## Create tenant in Identity
 
@@ -301,6 +453,40 @@ curl --location --request POST 'https://login.microsoftonline.com/cbd...ba9f/oau
 Copy the token in https://www.jwt.io/. See the detail in terms of object used by EntraId
 
 ![img.png](images/MultiTenancyDebug.png)
+
+
+Check 
+
+* `token.aud` == (value.yaml) `orchestration.security.authentication.oidc.audience`
+
+* `token.iss` == (value.yaml) `global.identity.auth.publicIssuerUrl`
+
+* `token.kid` (header) == is present in (value.yaml) `global.identity.auth.jwksUrl` : on one the `keys[].kid`
+
+* `token.alg` (header) == `RS256`
+
+
+
+In the command used to get the token :
+
+```shell
+
+curl --location --request POST '${TOKENURL}' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode "client_id=${CLIENT_ID}" \
+--data-urlencode "client_secret=${CLIENT_SECRET}" \
+--data-urlencode "scope=${SCOPE}" \
+--data-urlencode 'grant_type=client_credentials'
+```
+
+
+* `TOKENURL` is the same as (value.yaml) `global.liense.identity.auth.tokenUrl`
+* `CLIENT_ID` is the same as (value.yaml) `orchestration.security.authentication.oidc.clientId`
+* `CLIENT_SECRET` :is the same as (value.yaml) `orchestration.security.authentication.oidc.secret` (different method to set up the secret)
+
+> note: the secret used may be different in the token creation and in the cluster - this is what I have on my cluster
+
+* `SCOPE` in EntraID must be "<CLIENTID>/.default" . It is used to build the audience in the token (see the previous verification)
 
 
 # Management identity / Web Modeler / Optimize
