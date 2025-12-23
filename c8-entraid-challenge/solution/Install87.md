@@ -143,9 +143,11 @@ Click on `Add groups claim` and select `Security groups`
 ![img.png](images/RoleMappingAddGroupsClaim.png)
 
 Find a group ID. in `Groups`, search a group like `Postsales consulting`
+
 ![img_1.png](images/RoleMappingSearchGroup.png)
 
 Identify the ObjectId
+
 ![img.png](images/RoleMappingGroupObjectId.png)
 
 | Value           | Value      |

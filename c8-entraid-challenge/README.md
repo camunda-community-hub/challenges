@@ -1,5 +1,6 @@
 # EntraID challenge
 Connect a Camunda 8 to an Entra ID.
+
 The cluster is a 8.7 (or an 8.8), multi tenant server.
 Connect one user to access.
 

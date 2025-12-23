@@ -5,13 +5,15 @@ Configure Helm
 Copy the Helm from the template in the documentation
 https://docs.camunda.io/docs/8.7/self-managed/identity/configuration/connect-to-an-oidc-provider/
 
+
 > Note: this section is use to connect the orchestration server. The Management Identity is after. 
  
+
+
 ```yaml
 global:
   identity:
     auth:
-      enabled: true
       issuer: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
       # this is used for container to container communication
       issuerBackendUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
@@ -19,7 +21,21 @@ global:
       jwksUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/discovery/v2.0/keys
       type: "MICROSOFT"
       publicIssuerUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
-      
+
+      webModeler:
+        clientId: <Client ID of Web Modeler's UI from Step 2>
+        clientApiAudience: <Client ID of Web Modeler's UI from Step 2>
+        publicApiAudience: <Client ID of Web Modeler's API from Step 2>
+        redirectUrl: <See the Helm value in the table below>
+      console:
+        clientId: <Client ID from Step 2>
+        audience: <Client ID from Step 2>
+        redirectUrl: <See the Helm value in the table below>
+        wellKnown: <Found in the "Endpoints" section of the app registrations page>
+      connectors:
+        clientId: <Client ID from Step 2>
+        existingSecret: <Client secret from Step 5>
+
 orchestration:
   clusterSize: "1"
   partitionCount: "1"
@@ -28,36 +44,29 @@ orchestration:
   security:
     authorizations:
       enabled: true
-    authentication:
-      method: oidc
       oidc:
-        usernameClaim: oid
-        clientIdClaim: azp
-        groupsClaim: ""
-        tokenScope: "<Client ID from Step 2>/.default"
-        clientId: <Client ID from Step 2>
+        secret:
+          inlineSecret: <Client secret from Step 5>
+
         redirectUrl: http://localhost:8080
-        secret:
-          existingSecret: camunda-client-credentials
-          existingSecretKey: client-secret
+        usernameClaim: oid
+        groupsClaim: groups
+        clientId: <Client ID from Step 2>
+        audience: <Client ID from Step 2>            
 ```
 
-To give directly the secret in the `value.yaml` (not recommended)
 
-```yaml
-        secret:
-          inlineSecret: <Client secret from Step 5> 
-```
+Replace all values:
 
-Replace all values
-
-| Value                                        | Origin              | Value               |
-|----------------------------------------------|---------------------|---------------------|
-| <Microsoft Entra tenant ID>                  | TenantId            | cbd...ba9           |
-| <Audience from Step 2>                       | is the ClientId     | 026...1c9           |
-| <Initial claim value>                        | ObjectId of user    | ef6...312           |
-| <Client ID from Step 2>                      | Client Id           | 026...1c9           |
-| <Client secret from Step 5>                  | Value of the secret | fzR...ueP.apy_Kc.7  |
+| Value                                        | Origin               | Value               |
+|----------------------------------------------|----------------------|---------------------|
+| <Microsoft Entra tenant ID>                  | TenantId             | cbd...ba9           |
+| <Audience from Step 2>                       | is the ClientId      | 026...1c9           |
+| <Initial claim value>                        | ObjectId of user     | ef6...312           |
+| <Client ID from Step 2>                      | ClientId             | 026...1c9           |
+| <Client secret from Step 5>                  | Value of the secret  | fzR...ueP.apy_Kc.7  |
+| <Client ID of Web Modeler's API from Step 2> | ClientId             | 026...1c9           |
+| <Client ID of Web Modeler's UI from Step 2>  | Value of the secret  | fzR...ueP.apy_Kc.7  |
 
 
 
@@ -80,7 +89,7 @@ Try to access Operate via `localhost:8080`
 
 # Identify users in applications
 
-To allow a user in the application (tasklist or operate), two options are possible
+To allow a user in the application (Tasklist or Operate), two options are possible
 * directly map a user
 * map a EntraID group where the user is registered
 
@@ -241,7 +250,8 @@ orchestration:
         clientIdClaim: azp                  # Entra puts client ID here
         preferUsernameClaim: true           # user tokens win if both present
 ```
-> Note: the tolen can still be considered as a user
+  
+> Note: the token can still be considered as a user
 
 
 If the object is a username, add it in as admin role as a user

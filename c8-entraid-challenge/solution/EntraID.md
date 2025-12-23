@@ -19,18 +19,22 @@ You need to collect at the end of the installation these parameters
 The solution is based on the fact an EntraId already exists, with a Tenant
 In your AzureID.
 
+1. Access the Entrat ID
 ![Search EntraID](images/SearchEntraId.png)
 
-Click on `manage tenants`.
+2. Click on `manage tenants`.
+
 ![Manage Tenants.png](images/ManageTenants.png)
 
-A tenant is present.
+3. A tenant is present.
+
 ![ListofTenants](images/ListOfTenants.png)
 
-Click on it
+4. Click on it
+
 ![img.png](images/TenantDetail.png)
 
-Get the tenantId
+5. Get the tenantId
 
 | Name      | Value      |
 |-----------|------------| 
@@ -79,36 +83,36 @@ Access the user
 
 ## Create the application registration
 
-Go to App registration
+1. Go to App registration
 
 ![Search App registration](images/SearchAppRegistration.png)
 
-Click on `New registration`
+2. Click on `New registration`
 
 ![New App Registration](images/NewAppRegistration.png)
 
-Give a name like `pierre-yves-c8-entraid`
+3. Give a name like `pierre-yves-c8-entraid`
 
 ![Create application registration](images/CreateAppRegistration.png)
 
-Click on `Register`. 
+4. Click on `Register`. 
 
-Collect the Client ID from overview (`Application (client) ID`)
+5. Collect the Client ID from overview (`Application (client) ID`)
 
 ![Overview](images/AppRegistrationOverview.png)
 
 ## Create a secret
 
-Go to `manage/Certificate and Secret`
+1. Go to `manage/Certificate and Secret`
 
 ![Access Certificates and secrets](images/AddCertificateSecret.png)
 
-Add a client Secret: click on `new client secret`. Give a description and click on Add
+2. Add a client Secret: click on `new client secret`. Give a description and click on Add
 
 
 ![img.png](images/CertificationSecretList.png)
 
-Collect the Value (this is the Client Secret) and the Secret ID
+3. Collect the Value (this is the Client Secret) and the Secret ID
 
 | Name                             | Value               |
 |----------------------------------|---------------------|
@@ -119,16 +123,18 @@ Collect the Value (this is the Client Secret) and the Secret ID
 
 
 ## Add redirect URI (8.7)
-Add a redirect URI per components (Identity, Operate, Tasklist, Optimize, WebModeler). 
-Click on `manage/Authentication`.
 
-On the first screen, click on `Add a platform` and select `Web`
+Add a redirect URI per components (Identity, Operate, Tasklist, Optimize, WebModeler).
+
+1. Click on `manage/Authentication`.
+
+2. On the first screen, click on `Add a platform` and select `Web`
 
 ![img.png](images/RedirecturlAllPlatformWeb.png)
 
-For the test, we use "localhost:8080" for Identity, so the URL is `http://localhost:8080/auth/login-callback`
+3. For the test, we use "localhost:8080" for Identity, so the URL is `http://localhost:8080/auth/login-callback`
 
-Select the `Access tokens`and `Ìd tokens`
+4. Select the `Access tokens`and `Ìd tokens`
 
 ![img.png](images/RedirectUrlAddWebApplication.png)
 
@@ -155,19 +161,21 @@ Do the same for all applications.
 
 
 
-Final status should be
+5. The final status should be
+
 ![img.png](images/RedirectUrlWeb87.png)
 
 
 ## Add redirect URL (8.8)
 Add a redirect URI per components (Identity, Operate, Tasklist, Optimize, WebModeler).
-Click on `manage/Authentication`.
 
-On the first screen, click on `Add a platform` and select `Web`
+1. Click on `manage/Authentication`.
+
+2. On the first screen, click on `Add a platform` and select `Web`
 
 ![img.png](images/RedirecturlAllPlatformWeb.png)
 
-For the test, we use "localhost:8080" for Identity, so the URL is `http://localhost:8080/auth/login-callback`
+3. For the test, we use "localhost:8080" for Identity, so the URL is `http://localhost:8080/auth/login-callback`
 
 
 | Component                | RedirectURL                                       | Helm                            |
@@ -180,10 +188,11 @@ For the test, we use "localhost:8080" for Identity, so the URL is `http://localh
 
 TODO: what about managementIdentity?
 
-Final status in 8.8 should be
+4. Final status in 8.8 should be
+
 ![img.png](images/RedirectUrl88.png)
 
-For the Web Modeler, a `Single Page application` must be added. Click on `Add a platform`
+5. For the Web Modeler, a `Single Page application` must be added. Click on `Add a platform`
 
 ![img.png](images/RedirectUrlAddSinglePage.png)
 
@@ -198,10 +207,38 @@ For the Web Modeler, a `Single Page application` must be added. Click on `Add a 
 
 ## Change the manifest
 
-Click on Manifest, and search the `requestedAccessTokenVersion` (close to line 30).
+1. Click on Manifest, and search the `requestedAccessTokenVersion` (close to line 30).
+
 ![img.png](images/ManifestSearchRequested.png)
 
-Change the value to `2`
+2. Change the value to `2`
+
 ![img.png](images/ManifestRequestedAccessTokenVersion_2.png)
 
-Click on the `Save` button.
+3. Click on the `Save` button.
+
+## Debugging
+
+According to https://docs.camunda.io/docs/8.6/apis-tools/operate-api/operate-api-authentication/
+
+ask for a token via this call
+
+```shell
+curl --location --request POST '${TOKENURL}' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode "client_id=${CLIENT_ID}" \
+--data-urlencode "client_secret=${CLIENT_SECRET}" \
+--data-urlencode "scope=${SCOPE}" \
+--data-urlencode 'grant_type=client_credentials'
+```
+For example
+
+```shell
+curl --location --request POST 'https://login.microsoftonline.com/cbd...ba9f/oauth2/v2.0/token' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode "client_id=026...1c9" \
+--data-urlencode "client_secret=fzR...ueP.apy_Kc.7" \
+--data-urlencode "scope=026...1c9/.default" \
+--data-urlencode 'grant_type=client_credentials'
+{"token_type":"Bearer","expires_in":3599,"ext_expires_in":3599,"access_token":"eyJ0eXAiO.....xxuH9RS6pH_zscNSMff_wVJE7fvqSkyi_T5pgM3AJj9yuTeYPuJ6HC6_AKkqsA_gVVxPqnKG8GFTn2TXaPYRdhfwBc5DwZIPF3qIbM49xQAq141yTSumfe-1d2f5iZzmdFh32OHLKBr4A_ybj_pfZOjW-Sg"}
+```
