@@ -7,7 +7,7 @@ orchestration:
   # Mount the populated JAR into the main orchestration container
   extraVolumeMounts:
     - name: es-api-plugin
-      mountPath: /usr/local/plugin/es-api-key-plugin.jar
+      mountPath: /usr/local/plugins/es-api-key-plugin.jar
       subPath: es-api-key-plugin.jar
 
   # Init container: copies JAR from the secret into the shared volume
@@ -18,14 +18,14 @@ orchestration:
       command: ["/bin/sh", "-c"]
       args:
         - |
-          cp /plugin-src/es-api-key-plugin.jar /plugin/es-api-key-plugin.jar #to-be-change to curl command to download
+          cp /plugin-src/es-api-key-plugin.jar /plugins/es-api-key-plugin.jar #to-be-change to curl command to download
       volumeMounts:
         # Secret with the JAR – only mounted in init container
         - name: es-api-plugin-secret
           mountPath: /plugin-src
         # Shared volume to hand off the JAR to the main container
         - name: es-api-plugin
-          mountPath: /plugin
+          mountPath: /plugins
 
   # Extra volumes only needed by the initContainer
   extraVolumesAppend:
@@ -40,7 +40,7 @@ orchestration:
     - name: CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
       value: com.example.camunda.es.EsApiKeyHeaderPlugin
     - name: CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
-      value: /usr/local/plugin/es-api-key-plugin.jar
+      value: /usr/local/plugins/es-api-key-plugin.jar
 
     # Operate → Elasticsearch client
     - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
@@ -48,7 +48,7 @@ orchestration:
     - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
       value: com.example.camunda.es.EsApiKeyHeaderPlugin
     - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
-      value: /usr/local/plugin/es-api-key-plugin.jar
+      value: /usr/local/plugins/es-api-key-plugin.jar
 
     # Tasklist importer → Zeebe Elasticsearch
     - name: CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
@@ -56,7 +56,7 @@ orchestration:
     - name: CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
       value: com.example.camunda.es.EsApiKeyHeaderPlugin
     - name: CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
-      value: /usr/local/plugin/es-api-key-plugin.jar
+      value: /usr/local/plugins/es-api-key-plugin.jar
 
     # Tasklist → Elasticsearch client
     - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
@@ -64,7 +64,7 @@ orchestration:
     - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
       value: com.example.camunda.es.EsApiKeyHeaderPlugin
     - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
-      value: /usr/local/plugin/es-api-key-plugin.jar
+      value: /usr/local/plugins/es-api-key-plugin.jar
 
     # Your API key secret, same pattern as Zeebe example
     - name: ES_API_KEY_B64
