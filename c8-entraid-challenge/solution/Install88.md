@@ -76,6 +76,7 @@ kubectl -n camunda port-forward service/camunda-zeebe-gateway 8080:8080
 kubectl -n camunda port-forward service/camunda-zeebe-gateway 26500:26500
 ```
 Try to access Operate via `localhost:8080`
+![img.png](images/OrchestrationOperate.png)
 
 # Identify users in applications
 
@@ -130,20 +131,14 @@ First, add the Security check in the application
 
 5. In the role, register the group
 
-![img.png](RolemappingGroupRegister.png)
+![img.png](images/RolemappingGroupRegister.png)
 
 6. Register the role in the authorisation
 
-![img.png](RoleMappingCreateAuthorization.png)
+![img.png](images/RoleMappingCreateAuthorization.png)
 
 7. Access the application with your user
 
-
-
-> In progress
-
-
-<<< see https://camunda.slack.com/archives/C08MRKHJ0CD/p1761870705602369>>
 
 ## Use a group as Candidate group
 
@@ -246,10 +241,11 @@ orchestration:
         clientIdClaim: azp                  # Entra puts client ID here
         preferUsernameClaim: true           # user tokens win if both present
 ```
-> In progress: still consider as a username
+> Note: the tolen can still be considered as a user
 
 
-If the object is a username, add it in a role, like the role admin
+If the object is a username, add it in as admin role as a user
+
 
 ![img.png](images/ReferenceClientAsUserInRole.png)
 
@@ -275,13 +271,16 @@ The OAuthScope comes from the camunda-value.yaml
 ![img.png](images/DesktopModeler.png)
 
 
-This is not egnout: the object behind the token need to be authorized.
+This is not enough: the object behind the token need to be authorized. See before to get the user ID
+
+Add this user in the role `admin`
 
 
 Deploy a process, and create a process instance. Verify both are visible in Operate.
 
 # Worker
 
+## Connection
 Use this value.yaml to connect the worker
 
 
@@ -334,20 +333,230 @@ camunda:
       scope: 026...1c9/.default
 ```
 
+## Authorization
+
+The worker reference a user. This user must have authorizations READ_PROCESS_DEFINITION, READ_PROCESS_INSTANCE, UPDATE_PROCESS_INSTANCE on the PROCESS_DEFINITION objects
+
+![img.png](images/WorkerAuthorizationProcessInstance.png)
+
+if the worker need to manipulate documents, it must have authorization too
+
+![img.png](images/WorkerAuthorizationDocument.png)
+
+if the worker need to manipulate messages, give authorization
+
+![img.png](images/WorkerAuthorizationMessage.png)
+
+## unprotected API
+
+You can turn on the unprotected API mode by adding
+```yaml
+orchestration:
+  env:
+    - name: CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTED_API
+      value: "true"
+```
+
+Attention:
+* the API is not protected
+* but a worker need autorization to access jobs. Doing that, the connection does not have any user, so any authorization: the worker does not get any jobs to process.
+
+
 # REST API
 
-Get the access token
+Get the access token (see before)
 
-Then call any API
+Then call any API:
 
 ```shell
 curl --header "Authorization: Bearer ${ACCESS_TOKEN}" localhost:8080/v2/topology
 ```
 
-*
+# Management Identity, Web Modeler, Optimize
+
+## configuration
+
+
+```yaml
+  identity:
+    auth:
+      enabled: true
+      issuer: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
+      # this is used for container to container communication
+      issuerBackendUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
+      tokenUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/oauth2/v2.0/token
+      jwksUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/discovery/v2.0/keys
+      publicIssuerUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
+      type: "MICROSOFT"
+      identity:
+        clientId: <Client ID from Step 2>
+        audience: <Client ID from Step 2>
+        secret:
+          existingSecret: camunda-client-credentials
+          existingSecretKey: client-secret
+        initialClaimValue: <Initial claim value>
+        initialClaimName: "oid"
+        redirectUrl: "http://localhost:8084"
+      optimize:
+        clientId: <Client ID from Step 2>
+        audience: <Client ID from Step 2>
+        secret:
+          existingSecret: camunda-client-credentials
+          existingSecretKey: client-secret
+        redirectUrl: "http://localhost:8085/optimize"
+      webModeler:
+        clientId: <Client ID from Step 2>
+        audience: <Client ID from Step 2>
+        clientApiAudience: <Client ID from Step 2>
+        publicApiAudience: <Client ID from Step 2>
+        redirectUrl: "http://localhost:8090"
+
+
+identity:
+    #  contextPath: "/identity"
+  enabled: true
+  env:
+    - name: CAMUNDA_IDENTITY_AUDIENCE
+      value: <Client ID from Step 2>
+
+
+identityPostgresql :
+  enabled: true
+  auth:
+    existingSecret: camunda-client-credentials
+    secretKeys:
+      userPasswordKey: postgres-password
+      adminPasswordKey: postgres-password
+
+  # kubectl port
+webModeler:
+  #  contextPath: "/modeler"
+  enabled: true
+  webapp:
+
+  restapi:
+    mail:
+      # This value is required, otherwise the restapi pod wouldn't start.
+      fromAddress: pierre-yves.monnet@camunda.com
+    env:
+      - name: CAMUNDA_MODELER_CLUSTERS_0_ID
+        value: "local-cluster"
+      - name: CAMUNDA_MODELER_CLUSTERS_0_NAME
+        value: "Local Cluster"
+      - name: CAMUNDA_MODELER_CLUSTERS_0_VERSION
+        value: "8.8.0"
+      - name: CAMUNDA_MODELER_CLUSTERS_0_AUTHENTICATION
+        value: "BEARER_TOKEN"
+        # Might be able to omit the .svc.local
+      - name: CAMUNDA_MODELER_CLUSTERS_0_URL_GRPC
+        value: "grpc://camunda-zeebe-gateway.camunda.svc.cluster.local:26500"
+        # Internal cluster REST reference
+      - name: CAMUNDA_MODELER_CLUSTERS_0_URL_REST
+        value: "http://camunda-zeebe-gateway.camunda.svc.cluster.local"
+      - name: CAMUNDA_MODELER_CLUSTERS_0_URL_WEBAPP
+        value: "http://localhost:8080/"
+      - name: CAMUNDA_MODELER_CLUSTERS_0_AUTHORIZATIONS_ENABLED
+        value: "true"
+      - name: SPRING_PROFILES_INCLUDE
+        value: "default-logging"
+
+# WebModeler Database.
+webModelerPostgresql:
+  enabled: true
+  auth:
+    existingSecret: "camunda-client-credentials"
+    secretKeys:
+      adminPasswordKey: postgres-password
+      userPasswordKey: postgres-password
+
+
+optimize:
+  enabled: true
+  contextPath: "/optimize"
+
+```
+
+Replace all values
+
+| Value                                        | Origin              | Value               |
+|----------------------------------------------|---------------------|---------------------|
+| <Microsoft Entra tenant ID>                  | TenantId            | cbd...ba9           |
+| <Initial claim value>                        | ObjectId of user    | ef6...312           |
+| <Client ID from Step 2>                      | Client Id           | 026...1c9           |
+
+# ContextPath or not ContextPath?
+
+When an ingres is used, the context path is mandatory. Else, the context Path **must not be set**.
+
+
+## Management Identity
+
+Connect to the Management Identity
+
+```shell
+$ kubectl -n camunda port-forward service/camunda-identity 8084:80
+```
+
+Then use the url `localhost:9084` (or `localhost:9084/identity` if a contextPath is given)
+
+![img.png](images/ManagementIdentityRoles.png)
+
+Access the Mapping tab
+
+![img.png](images/ManagementIdentityMappingRole.png)
+
+
+Click on Edit on the Default role, and add in the role `Web Modeler`and `Òptimize` 
+
+![img.png](images/ManagementIdentityAddWebModelerOptimize.png)
+
+> Management Identity does not cumulate roles. If you create a different mapping based on the same users, it will not cumumlate roles. Check existing mapping.
+
+
+
+
+## Web Modeler
+
+Forward the port
+```shell
+$ kubectl -n camunda port-forward service/camunda-web-modeler-webapp 8090:80
+```
+
+2. Then use the url `localhost:9084` (or `localhost:9084/identity` if a contextPath is given)
+
+If the webModeler loop on the token authentication, check the redirection 
+![img.png](images/WebModelerRedirection.png)
+
+The redirection **must be** under the category  `single Page Application`
+
+
+3. Create a procject, and inside a project, a simple BPMN Diagram
+
+
+![img.png](images/WebModelerSimpleProject.png)
+
+4. Deploy the diagram: name `Local Cluster` come from the variables.
+
+![img.png](images/WebModelerDeployAndRun.png)
+
+5. Verify the process appears on Operate
+
+![img.png](images/WebModelerViewInOperate.png)
+
+
+## Optimize
+
+1. Forward the Optimize port
+
+```shell
+$ kubectl -n camunda port-forward service/camunda-optimize 8085:80
+```
+
+2. Access `localhost:8085/optimize` 
+
+![img.png](images/Optimize.png)
 # Multi tenancy
 
-> In progress
 
 ```
 global:
@@ -356,62 +565,65 @@ global:
   
 ```
 
-
+> Note: enable multi tenant implie to enable Identity Management
 
 ==> Multi tenancy is not enable, but it is visible in Idenity and possible to create a tenant!
 
 
 ## Create tenant in Identity
-
-
-
  
-Create a tenant `blue`
+Go to Identity, then select "tenant". Create a tenant `blue`
 
 ![img.png](images/MultiTenancyCreateTenant.png)
 
+Users has to be validated in that tenant. Go to Role, and add the role `admin`
 
-## Deploy process in a tenant
+![img.png](images/MultyTenancyNlueRole.png)
 
-![img.png](images/MultiTenancyDeployProcess.png)
+Check in Operate: the tenant `blue` is visible.
 
-But creation failed
+![img_1.png](images/MultiTenancyOperate.png)
 
+## Deploy process in a tenant via WebModeler
+
+WebModeler use the application registration ID.
+
+This client must have access in the tenant. Decode the token and get the `oid` value. It may be on another attribute used in the token: check the value `orchestration.security.authentication.oidc.usernameClaim`
+
+1. Access Identity/Tenants
+
+2. Add the user in the tenant
+
+![img.png](images/MultiTenancyBlueTenantAccess.png)
+
+3. in Authorization/Tenant, add the user
+
+> This step is not mandatory, but it's better to give access to the user in this authorization.
+
+![img.png](images/MultiTenancyBlueAuthorizationTenant.png)
+
+4. In Authorization/Resource, add the user
+
+![img.png](images/MultiTenancyAuthorizationResource.png)
+
+5. Deployment works : check the REST API
+
+```shell
+
+curl --header "Authorization: Bearer ${ACCESS_TOKEN}" -L 'http://localhost:8080/v2/deployments' \
+-H 'Accept: application/json' \
+-F resources=@ReviewCandidateGroup.bpmn \
+-F 'tenantId=blue'
 ```
-Expected to handle gRPC request DeployResource with tenant identifier 'blue', but tenant is not authorized to perform this request [ deploy-error ]
-```
 
-Get the Enterprise Application Object ID
-When a Application Registration is created, an Enterprise Application with the same name is created.
-Search in Entreprise this object
-![img.png](images/MultiTenancyGetEntrepriseApplication.png)
-
-Get the ObjectId from this object
-
-| name                | Value        |
-|---------------------|--------------|
-| EntrepriseObjectId  | -7c7...164   |
-
-Use this objectID to create a Tenant Mapping
-
-Select the tenant (blue) and use `oid` equals <EntrepriseObjectid>
-
-![img.png](images/MultiTenancyClientTenantMapping.png)
-
-Deployment works
-
-## Operate
-Add a Mapping in Identity
-
-![img.png](images/MultiTenancyUser.png)
-
-This method works in Operate and Tasklist, but give it 30 minutes to see the result
-
+6. Check from the Web Modeler 
 
 
 ## Worker
 
-Add the tenant in the tenant list
+Add the tenant in the tenant list.
+ 
+The API must be protected (CAMUNDA_SECURITY_AUTHENTICATION_UNPROTECTED_API **must not** be true)
 
 ```yaml
 camunda:
@@ -423,6 +635,9 @@ camunda:
 ```
 
 Restart the worker
+
+> Check the workers section before to give authorization to workers
+
 
 ## Debugging
 
