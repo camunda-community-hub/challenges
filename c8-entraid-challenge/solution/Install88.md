@@ -155,9 +155,10 @@ The candidate group has no impact on tasklist
 https://docs.camunda.io/docs/components/tasklist/api-versions/#candidate-groups-and-users
 
 # Token and client
+
 To authorize the REST API or the desktop modeler access the cluster, the object behind the token must be accepted.
 
-Check the token generated:
+1. Check the token generated:
 
 
 ```shell
@@ -179,13 +180,13 @@ Replace variables
 | ClientID                   | App Registration.ClientId | 026...1c9          |
 | ClientSecret               | App Registration.Value    | fzR...ueP.apy_Kc.7 |
 
-result is
+The result in the payload is
 
 ```
 {"token_type":"Bearer","expires_in":3599,"ext_expires_in":3599,"access_token":"eyJ0eXAiO...flmA"}
 
 ```
-Set the token in a variable
+2. Set the token in a variable
 ```shell
 $ ACCESS_TOKEN="eyJ0eXAiO...flmA"
 ```
@@ -199,9 +200,23 @@ ACCESS_TOKEN=$(curl -s curl --location --request POST 'https://login.microsofton
   --data-urlencode "scope=<ClientID>/.default" 
   --data-urlencode 'grant_type=client_credentials' | jq -r '.access_token')
 ```
-Use jwt.io to get a full description of the token
 
-1. use jwt to decode the token
+3. Use jwt.io to get a full description of the token
+
+
+Header:
+```yaml
+{
+  "typ": "JWT",
+  "alg": "RS256",
+  "kid": "rtsFT-b-7LuY7DVYeSNKcIJ7Vnc"
+}
+```
+
+
+
+Payload:
+
 ```yaml
 {
   "aud": "fa...789c0",
@@ -221,7 +236,8 @@ Use jwt.io to get a full description of the token
   "xms_ftd": "mM292...1kc21z"
 }
 ```
-Is this token is considered as a user or as a client?  Run
+
+4. Is this token is considered as a user or as a client?  Run
 ```shell
  curl -s \
   -H "Authorization: Bearer ${ACCESS_TOKEN}" \
@@ -240,7 +256,8 @@ Is this token is considered as a user or as a client?  Run
 
 This token is identified as user (username).The username is retrieved from the "sub" attributes. It's possible to configure Identity to resolve this as a Client
 The token as an OID and a AZP attribute. 
-Add this configuration.
+
+5. Add this configuration.
 
 ```yaml
 orchestration:
@@ -259,7 +276,7 @@ If the object is a username, add it in as admin role as a user
 
 ![img.png](images/ReferenceClientAsUserInRole.png)
 
-Now, it's possible to deploy a process via the desktop modeler or the REST API
+6. Now, it's possible to deploy a process via the desktop modeler or the REST API
 
 https://docs.camunda.io/docs/apis-tools/orchestration-cluster-api-rest/orchestration-cluster-api-rest-authentication/#using-a-token-oidcjwt
 
@@ -494,6 +511,20 @@ Replace all values
 | <Initial claim value>                        | ObjectId of user    | ef6...312           |
 | <Client ID from Step 2>                      | Client Id           | 026...1c9           |
 
+
+Secrets are store in a Secret file
+
+```yaml
+# kubectl apply -f em_camunda-client-credentials.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: camunda-client-credentials
+type: Opaque
+stringData:
+  client-secret: "<Client secret from Step 5>"
+  postgres-password: "postgres"
+```
 # ContextPath or not ContextPath?
 
 When an ingres is used, the context path is mandatory. Else, the context Path **must not be set**.
@@ -565,6 +596,11 @@ $ kubectl -n camunda port-forward service/camunda-optimize 8085:80
 2. Access `localhost:8085/optimize` 
 
 ![img.png](images/Optimize.png)
+
+
+
+
+
 # Multi tenancy
 
 
@@ -653,7 +689,7 @@ Restart the worker
 
 According to https://docs.camunda.io/docs/8.6/apis-tools/operate-api/operate-api-authentication/
 
-ask for a token via this call
+1. Ask for a token via this call
 
 ```shell
 curl --location --request POST '${TOKENURL}' \
@@ -675,12 +711,49 @@ curl --location --request POST 'https://login.microsoftonline.com/cbd...ba9f/oau
 {"token_type":"Bearer","expires_in":3599,"ext_expires_in":3599,"access_token":"eyJ0eXAiO.....xxuH9RS6pH_zscNSMff_wVJE7fvqSkyi_T5pgM3AJj9yuTeYPuJ6HC6_AKkqsA_gVVxPqnKG8GFTn2TXaPYRdhfwBc5DwZIPF3qIbM49xQAq141yTSumfe-1d2f5iZzmdFh32OHLKBr4A_ybj_pfZOjW-Sg"}
 ```
 
-Copy the token in https://www.jwt.io/. See the detail in terms of object used by EntraId
+2. Copy the token in https://www.jwt.io/. See the detail in terms of object used by EntraId
 
 ![img.png](images/MultiTenancyDebug.png)
 
+The result is something like 
 
-Check 
+Header:
+```yaml
+{
+  "typ": "JWT",
+  "alg": "RS256",
+  "kid": "rtsFT-b-7LuY7DVYeSNKcIJ7Vnc"
+}
+```
+
+Payload:
+
+```yaml
+{
+  "aud": "fa...789c0",
+  "iss": "https://login.microsoftonline.com/cbd4...a9f/v2.0",
+  "iat": 1765825135,
+  "nbf": 1765825135,
+  "exp": 1765829035,
+  "aio": "k2J...zcA",
+  "azp": "fa78...39c0",
+  "azpacr": "1",
+  "oid": "4a71...8f4",
+  "rh": "1.AYE...AA.",
+  "sub": "4a71...b8f4",
+  "tid": "cbd...ba9f",
+  "uti": "iNn...86AA",
+  "ver": "2.0",
+  "xms_ftd": "mM292...1kc21z"
+}
+```
+
+The header contains two important information: `alg` (algorithm use to decode) and `kid` (key accepted for the application)
+
+
+
+
+
 
 * `token.aud` == (value.yaml) `orchestration.security.authentication.oidc.audience`
 
@@ -690,7 +763,20 @@ Check
 
 * `token.alg` (header) == `RS256`
 
+**Check PID**
+To check the KID, use the URL behind the `global.identity.auth.jwksUrl`
 
+```shell
+ curl https://login.microsoftonline.com/cbd<TenantId>a9f/discovery/v2.0/keys
+```
+or access it via a browser.
+
+![img.png](images/JWKSListOfkeys.png)
+
+The result contains a list of keys. Each key has a `kid`. The `kid` present in the tocken must be referenced in the list.
+
+
+** Control the token**
 
 In the command used to get the token :
 
@@ -713,167 +799,3 @@ curl --location --request POST '${TOKENURL}' \
 
 * `SCOPE` in EntraID must be "<CLIENTID>/.default" . It is used to build the audience in the token (see the previous verification)
 
-
-# Management identity / Web Modeler / Optimize
-
-```yaml
-global:
-  ingress:
-    enabled: true
-    tls:
-      enabled: true
-      secretName: camunda-platform
-  security:
-    authentication:
-      method: oidc
-  identity:
-    auth:
-      enabled: true
-      issuer: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
-      issuerBackendUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
-      tokenUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/oauth2/v2.0/token
-      jwksUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/discovery/v2.0/keys
-      authUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/oauth2/v2.0/authorize
-      publicIssuerUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
-      type: "MICROSOFT"
-      identity:
-        clientId: <Client ID from Step 2>
-        audience: <Audience from Step 2>
-        secret:
-          existingSecret: camunda-client-credentials
-          existingSecretKey: client-secret
-        # emma oid
-        initialClaimValue: <Initial claim value>
-        initialClaimName: "oid"
-        redirectUrl: <See the Helm value in the table below>
-      optimize:
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        secret:
-          existingSecret: camunda-client-credentials
-          existingSecretKey: client-secret
-        redirectUrl: <See the Helm value in the table below>
-      webModeler:
-        clientId: <Client ID of Web Modeler's UI from Step 2>
-        clientApiAudience: <Client ID of Web Modeler's UI from Step 2>
-        publicApiAudience: <Client ID of Web Modeler's API from Step 2>
-        redirectUrl: <See the Helm value in the table below>
-      console:
-        wellKnown: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0/.well-known/openid-configuration
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        secret:
-          existingSecret: camunda-client-credentials
-          existingSecretKey: client-secret
-        tokenScope: <Client ID from Step 2>/.default
-        redirectUrl: <See the Helm value in the table below>
-      orchestration:
-        clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>
-        secret:
-          existingSecret: camunda-client-credentials
-          existingSecretKey: client-secret
-        redirectUrl: <See the Helm value in the table below>
-
-identity:
-  contextPath: "/identity"
-  enabled: true
-  env:
-    - name: CAMUNDA_IDENTITY_AUDIENCE
-      value: <Client ID from Step 2>
-
-identityPostgresql:
-  enabled: true
-  auth:
-    existingSecret: camunda-client-credentials
-    secretKeys:
-      userPasswordKey: postgres-password
-      adminPasswordKey: postgres-password
-
-console:
-  enabled: false
-  env:
-    - name: CAMUNDA_IDENTITY_JWKS_URL
-      value: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/discovery/v2.0/keys
-
-webModeler:
-  contextPath: "/modeler"
-  enabled: true
-  restapi:
-    mail:
-      # This value is required, otherwise the restapi pod wouldn't start.
-      fromAddress: noreply@example.com
-    env:
-      - name: CAMUNDA_MODELER_CLUSTERS_0_ID
-        value: "local-cluster"
-      - name: CAMUNDA_MODELER_CLUSTERS_0_NAME
-        value: "Local Cluster"
-      - name: CAMUNDA_MODELER_CLUSTERS_0_VERSION
-        value: "8.8.0"
-      - name: CAMUNDA_MODELER_CLUSTERS_0_AUTHENTICATION
-        value: "BEARER_TOKEN"
-        # Might be able to omit the .svc.local
-      - name: CAMUNDA_MODELER_CLUSTERS_0_URL_GRPC
-        value: "grpc://camunda-zeebe-gateway.orchestration.svc.cluster.local:26500"
-        # Internal cluster REST reference
-      - name: CAMUNDA_MODELER_CLUSTERS_0_URL_REST
-        value: "http://camunda-zeebe-gateway.orchestration.svc.cluster.local"
-        # External REST reference for example
-      #      - name: CAMUNDA_MODELER_CLUSTERS_0_URL_REST
-      #        value: "http://local.distro.ultrawombat.com/orchestration"
-      - name: CAMUNDA_MODELER_CLUSTERS_0_URL_WEBAPP
-        value: "http://local.distro.ultrawombat.com/orchestration"
-      - name: CAMUNDA_MODELER_CLUSTERS_0_AUTHORIZATIONS_ENABLED
-        value: "true"
-      - name: LOGGING_LEVEL_IO_GRPC
-        value: "TRACE"
-      - name: LOGGING_LEVEL_IO_CAMUNDA_MODELER
-        value: "DEBUG"
-      - name: SPRING_PROFILES_INCLUDE
-        value: "default-logging"
-
-# WebModeler Database.
-webModelerPostgresql:
-  enabled: true
-  auth:
-    existingSecret: "camunda-client-credentials"
-    secretKeys:
-      adminPasswordKey: postgres-password
-      userPasswordKey: postgres-password
-
-orchestration:
-  enabled: false
-optimize:
-  enabled: false
-elasticsearch:
-  enabled: false
-connectors:
-  enabled: false
-```
-
-
-Replace all values
-
-| Value                                        | Origin              | Value               |
-|----------------------------------------------|---------------------|---------------------|
-| <Microsoft Entra tenant ID>                  | TenantId            | cbd...ba9           |
-| <Audience from Step 2>                       | is the ClientId     | 026...1c9           |
-| <Initial claim value>                        | ObjectId of user    | ef6...312           |
-| <Client ID from Step 2>                      | Client Id           | 026...1c9           |
-| <Client secret from Step 5>                  | Value of the secret | fzR...ueP.apy_Kc.7  |
-| <Client ID of Web Modeler's API from Step 2> | ClientId            | 026...1c9           |
-| <Client ID of Web Modeler's UI from Step 2>  | Value of the secret | fzR...ueP.apy_Kc.7  |
-
-Secrets are store in a Secret file
-
-```yaml
-# kubectl apply -f em_camunda-client-credentials.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: camunda-client-credentials
-type: Opaque
-stringData:
-  client-secret: "<Client secret from Step 5>"
-  postgres-password: "postgres"
-```
