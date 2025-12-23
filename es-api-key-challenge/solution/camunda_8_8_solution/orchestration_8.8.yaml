@@ -6,7 +6,7 @@ orchestration:
 
   extraVolumeMounts:
     - name: es-api-plugin
-      mountPath: /usr/local/plugin/es-api-key-plugin.jar
+      mountPath: /usr/local/plugins/es-api-key-plugin.jar
       subPath: es-api-key-plugin.jar
 
   env:
@@ -16,7 +16,7 @@ orchestration:
     - name: CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
       value: com.example.camunda.es.EsApiKeyHeaderPlugin
     - name: CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
-      value: /usr/local/plugin/es-api-key-plugin.jar
+      value: /usr/local/plugins/es-api-key-plugin.jar
 
     # Operate → Elasticsearch client
     - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
@@ -24,7 +24,7 @@ orchestration:
     - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
       value: com.example.camunda.es.EsApiKeyHeaderPlugin
     - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
-      value: /usr/local/plugin/es-api-key-plugin.jar
+      value: /usr/local/plugins/es-api-key-plugin.jar
 
     # Tasklist importer → Zeebe Elasticsearch
     - name: CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
@@ -32,7 +32,7 @@ orchestration:
     - name: CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
       value: com.example.camunda.es.EsApiKeyHeaderPlugin
     - name: CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
-      value: /usr/local/plugin/es-api-key-plugin.jar
+      value: /usr/local/plugins/es-api-key-plugin.jar
 
     # Tasklist → Elasticsearch client
     - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
@@ -40,7 +40,7 @@ orchestration:
     - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
       value: com.example.camunda.es.EsApiKeyHeaderPlugin
     - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
-      value: /usr/local/plugin/es-api-key-plugin.jar
+      value: /usr/local/plugins/es-api-key-plugin.jar
 
     # Secret with the actual header value (same pattern as your Zeebe example)
     - name: ES_API_KEY_B64
