@@ -1,0 +1,88 @@
+---
+zeebe:
+  extraVolumes:
+    - name: es-api-plugin
+      secret:
+        secretName: es-api-key-plugin-jar
+  extraVolumeMounts:
+    - name: es-api-plugin
+      mountPath: /usr/local/plugins/es-api-key-plugin.jar
+      subPath: es-api-key-plugin.jar
+  env:
+    - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_INTERCEPTORPLUGINS_0_ID
+      value: es-api-key
+    - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_INTERCEPTORPLUGINS_0_CLASSNAME
+      value: com.example.camunda.es.EsApiKeyHeaderPlugin
+    - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_INTERCEPTORPLUGINS_0_JARPATH
+      value: /usr/local/plugins/es-api-key-plugin.jar
+    - name: ES_API_KEY_B64
+      valueFrom:
+        secretKeyRef:
+          name: es-api-key
+          key: ES_API_KEY_B64
+
+operate:
+  extraVolumes:
+    - name: es-api-plugin
+      secret:
+        secretName: es-api-key-plugin-jar
+  extraVolumeMounts:
+    - name: es-api-plugin
+      mountPath: /usr/local/plugins/es-api-key-plugin.jar
+      subPath: es-api-key-plugin.jar
+  env:
+    - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
+      value: es-api-key
+    - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
+      value: com.example.camunda.es.EsApiKeyHeaderPlugin
+    - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
+      value: /usr/local/plugins/es-api-key-plugin.jar
+    - name: ES_API_KEY_B64
+      valueFrom:
+        secretKeyRef:
+          name: es-api-key
+          key: ES_API_KEY_B64
+
+tasklist:
+  extraVolumes:
+    - name: es-api-plugin
+      secret:
+        secretName: es-api-key-plugin-jar
+  extraVolumeMounts:
+    - name: es-api-plugin
+      mountPath: /usr/local/plugins/es-api-key-plugin.jar
+      subPath: es-api-key-plugin.jar
+  env:
+    - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
+      value: es-api-key
+    - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
+      value: com.example.camunda.es.EsApiKeyHeaderPlugin
+    - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
+      value: /usr/local/plugins/es-api-key-plugin.jar
+    - name: ES_API_KEY_B64
+      valueFrom:
+        secretKeyRef:
+          name: es-api-key
+          key: ES_API_KEY_B64
+
+optimize:
+  extraVolumes:
+    - name: es-api-plugin
+      secret:
+        secretName: es-api-key-plugin-jar
+  extraVolumeMounts:
+    - name: es-api-plugin
+      mountPath: /optimize/plugins/es-api-key-plugin.jar
+      subPath: es-api-key-plugin.jar
+  env:
+    - name: CAMUNDA_OPTIMIZE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
+      value: es-api-key
+    - name: CAMUNDA_OPTIMIZE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
+      value: com.example.camunda.optimize.es.ElasticApiKeyHeaderPlugin
+    - name: CAMUNDA_OPTIMIZE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
+      value: /optimize/plugins/es-api-key-plugin.jar
+    - name: ES_API_KEY_B64
+      valueFrom:
+        secretKeyRef:
+          name: es-api-key
+          key: ES_API_KEY_B64
