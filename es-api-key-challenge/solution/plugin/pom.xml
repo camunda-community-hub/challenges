@@ -1,0 +1,154 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0  https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.example.camunda.optimize</groupId>
+  <artifactId>es-api-key-header-plugin</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+  <name>es-api-key-header-plugin</name>
+
+  <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <version.camunda-search-client-plugin>8.7.11</version.camunda-search-client-plugin>
+    <plugin.version.maven-shade-plugin>3.5.2</plugin.version.maven-shade-plugin>
+    <plugin.version.maven-install-plugin>3.1.1</plugin.version.maven-install-plugin>
+    <plugin.version.maven-resources-plugin>3.3.1</plugin.version.maven-resources-plugin>
+    <plugin.version.maven-clean-plugin>3.3.2</plugin.version.maven-clean-plugin>
+    <plugin.version.maven-compiler-plugin>3.13.0</plugin.version.maven-compiler-plugin>
+    <plugin.version.maven-dependency-plugin>3.6.1</plugin.version.maven-dependency-plugin>
+    <plugin.version.maven-jar-plugin>3.3.0</plugin.version.maven-jar-plugin>
+    <plugin.version.maven-surefire-plugin>3.2.5</plugin.version.maven-surefire-plugin>
+  </properties>
+
+  <dependencies>
+    <!-- IMPORTANT: keep as provided/compileOnly to avoid classloader conflicts -->
+    <dependency>
+      <groupId>io.camunda</groupId>
+      <artifactId>camunda-search-client-plugin</artifactId>
+      <version>${version.camunda-search-client-plugin}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.17</version> <!-- Use the latest version -->
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.17</version> <!-- Use the latest version -->
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- builds a thin jar containing only your class -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>${plugin.version.maven-clean-plugin}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${plugin.version.maven-dependency-plugin}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${plugin.version.maven-resources-plugin}</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/element-templates</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>element-templates</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${plugin.version.maven-compiler-plugin}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${plugin.version.maven-jar-plugin}</version>
+        <configuration>
+          <useDefaultManifestFile>false</useDefaultManifestFile>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>${plugin.version.maven-install-plugin}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${plugin.version.maven-shade-plugin}</version>
+        <configuration>
+          <shadedArtifactAttached>true</shadedArtifactAttached>
+          <shadedClassifierName>with-dependencies</shadedClassifierName>
+          <!-- no need for this since we are not consuming this artifact downstream -->
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>module-info.class</exclude>
+                <exclude>META-INF/MANIFEST.MF</exclude>
+                <exclude>META-INF/*.SF</exclude>
+                <exclude>META-INF/*.DSA</exclude>
+                <exclude>META-INF/*.RSA</exclude>
+              </excludes>
+            </filter>
+          </filters>
+          <transformers>
+            <!-- This is needed if you have dependencies that use Service Loader. Most Google Cloud client libraries does. -->
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+            <!-- This is needed to not repeat licenses in the META-INF directory -->
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
+            <!-- This is needed to merge existing NOTICE files and keep them downstream -->
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
+              <addHeader>false</addHeader>
+            </transformer>
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer" />
+          </transformers>
+          <!-- Uncomment and adjust to use relocations inside your JAR -->
+          <!--<relocations>
+            <relocation>
+              <pattern>com.fasterxml.jackson</pattern>
+              <shadedPattern>myconnector.com.fasterxml.jackson</shadedPattern>
+            </relocation>
+          </relocations>-->
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${plugin.version.maven-surefire-plugin}</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>
