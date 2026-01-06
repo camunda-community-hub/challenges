@@ -302,6 +302,13 @@ This is not enough: the object behind the token need to be authorized. See befor
 
 Add this user in the role `admin`
 
+> How the Desktop Modeler reference a user? 
+> * Desktop Modeler use the information ClientId/Client Secret to ask EntraID to generate a token.
+> * The token is sent to Zeebe/Identity.
+> * The token is decoded, and using the "usernameClaims" attribute, a value is retrieved. 
+> * This value is considered to ba a USERID.
+> * This USERID must have the authorization to deploy processes.
+
 
 Deploy a process, and create a process instance. Verify both are visible in Operate.
 
@@ -363,6 +370,13 @@ camunda:
 ## Authorization
 
 The worker reference a user. This user must have authorizations READ_PROCESS_DEFINITION, READ_PROCESS_INSTANCE, UPDATE_PROCESS_INSTANCE on the PROCESS_DEFINITION objects
+
+> How the worker reference a user? 
+> * the Worker use the information ClientId/Client Secret to ask EntraID to generate a token.
+> * The token is sent to Zeebe/Identity.
+> * The token is decoded, and using the "usernameClaims" attribute, a value is retrieved.
+> * This value is considered to ba a USERID.
+> * This USERID must have the authorization to deploy processes.
 
 ![img.png](images/WorkerAuthorizationProcessInstance.png)
 
