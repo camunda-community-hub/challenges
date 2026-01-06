@@ -49,7 +49,7 @@ orchestration:
     - name: CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
       value: es-api-key
     - name: CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
-      value: com.example.camunda.es.EsApiKeyHeaderPlugin
+      value: com.example.camunda.optimize.es.ElasticApiKeyHeaderPlugin
     - name: CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
       value: /usr/local/plugins/es-api-key-plugin.jar
 
@@ -57,7 +57,7 @@ orchestration:
     - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
       value: es-api-key
     - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
-      value: com.example.camunda.es.EsApiKeyHeaderPlugin
+      value: com.example.camunda.optimize.es.ElasticApiKeyHeaderPlugin
     - name: CAMUNDA_OPERATE_ELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
       value: /usr/local/plugins/es-api-key-plugin.jar
 
@@ -65,7 +65,7 @@ orchestration:
     - name: CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
       value: es-api-key
     - name: CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
-      value: com.example.camunda.es.EsApiKeyHeaderPlugin
+      value: com.example.camunda.optimize.es.ElasticApiKeyHeaderPlugin
     - name: CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
       value: /usr/local/plugins/es-api-key-plugin.jar
 
@@ -73,7 +73,7 @@ orchestration:
     - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_ID
       value: es-api-key
     - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_CLASSNAME
-      value: com.example.camunda.es.EsApiKeyHeaderPlugin
+      value: com.example.camunda.optimize.es.ElasticApiKeyHeaderPlugin
     - name: CAMUNDA_TASKLIST_ELASTICSEARCH_INTERCEPTORPLUGINS_0_JARPATH
       value: /usr/local/plugins/es-api-key-plugin.jar
 
