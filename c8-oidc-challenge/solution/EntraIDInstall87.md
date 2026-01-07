@@ -109,24 +109,24 @@ Both are via the Role Mapping function in Indentity
 
 You should access Identity. Go to Mappings. Edit the Default mapping.
 
-![img.png](images/IdentityMappings.png)
+![img.png](images/entraid/IdentityMappings.png)
 
 Edit the mapping to let the user access all applications (operate, tasklist)
-![img.png](images/IdentityEditMapping.png)
+![img.png](images/entraid/IdentityEditMapping.png)
 
 The default user can access Operate.
 
 ## Role mapping for a user
 
 Identify the Object ID of the User in EntraID
-![img.png](images/RoleMappingUserObjectId.png)
+![img.png](images/entraid/RoleMappingUserObjectId.png)
 
 | Value         | Value      |
 |---------------|------------|
 | User ObjectId | ef6...312  |
 
 Create a role mapping
-![img.png](images/RoleMappingCreateUserMapping.png)
+![img.png](images/entraid/RoleMappingCreateUserMapping.png)
 
 Connect to Operate.
 
@@ -136,19 +136,19 @@ First, add the Security check in the application
 
 In the application registration, access `manage/token configuration`
 
-![img.png](images/RoleMappingAppRegistrationToken.png)
+![img.png](images/entraid/RoleMappingAppRegistrationToken.png)
 
 Click on `Add groups claim` and select `Security groups`
 
-![img.png](images/RoleMappingAddGroupsClaim.png)
+![img.png](images/entraid/RoleMappingAddGroupsClaim.png)
 
 Find a group ID. in `Groups`, search a group like `Postsales consulting`
 
-![img_1.png](images/RoleMappingSearchGroup.png)
+![img_1.png](images/entraid/RoleMappingSearchGroup.png)
 
 Identify the ObjectId
 
-![img.png](images/RoleMappingGroupObjectId.png)
+![img.png](images/entraid/RoleMappingGroupObjectId.png)
 
 | Value           | Value      |
 |-----------------|------------|
@@ -156,7 +156,7 @@ Identify the ObjectId
 
 Create a role mapping based on the groupId
 
-![img.png](images/RoleMappingCreateGroupMapping.png)
+![img.png](images/entraid/RoleMappingCreateGroupMapping.png)
 
 ## Use a group as Candidate group
 
@@ -179,7 +179,7 @@ The OAuthScope comes from the camunda-value.yaml
 | OAuth audience  |                                        | zeebe-api                                                                                |
 | OAuthScope      | global.identity.auth.zeebe.tokenScope  | 026...1c9/.default                                            |
 
-![img.png](images/DesktopModeler.png)
+![img.png](images/entraid/DesktopModeler.png)
 
 Deploy a process, and create a process instance. Verify both are visible in Operate.
 
@@ -224,23 +224,23 @@ global:
 
 Create a tenant `blue`
 
-![img.png](images/MultiTenancyCreateTenant.png)
+![img.png](images/entraid/MultiTenancyCreateTenant.png)
 
 
 ## Deploy process in a tenant
 
-![img.png](images/MultiTenancyDeployProcess.png)
 
-But creation failed
+
+Ccreation failed during the deployment
 
 ```
 Expected to handle gRPC request DeployResource with tenant identifier 'blue', but tenant is not authorized to perform this request [ deploy-error ]
 ```
 
 Get the Entreprise Application Object ID
-When a Application Registration is created, an Entreprise Application with the same name is created.
+When an Application Registration is created, an Entreprise Application with the same name is created.
 Search in Entreprise this object
-![img.png](images/MultiTenancyGetEntrepriseApplication.png)
+![img.png](images/entraid/MultiTenancyGetEntrepriseApplication.png)
 
 Get the ObjectId from this object
 
@@ -252,14 +252,14 @@ Use this objectID to create a Tenant Mapping
 
 Select the tenant (blue) and use `oid` equals <EntrepriseObjectid>
 
-![img.png](images/MultiTenancyClientTenantMapping.png)
+![img.png](images/entraid/MultiTenancyClientTenantMapping.png)
 
 Deployment works
 
 ## Operate
 Add a Mapping in Identity
 
-![img.png](images/MultiTenancyUser.png)
+![img.png](images/entraid/MultiTenancyUser.png)
 
 This method works in Operate and Tasklist, but give it 30 minutes to see the result
 
@@ -308,6 +308,6 @@ curl --location --request POST 'https://login.microsoftonline.com/cbd...ba9f/oau
 
 Copy the token in https://www.jwt.io/. See the detail in terms of object used by EntraId
 
-![img.png](images/MultiTenancyDebug.png)
+![img.png](images/entraid/MultiTenancyDebug.png)
 
 

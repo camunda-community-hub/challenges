@@ -20,19 +20,19 @@ The solution is based on the fact an EntraId already exists, with a Tenant
 In your AzureID.
 
 1. Access the Entrat ID
-![Search EntraID](images/SearchEntraId.png)
+![Search EntraID](images/entraid/SearchEntraId.png)
 
 2. Click on `manage tenants`.
 
-![Manage Tenants.png](images/ManageTenants.png)
+![Manage Tenants.png](images/entraid/ManageTenants.png)
 
 3. A tenant is present.
 
-![ListofTenants](images/ListOfTenants.png)
+![ListofTenants](images/entraid/ListOfTenants.png)
 
 4. Click on it
 
-![img.png](images/TenantDetail.png)
+![img.png](images/entraid/TenantDetail.png)
 
 5. Get the tenantId
 
@@ -42,10 +42,10 @@ In your AzureID.
 
 Click on Users, and identify one user (for example, Pierre-Yves Monnet will be my user1)
 
-![GetOneUser](images/EntraIdUser.png)
+![GetOneUser](images/entraid/EntraIdUser.png)
 
 Check if the user is part of a group.
-![GroupMemberShip](images/UserMembership.png)
+![GroupMemberShip](images/entraid/UserMembership.png)
 
 User information:
 
@@ -62,15 +62,15 @@ User information:
 # Get user information
 
 Search for users
-![img.png](images/SearchUsers.png)
+![img.png](images/entraid/SearchUsers.png)
 
 Search for your name
 
-![img.png](images/UsersPyMonnet.png)
+![img.png](images/entraid/UsersPyMonnet.png)
 
 Access the user
 
-![img_1.png](images/UserPyMonnetObjectId.png)
+![img_1.png](images/entraid/UserPyMonnetObjectId.png)
 
 | Name         | Value      |
 |--------------|------------|
@@ -85,32 +85,32 @@ Access the user
 
 1. Go to App registration
 
-![Search App registration](images/SearchAppRegistration.png)
+![Search App registration](images/entraid/SearchAppRegistration.png)
 
 2. Click on `New registration`
 
-![New App Registration](images/NewAppRegistration.png)
+![New App Registration](images/entraid/NewAppRegistration.png)
 
 3. Give a name like `pierre-yves-c8-entraid`
 
-![Create application registration](images/CreateAppRegistration.png)
+![Create application registration](images/entraid/CreateAppRegistration.png)
 
 4. Click on `Register`. 
 
 5. Collect the Client ID from overview (`Application (client) ID`)
 
-![Overview](images/AppRegistrationOverview.png)
+![Overview](images/entraid/AppRegistrationOverview.png)
 
 ## Create a secret
 
 1. Go to `manage/Certificate and Secret`
 
-![Access Certificates and secrets](images/AddCertificateSecret.png)
+![Access Certificates and secrets](images/entraid/AddCertificateSecret.png)
 
 2. Add a client Secret: click on `new client secret`. Give a description and click on Add
 
 
-![img.png](images/CertificationSecretList.png)
+![img.png](images/entraid/CertificationSecretList.png)
 
 3. Collect the Value (this is the Client Secret) and the Secret ID
 
@@ -130,13 +130,13 @@ Add a redirect URI per components (Identity, Operate, Tasklist, Optimize, WebMod
 
 2. On the first screen, click on `Add a platform` and select `Web`
 
-![img.png](images/RedirecturlAllPlatformWeb.png)
+![img.png](images/entraid/RedirecturlAllPlatformWeb.png)
 
 3. For the test, we use "localhost:8080" for Identity, so the URL is `http://localhost:8080/auth/login-callback`
 
 4. Select the `Access tokens`and `Ìd tokens`
 
-![img.png](images/RedirectUrlAddWebApplication.png)
+![img.png](images/entraid/RedirectUrlAddWebApplication.png)
 
 
 | Component | RedirectURL                               | Helm                            |
@@ -163,7 +163,7 @@ Do the same for all applications.
 
 5. The final status should be
 
-![img.png](images/RedirectUrlWeb87.png)
+![img.png](images/entraid/RedirectUrlWeb87.png)
 
 
 ## Add redirect URL (8.8)
@@ -173,7 +173,7 @@ Add a redirect URI per components (Identity, Operate, Tasklist, Optimize, WebMod
 
 2. On the first screen, click on `Add a platform` and select `Web`
 
-![img.png](images/RedirecturlAllPlatformWeb.png)
+![img.png](images/entraid/RedirecturlAllPlatformWeb.png)
 
 3. For the test, we use "localhost:8080" for Identity, so the URL is `http://localhost:8080/auth/login-callback`
 
@@ -190,11 +190,11 @@ TODO: what about managementIdentity?
 
 4. Final status in 8.8 should be
 
-![img.png](images/RedirectUrl88.png)
+![img.png](images/entraid/RedirectUrl88.png)
 
 5. For the Web Modeler, a `Single Page application` must be added. Click on `Add a platform`
 
-![img.png](images/RedirectUrlAddSinglePage.png)
+![img.png](images/entraid/RedirectUrlAddSinglePage.png)
 
 
 | Component  | RedirectURL                          | Helm                  |
@@ -209,11 +209,11 @@ TODO: what about managementIdentity?
 
 1. Click on Manifest, and search the `requestedAccessTokenVersion` (close to line 30).
 
-![img.png](images/ManifestSearchRequested.png)
+![img.png](images/entraid/ManifestSearchRequested.png)
 
 2. Change the value to `2`
 
-![img.png](images/ManifestRequestedAccessTokenVersion_2.png)
+![img.png](images/entraid/ManifestRequestedAccessTokenVersion_2.png)
 
 3. Click on the `Save` button.
 

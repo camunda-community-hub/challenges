@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1d1y6cw" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.40.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.8.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1d1y6cw" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.41.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.8.0">
   <bpmn:process id="EntraIdCandidateGroup" name="EntraIdCandidateGroup" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_0zowk4h</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_0zowk4h" sourceRef="StartEvent_1" targetRef="Gateway_1r0x6st" />
-    <bpmn:userTask id="Activity_0nbky9v" name="reviewGroup">
+    <bpmn:userTask id="Activity_0nbky9v" name="reviewPostSale">
       <bpmn:extensionElements>
         <zeebe:userTask />
         <zeebe:assignmentDefinition candidateGroups="Postsales Consulting" />
@@ -22,6 +22,7 @@
       <bpmn:incoming>Flow_0zowk4h</bpmn:incoming>
       <bpmn:outgoing>Flow_0e7fngh</bpmn:outgoing>
       <bpmn:outgoing>Flow_16lzvj0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0r3jkc2</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:sequenceFlow id="Flow_16lzvj0" sourceRef="Gateway_1r0x6st" targetRef="Activity_13ikw8z" />
     <bpmn:userTask id="Activity_13ikw8z" name="review All">
@@ -35,27 +36,47 @@
       <bpmn:incoming>Flow_1xr8sp5</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1xr8sp5" sourceRef="Activity_13ikw8z" targetRef="Event_093khog" />
+    <bpmn:sequenceFlow id="Flow_0r3jkc2" sourceRef="Gateway_1r0x6st" targetRef="Activity_0bvb79e" />
+    <bpmn:userTask id="Activity_0bvb79e" name="ReviewQuality">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:assignmentDefinition candidateGroups="Quality Grouo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0r3jkc2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0plwgv4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_19ffmnl">
+      <bpmn:incoming>Flow_0plwgv4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0plwgv4" sourceRef="Activity_0bvb79e" targetRef="Event_19ffmnl" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="EntraIdCandidateGroup">
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="182" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_09vpfua_di" bpmnElement="Event_09vpfua">
-        <dc:Bounds x="582" y="102" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1sbsi0t_di" bpmnElement="Activity_0nbky9v">
         <dc:Bounds x="430" y="80" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09vpfua_di" bpmnElement="Event_09vpfua">
+        <dc:Bounds x="582" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_069d06h_di" bpmnElement="Gateway_1r0x6st">
         <dc:Bounds x="275" y="95" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1x4hies_di" bpmnElement="Activity_13ikw8z">
-        <dc:Bounds x="430" y="190" width="100" height="80" />
+        <dc:Bounds x="430" y="310" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_093khog_di" bpmnElement="Event_093khog">
+        <dc:Bounds x="642" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0k76rsl_di" bpmnElement="Activity_0bvb79e">
+        <dc:Bounds x="430" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_19ffmnl_di" bpmnElement="Event_19ffmnl">
         <dc:Bounds x="642" y="212" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0zowk4h_di" bpmnElement="Flow_0zowk4h">
@@ -72,10 +93,19 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_16lzvj0_di" bpmnElement="Flow_16lzvj0">
         <di:waypoint x="300" y="145" />
+        <di:waypoint x="300" y="350" />
+        <di:waypoint x="430" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xr8sp5_di" bpmnElement="Flow_1xr8sp5">
+        <di:waypoint x="530" y="350" />
+        <di:waypoint x="642" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0r3jkc2_di" bpmnElement="Flow_0r3jkc2">
+        <di:waypoint x="300" y="145" />
         <di:waypoint x="300" y="230" />
         <di:waypoint x="430" y="230" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1xr8sp5_di" bpmnElement="Flow_1xr8sp5">
+      <bpmndi:BPMNEdge id="Flow_0plwgv4_di" bpmnElement="Flow_0plwgv4">
         <di:waypoint x="530" y="230" />
         <di:waypoint x="642" y="230" />
       </bpmndi:BPMNEdge>
