@@ -699,7 +699,7 @@ Restart the worker
 > Check the workers section before to give authorization to workers
 
 
-## Debugging
+# Debugging
 
 According to https://docs.camunda.io/docs/8.6/apis-tools/operate-api/operate-api-authentication/
 
@@ -764,11 +764,6 @@ Payload:
 
 The header contains two important information: `alg` (algorithm use to decode) and `kid` (key accepted for the application)
 
-
-
-
-
-
 * `token.aud` == (value.yaml) `orchestration.security.authentication.oidc.audience`
 
 * `token.iss` == (value.yaml) `global.identity.auth.publicIssuerUrl`
@@ -813,3 +808,66 @@ curl --location --request POST '${TOKENURL}' \
 
 * `SCOPE` in EntraID must be "<CLIENTID>/.default" . It is used to build the audience in the token (see the previous verification)
 
+## user token
+
+Management Identity and Web Modeler works on a different way. Web Modeler redirect the URL to the EntraId server, and then the EntraId call back Web Modeler with a token.
+This token is available in the URL
+
+1. Open the Chrome Debbuger, access "network"
+
+2. Access the Web Modeler URL
+
+3. Search the URL `https://login.microsoftonline.com/cbd46654-4f74-4332-a490-69f0f071ba9f/oauth2/v2.0/token`
+
+In the response, the payload is 
+
+```json
+{
+    "token_type": "Bearer",
+    "scope": "fa78384d-5ace-4d84-aadd-00ec55ea39c0/.default",
+    "expires_in": 4634,
+    "ext_expires_in": 4634,
+    "access_token": "eyJ0eXA...yqvw",
+    "refresh_token": "1.AYE..hA",
+    "id_token": "eyJ0eX..6tw"
+}
+```
+The access token is visible here.
+
+Note: in the next URL, `http://localhost:8090/modeler/internal-api/login?version=456b1bb64b88240be022f828b573d3531b614ce3&lastRefreshAge=0`,
+the token is present in the Request Headers, as an Authorization, `Bearer` token
+
+4. Copy the token in jwt.io
+
+5. Check the decode payloads
+
+This is what you have in the token generated for your user
+
+```json
+{
+  "aud": "fa78384d-5ace-4d84-aadd-00ec55ea39c0",
+  "iss": "https://login.microsoftonline.com/cbd...a9f/v2.0",
+  "iat": 1768256757,
+  "nbf": 1768256757,
+  "exp": 1768261692,
+  "aio": "AVQAq/8a...Kc=",
+  "azp": "fa78384d-5ace-4d84-aadd-00ec55ea39c0",
+  "azpacr": "0",
+  "groups": [
+    "646f768a-9a89-4d12-86d4-8832cdda8c68"
+  ],
+  "name": "Pierre-Yves Monnet",
+  "oid": "ef6da5...312",
+  "preferred_username": "pierre-yves.monnet@camundaittest.onmicrosoft.com",
+  "rh": "1.AYE...AA.",
+  "scp": ".aca2...78e",
+  "sid": "001...3d5",
+  "sub": "n3t...kdo",
+  "tid": "cbd...a9f",
+  "uti": "oSu...jAA",
+  "ver": "2.0",
+  "xms_ftd": "IS4T...21z"
+}
+```
+
+All mappings must be related to any attribute present here.
