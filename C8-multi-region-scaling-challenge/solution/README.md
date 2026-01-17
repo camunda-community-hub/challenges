@@ -2,288 +2,10 @@
 
 The multi region cluster is created on Google
 
-# Cluster creation
+See the challenge "[Set up a multi region](../../c8-multi-region/solution/README.md)
 
-1. Create two clusters on Google, named `blue-west` and `green-east`
 
-To switch between region, use the
 
-```shell
-$ kubectl config get-contexts
-````
-
-This give the list of context. Switch to a specific context via
-
-```shell
-$ kubectl config use-context gke_pierre-yves_us-east1_green-east
-````
-
-
-# DNS
-
-## Dns Load balancer
-
-** On region 0 (blue-west)**
-
-```shell
-$ kubectl apply -f zeebegateway-loadbalancer.yaml
-$ kubectl apply -f internal-dns-lb.yaml
-$ kubectl get svc -n kube-system
-kube-dns-lb            LoadBalancer   34.118.235.184   34.26.200.157   53:30624/UDP    22h
-```
-** On region 1 (green-east)**
-
-same command.
-```shell
-$ kubectl apply -f zeebegateway-loadbalancer.yaml
-$ kubectl apply -f internal-dns-lb.yaml
-$ kubectl get svc -n kube-system
-kube-dns-lb            LoadBalancer   34.118.235.184   35.237.32.136   53:30624/UDP    22h
-```
-
-Get the list of IP
-
-| region     | Public IP      |
-|------------|----------------| 
-| blue-west  | 34.26.200.157  |
-| green-east | 35.237.32.136  |
-
-## Register each other DNS
-
-**BLUE west cluster**
-In the `blue-west`, the `green-east` must be registered.
-
-Execute
-```shell
-kubectl edit configmap kube-dns -n kube-system
-```
-
-Set the file:
-
-``` 
-data:
-  stubDomains: |
-    {"green-east.svc.cluster.local": ["35.237.32.136"], "green-east-failover.svc.cluster.local": ["35.237.32.136"]}
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"stubDomains":"{\"green-east.svc.cluster.local\": [\"35.237.32.136\"], \"green-east-failover.svc.cluster.local\": [\"35.237.32.136\"]}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"kube-dns","namespace":"kube-system"}}
-
-```
-
-The file must be
-```yaml
-apiVersion: v1
-data:
-  stubDomains: |
-    {"green-east.svc.cluster.local": ["34.26.200.157"], "green-east-failover.svc.cluster.local": ["34.26.200.157"]}
-kind: ConfigMap
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"stubDomains":"{\"green-east.svc.cluster.local\": [\"34.26.200.157\"], \"green-east-failover.svc.cluster.local\": [\"34.26.200.157\"]}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"kube-dns","namespace":"kube-system"}}
-  creationTimestamp: "2025-11-19T16:04:52Z"
-  labels:
-    addonmanager.kubernetes.io/mode: EnsureExists
-  name: kube-dns
-  namespace: kube-system
-  resourceVersion: "1763596440927791001"
-  uid: 7b874140-f6ac-46f4-9bba-9e35442964a3
-
-```
-
-Restart the service
-
-```shell
-$ kubectl get pods -n kube-system | grep kube-dns
-$ kubectl delete pod kube-dns…-n kube-system
-```
-
-
-
-**GREEN east cluster**
-In the `green-east`, the `green-east` must be registered.
-
-Execute
-```shell
-$ kubectl edit configmap kube-dns -n kube-system
-```
-
-Add the file:
-
-``` 
-data:
-  stubDomains: |
-    {"blue-west.svc.cluster.local": ["34.26.200.157"], "blue-west-failover.svc.cluster.local": ["34.26.200.157"]}
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"stubDomains":"{\"blue-west.svc.cluster.local\": [\"34.26.200.157\"], \"blue-west-failover.svc.cluster.local\": [\"34.26.200.157\"]}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"kube-dns","namespace":"kube-system"}}
-
-```
-
-At the end the file must be
-```yaml
-apiVersion: v1
-data:
-  stubDomains: |
-    {"green-east.svc.cluster.local": ["34.168.93.206"], "green-east-failover.svc.cluster.local": ["34.168.93.206"]}
-kind: ConfigMap
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"stubDomains":"{\"green-east.svc.cluster.local\": [\"34.168.93.206\"], \"green-east-failover.svc.cluster.local\": [\"34.168.93.206\"]}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"kube-dns","namespace":"kube-system"}}
-  creationTimestamp: "2025-09-22T17:37:45Z"
-  labels:
-    addonmanager.kubernetes.io/mode: EnsureExists
-  name: kube-dns
-  namespace: kube-system
-  resourceVersion: "1758568538175839001"
-  uid: 0f26ea0e-6f6a-4849-bacd-82571b23fefd
-```
-
-Restart the service
-
-```shell
-$ kubectl get pods -n kube-system | grep kube-dns
-$ kubectl delete pod kube-dns…-n kube-system
-```
-
-# Google Firewall
-
-In GKE, select the firewall and create a rule to allow cluster `blue` to communicate to cluster `green` in both direction.
-
-![img.png](images/GKE_Firewall.png)
-
-Create a Firewall rule:
-
-![img.png](images/GKE_FirewallRule.png)
-
-Set 
-
-| Parameter            | name                        |
-|----------------------|-----------------------------|
-| Name                 | bluegreencommunication      |
-| Priority             | 999                         | 
-| Direction of traffic | ingress                     |
-| Targets              | All instance in the network |
-| Source IPv4 ranges   | 0.0.0.0/0                   | 
-| Protocols and ports  | Allow all                   | 
-
-
-Result is 
-![Firewall Configuration](images/GKE_FirewallConfiguration.png)
-
-Click on `Create`
-
-# Test the configuration
-
-On `green-east`
-
-```shell
-$ kubectl config use-context gke_pierre-yves_us-east1_green-east
-$ kubectl run dns-test --rm -it --image=busybox -- sh
-/# ping 34.26.200.157
-PING 34.26.200.157 (34.26.200.157): 56 data bytes
-64 bytes from 34.26.200.157: seq=0 ttl=114 time=0.379 ms
-/# exit
-```
-
-The firewall is open.
-
-```shell
-$ kubectl run dns-test --rm -it --image=busybox -- nslookup blue-west.svc.cluster.local
-```
-
-On `blue-west`
-
-```shell
-$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
-$ kubectl run dns-test --rm -it --image=busybox -- sh
-/ # ping 35.237.32.136
-PING 35.237.32.136 (35.237.32.136): 56 data bytes
-64 bytes from 35.237.32.136: seq=0 ttl=114 time=0.435 ms
-```
-
-
-```shell
-$ kubectl run dns-test --rm -it --image=busybox -- nslookup green-east.svc.cluster.local
-```
-
-> the communication failed, but the cluster is working correctly, so can communicate.
-
-# Create Camunda clusters
-
-Attention, each cluster must be in different namespace: the namespace must be different. Do not use `camunda`
-
-
-1. Edit camunda-value.yaml
-
-Add the multi region setting
-
-```yaml
-global:
-  multiregion:
-    # number of regions that this Camunda Platform instance is stretched across
-    regions: 2
-    # unique id of the region. Should start at 0 for easy computation. With 2 regions, you would have region 0 and 1.
-    regionId: 0
-```
-
-In blue, set the regionId to 0, in Green, to 1.
-
-2. Add the list of Initial Contact points
-
-
-```yaml
-orchestration:
-  clusterSize: "4"
-  partitionCount: "3"
-  replicationFactor: "4"
-
-  env:
-    - name: ZEEBE_BROKER_DATA_SNAPSHOTPERIOD
-      value: "5m"
-    - name: ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK
-      value: "0.85"
-    - name: ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK
-      value: "0.87"
-    - name: ZEEBE_BROKER_CLUSTER_INITIALCONTACTPOINTS
-      value: "camunda-zeebe-0.camunda-zeebe.green-east.svc.cluster.local:26502,
-      camunda-zeebe-1.camunda-zeebe.green-east.svc.cluster.local:26502,
-      camunda-zeebe-0.camunda-zeebe.blue-west.svc.cluster.local:26502,
-      camunda-zeebe-1.camunda-zeebe.blue-west.svc.cluster.local:26502"
-    - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH0_CLASSNAME
-      value: io.camunda.zeebe.exporter.ElasticsearchExporter
-    - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH0_ARGS_URL
-      value: http://camunda-elasticsearch-master-hl.green-east.svc.cluster.local:9200
-    - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH1_CLASSNAME
-      value: io.camunda.zeebe.exporter.ElasticsearchExporter
-    - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH1_ARGS_URL
-      value: http://camunda-elasticsearch-master-hl.blue-west.svc.cluster.local:9200
-    - name: ZEEBE_BROKER_CLUSTER_MEMBERSHIP_PROBETIMEOUT
-      value: 2s
-    - name: ZEEBE_BROKER_CLUSTER_MEMBERSHIP_PROBEINTERVAL
-      value: 10s
-```
-
-Create the cluster in Region 0 `blue-west`. The name blue-west is used in the INITIAL_CONTACT point so, this is the name of the namespace.
-
-```shell
-$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
-$ kubectl create namespace blue-west
-$ kubens blue-west
-$ helm upgrade --install --namespace blue-west camunda camunda/camunda-platform -f region0/camunda-value-88.yaml --skip-crds --version 13.1.2
-```
-
-Create the cluster in Region 1/ `green-east`. The name green-east is used in the INITIAL_CONTACT point so, this is the name of the namespace.
-
-```shell
-$ kubectl config use-context gke_pierre-yves_us-east1_green-east
-$ kubectl create namespace green-east
-$ kubens green-east
-$ helm upgrade --install --namespace green-east camunda camunda/camunda-platform -f region1/camunda-value-88.yaml --skip-crds --version 13.1.2
-```
 
 # Check health
 
@@ -299,14 +21,19 @@ $ kubectl port-forward -n green-east service/camunda-zeebe-gateway 9600:9600 &
 
 ```
 
-2. Run a topology command
+2. Run a re-balance command
 
 Rebalance the cluster
 
 ```shell
+$ curl  -c cookies.txt -X POST "http://localhost:8080/login" \
+-H "Content-Type: application/x-www-form-urlencoded" \
+-d "username=demo" \
+-d "password=demo"
+
 curl -X POST http://localhost:9600/actuator/rebalance
 ```
-
+3. Run a topology
 
 ```shell
 $ curl  -c cookies.txt -X POST "http://localhost:8080/login" \
@@ -431,20 +158,20 @@ We analyse the cluster
 
 Distribution:
 
-| Partition | 0/blue | 1/green | 2/blue | 3/green |
-|-----------|:-------|:--------|:-------|:--------|
-| 1         | L      |  F      | F       | F      |
-| 2         | F      | L       | F       | F      |     
-| 3         | L      | F       | F       | F      |
-| 4         | F      | L       | F       | F      |
-| 5         | L      | F       | F       | F      |
+| Partition | 0/blue | 1/green | 2/blue   | 3/green |
+|-----------|:-------|:--------|:---------|:--------|
+| 1         | L      | F       | F        | F      |
+| 2         | F      | L       | F        | F      |     
+| 3         | L      | F       | F        | F      |
+| 4         | F      | L       | F        | F      |
+| 5         | L      | F       | F        | F      |
 
 
 > Leaders may be not very well distributed, due to the lattency on startup between region.
  
 
 
-# Add partition
+# Add partitions
 
 Add two new partitions
 
@@ -489,8 +216,6 @@ $ curl -b cookies.txt http://localhost:8080/v2/topology
 | 5         | L      | F       | F      | F       |
 | 6         | F      | L       | F      | F       |
 | 7         | F      | F       | L      | F       |
-
-
 
 
 
