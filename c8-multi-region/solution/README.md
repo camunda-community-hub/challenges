@@ -108,7 +108,7 @@ $ kubectl run dns-test --rm -it --image=busybox -- nslookup green-east.svc.clust
 Attention, each cluster must be in different namespace: the namespace must be different. Do not use `camunda`
 
 
-1. Edit camunda-value.yaml
+## 1. Edit camunda-value.yaml
 
 Add the multi region setting
 
@@ -123,8 +123,10 @@ global:
 
 In blue, set the regionId to 0, in Green, to 1.
 
-2. Add the list of Initial Contact points
+## 2. Add the list of Initial Contact points
 
+When a broker start, it needs to contact all other broker to share the partition distribution, elect a leader.
+After the start, any new broker will ise the same list to contact one other broker, which will share all new brokers.
 
 ```yaml
 orchestration:
@@ -152,10 +154,6 @@ orchestration:
       value: io.camunda.zeebe.exporter.ElasticsearchExporter
     - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH1_ARGS_URL
       value: http://camunda-elasticsearch-master-hl.blue-west.svc.cluster.local:9200
-    - name: ZEEBE_BROKER_CLUSTER_MEMBERSHIP_PROBETIMEOUT
-      value: 2s
-    - name: ZEEBE_BROKER_CLUSTER_MEMBERSHIP_PROBEINTERVAL
-      value: 10s
 ```
 
 Create the cluster in Region 0 `blue-west`. The name blue-west is used in the INITIAL_CONTACT point so, this is the name of the namespace.
@@ -175,3 +173,26 @@ $ kubectl create namespace green-east
 $ kubens green-east
 $ helm upgrade --install --namespace green-east camunda camunda/camunda-platform -f region1/camunda-value-88.yaml --skip-crds --version 13.1.2
 ```
+
+## 3. Setup the timeout
+
+Latency between region may be important, and when a broker cannot contact another broker on the second region. Increase the timeout
+
+```yaml
+
+- name: ZEEBE_BROKER_CLUSTER_MEMBERSHIP_PROBEINTERVAL
+  value: 5s
+- name: ZEEBE_BROKER_CLUSTER_MEMBERSHIP_PROBETIMEOUT
+  value: 10s
+- name: ZEEBE_BROKER_CLUSTER_MEMBERSHIP_SUSPECTPROBES
+  value: 5s
+- name: ZEEBE_BROKER_CLUSTER_MEMBERSHIP_FAILURETIMEOUT
+  value: 30s
+- name: ZEEBE_BROKER_CLUSTER_MEMBERSHIP_SYNCINTERVAL
+  value: 30s
+- name: ZEEBE_BROKER_CLUSTER_MESSAGINGTIMEOUT
+  value: 30s
+- name: ZEEBE_BROKER_CLUSTER_REQUESTTIMEOUT
+  value: 45s
+```
+
