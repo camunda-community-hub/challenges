@@ -6,7 +6,7 @@ Copy the Helm from the template in the documentation
 https://docs.camunda.io/docs/8.7/self-managed/identity/configuration/connect-to-an-oidc-provider/
 
 
-> Note: this section is use to connect the orchestration server. The Management Identity is after. 
+> Note: this section is used to connect the orchestration server. The Management Identity is after. 
  
 
 
