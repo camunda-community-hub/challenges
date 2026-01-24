@@ -37,6 +37,25 @@ You get this information
 | OIDC Discovery Endpoint           | https://auth.pingone.com/82abc49d-f6a1-46f6-9956-9d186bcd9aac/as/.well-known/openid-configuration       |
 | OAuth Server Metadata Endpoint    | https://auth.pingone.com/.well-known/oauth-authorization-server/82abc49d-f6a1-46f6-9956-9d186bcd9aac/as |
 
+
+4. Activate the application
+
+![img.png](images/pingfederate/PingFederateApplicationActive.png)
+
+
+7. On Configuration click Edit
+
+![img.png](images/pingfederate/PingFederateApplicationEditConfiguration.png)
+
+8. Go down to Add Redirect URI
+
+Give the same value as `orchestration.security.authentication.oidc.redirectUrl` : check the contextPath of the application
+
+
+![img.png](images/pingfederate/PingFederateApplicationAddRedirect.png)
+
+
+in
 ## Create a user
 
 1. Under Directory, select Users and click on the +
@@ -57,7 +76,8 @@ Determine in information
 
 Access
 ```
-https://auth.pingone.com:9031/82abc49d-f6a1-46f6-9956-9d186bcd9aac/.well-known/openid-configuration
+https://auth.pingone.com/82abc49d-f6a1-46f6-9956-9d186bcd9aac/as/.well-known/openid-configuration
+
 ```
 
 
@@ -104,7 +124,7 @@ orchestration:
         usernameClaim: oid
         groupsClaim: groups
         clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>            
+        audience: https://api.pingone.com           
 ```
 
 
@@ -112,7 +132,7 @@ Replace all values:
 
 | Value                                        | Origin               | Value               |
 |----------------------------------------------|----------------------|---------------------|
-| <EnvironmentId>                  | TenantId             | cbd...ba9           |
+| <EnvironmentId>                              | TenantId             | cbd...ba9           |
 | <Audience from Step 2>                       | is the ClientId      | 026...1c9           |
 | <Initial claim value>                        | ObjectId of user     | ef6...312           |
 | <Client ID from Step 2>                      | ClientId             | 026...1c9           |
@@ -136,7 +156,11 @@ port forward identity and operate.
 kubectl -n camunda port-forward service/camunda-zeebe-gateway 8080:8080
 kubectl -n camunda port-forward service/camunda-zeebe-gateway 26500:26500
 ```
-Try to access Operate via `localhost:8080`
+Try to access Operate via `localhost:8080/operate`
+![img.png](images/pingfederate/OperateLoginInPingFederate.png)
+
+Operate is accessible:
+
 ![img.png](images/entraid/OrchestrationOperate.png)
 
 # Identify users in applications
