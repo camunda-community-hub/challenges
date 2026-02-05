@@ -55,7 +55,12 @@ Give the same value as `orchestration.security.authentication.oidc.redirectUrl` 
 ![img.png](images/pingfederate/PingFederateApplicationAddRedirect.png)
 
 
-in
+9. Check parameters:
+* token
+* implicit
+* client-credential
+
+![img.png](PingFederateApplicationsParameters.png)
 ## Create a user
 
 1. Under Directory, select Users and click on the +
@@ -121,10 +126,16 @@ orchestration:
           inlineSecret: <Client secret from Step 5>
 
         redirectUrl: http://localhost:8080
-        usernameClaim: oid
-        groupsClaim: groups
+        usernameClaim: username
+        groupsClaim: memberOf
         clientId: <Client ID from Step 2>
-        audience: https://api.pingone.com           
+        audience: https://api.pingone.com 
+    initialization:
+      defaultRoles:
+         # we get the value from the mapping rule, then we can control the attribute (memberOf is the one we want)
+         admin:
+            users:
+               - pierreyvesmonnet
 ```
 
 
@@ -167,7 +178,7 @@ Operate is accessible:
 
 To allow a user in the application (Tasklist or Operate), two options are possible
 * directly map a user
-* map a EntraID group where the user is registered
+* map a PingFederate group where the user is registered
 
 Both are via the Role Mapping function in Identity
 
