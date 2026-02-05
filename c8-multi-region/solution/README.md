@@ -25,7 +25,7 @@ You should setup proper firewall rules and correctly route traffic among the pod
 
 See the different options:
 
-* [DNS Chainging with kube-dns](KubeDns.md)
+* [DNS Chainging with kube-dns](kubedns/KubeDns.md)
 * Istio
 * Skupper
 * Linkerd multi-cluster communication

@@ -7,6 +7,10 @@ We setup kube-dns automatically through a python script to route traffic to the 
 ** On region 0 (blue-west)**
 
 ```shell
+$ kubectl config get-contexts
+     gke_pierre-yves_us-east1_green-east
+$ kubectl config use-context gke_pierre-yves_us-east1_green-east
+ 
 $ kubectl apply -f zeebegateway-loadbalancer.yaml
 $ kubectl apply -f internal-dns-lb.yaml
 $ kubectl get svc -n kube-system
@@ -16,6 +20,8 @@ kube-dns-lb            LoadBalancer   34.118.235.184   34.26.200.157   53:30624/
 
 same command.
 ```shell
+$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
+
 $ kubectl apply -f zeebegateway-loadbalancer.yaml
 $ kubectl apply -f internal-dns-lb.yaml
 $ kubectl get svc -n kube-system
@@ -45,6 +51,12 @@ Set the file:
 data:
   stubDomains: |
     {"green-east.svc.cluster.local": ["35.237.32.136"], "green-east-failover.svc.cluster.local": ["35.237.32.136"]}
+```
+
+and 
+
+```yaml
+    
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
@@ -70,14 +82,13 @@ metadata:
   namespace: kube-system
   resourceVersion: "1763596440927791001"
   uid: 7b874140-f6ac-46f4-9bba-9e35442964a3
-
 ```
 
 Restart the service
 
 ```shell
 $ kubectl get pods -n kube-system | grep kube-dns
-$ kubectl delete pod kube-dns…-n kube-system
+$ kubectl delete pod kube-dns…    -n kube-system
 ```
 
 
@@ -96,6 +107,11 @@ Add the file:
 data:
   stubDomains: |
     {"blue-west.svc.cluster.local": ["34.26.200.157"], "blue-west-failover.svc.cluster.local": ["34.26.200.157"]}
+```
+
+and
+
+```yaml
 metadata:
   annotations:
     kubectl.kubernetes.io/last-applied-configuration: |
@@ -104,6 +120,7 @@ metadata:
 ```
 
 At the end the file must be
+
 ```yaml
 apiVersion: v1
 data:
@@ -127,5 +144,5 @@ Restart the service
 
 ```shell
 $ kubectl get pods -n kube-system | grep kube-dns
-$ kubectl delete pod kube-dns…-n kube-system
+$ kubectl delete pod kube-dns…   -n kube-system
 ```
