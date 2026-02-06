@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="AmountCountry" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.41.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.8.0">
+  <decision id="Decision_AmountCountry" name="AmountCountry">
+    <decisionTable id="DecisionTable_1epz4lz">
+      <input id="Input_1" label="country">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text>country</text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="amount" name="amount" typeRef="number" />
+      <rule id="DecisionRule_0asp2sn">
+        <inputEntry id="UnaryTests_0r5l4uk">
+          <text>USA</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_15fqzei">
+          <text>1000</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0nih1cj">
+        <inputEntry id="UnaryTests_1jh8mkm">
+          <text>FRANCE</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0wz060q">
+          <text>1010</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0il4e3i">
+        <inputEntry id="UnaryTests_19m09lw">
+          <text>GERMANY</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0b89ljr">
+          <text>1087</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0tenhia">
+        <inputEntry id="UnaryTests_1s3c17c">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0tjp541">
+          <text>990</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Decision_AmountCountry">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

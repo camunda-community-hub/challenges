@@ -4,25 +4,25 @@ We setup kube-dns automatically through a python script to route traffic to the 
 
 ## Dns Load balancer
 
-** On region 0 (blue-west)**
+** On region 0 (green-east)**
 
 ```shell
 $ kubectl config get-contexts
      gke_pierre-yves_us-east1_green-east
 $ kubectl config use-context gke_pierre-yves_us-east1_green-east
  
-$ kubectl apply -f zeebegateway-loadbalancer.yaml
+$ kubectl apply -f zeebegateway-core-zeebe-loadbalancer.yaml
 $ kubectl apply -f internal-dns-lb.yaml
 $ kubectl get svc -n kube-system
 kube-dns-lb            LoadBalancer   34.118.235.184   34.26.200.157   53:30624/UDP    22h
 ```
-** On region 1 (green-east)**
+** On region 1 (blue-west)**
 
 same command.
 ```shell
 $ kubectl config use-context gke_pierre-yves_us-east1_blue-west
 
-$ kubectl apply -f zeebegateway-loadbalancer.yaml
+$ kubectl apply -f zeebegateway-core-zeebe-loadbalancer.yaml
 $ kubectl apply -f internal-dns-lb.yaml
 $ kubectl get svc -n kube-system
 kube-dns-lb            LoadBalancer   34.118.235.184   35.237.32.136   53:30624/UDP    22h
@@ -53,16 +53,6 @@ data:
     {"green-east.svc.cluster.local": ["35.237.32.136"], "green-east-failover.svc.cluster.local": ["35.237.32.136"]}
 ```
 
-and 
-
-```yaml
-    
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"stubDomains":"{\"green-east.svc.cluster.local\": [\"35.237.32.136\"], \"green-east-failover.svc.cluster.local\": [\"35.237.32.136\"]}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"kube-dns","namespace":"kube-system"}}
-
-```
 
 The file must be
 ```yaml
@@ -72,9 +62,6 @@ data:
     {"green-east.svc.cluster.local": ["34.26.200.157"], "green-east-failover.svc.cluster.local": ["34.26.200.157"]}
 kind: ConfigMap
 metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"stubDomains":"{\"green-east.svc.cluster.local\": [\"34.26.200.157\"], \"green-east-failover.svc.cluster.local\": [\"34.26.200.157\"]}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"kube-dns","namespace":"kube-system"}}
   creationTimestamp: "2025-11-19T16:04:52Z"
   labels:
     addonmanager.kubernetes.io/mode: EnsureExists
@@ -87,8 +74,7 @@ metadata:
 Restart the service
 
 ```shell
-$ kubectl get pods -n kube-system | grep kube-dns
-$ kubectl delete pod kube-dns…    -n kube-system
+$ kubectl rollout restart deployment kube-dns -n kube-system
 ```
 
 
@@ -109,15 +95,6 @@ data:
     {"blue-west.svc.cluster.local": ["34.26.200.157"], "blue-west-failover.svc.cluster.local": ["34.26.200.157"]}
 ```
 
-and
-
-```yaml
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"stubDomains":"{\"blue-west.svc.cluster.local\": [\"34.26.200.157\"], \"blue-west-failover.svc.cluster.local\": [\"34.26.200.157\"]}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"kube-dns","namespace":"kube-system"}}
-
-```
 
 At the end the file must be
 
@@ -128,9 +105,6 @@ data:
     {"green-east.svc.cluster.local": ["34.168.93.206"], "green-east-failover.svc.cluster.local": ["34.168.93.206"]}
 kind: ConfigMap
 metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"stubDomains":"{\"green-east.svc.cluster.local\": [\"34.168.93.206\"], \"green-east-failover.svc.cluster.local\": [\"34.168.93.206\"]}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"kube-dns","namespace":"kube-system"}}
   creationTimestamp: "2025-09-22T17:37:45Z"
   labels:
     addonmanager.kubernetes.io/mode: EnsureExists
@@ -143,6 +117,5 @@ metadata:
 Restart the service
 
 ```shell
-$ kubectl get pods -n kube-system | grep kube-dns
-$ kubectl delete pod kube-dns…   -n kube-system
+$ kubectl rollout restart deployment kube-dns -n kube-system
 ```
