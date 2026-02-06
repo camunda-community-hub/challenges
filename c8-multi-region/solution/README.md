@@ -45,7 +45,7 @@ In GKE, select the firewall and create a rule to allow cluster `blue` to communi
 
 ![img.png](../../c8-multi-region/solution/images/GKE_Firewall.png)
 
-Create a Firewall rule:
+Create a `Firewall rule`:
 
 ![img.png](../../c8-multi-region/solution/images/GKE_FirewallRule.png)
 
@@ -91,15 +91,28 @@ On `blue-west`
 ```shell
 $ kubectl config use-context gke_pierre-yves_us-east1_blue-west
 $ kubectl run dns-test --rm -it --image=busybox -- sh
+```
+
+In the busy box, try:
+
+```shell
 / # ping 35.237.32.136
 PING 35.237.32.136 (35.237.32.136): 56 data bytes
 64 bytes from 35.237.32.136: seq=0 ttl=114 time=0.435 ms
+
+/ # nslookup camunda-zeebe.green-east.svc.cluster.local
+Server:         34.118.224.10
+Address:        34.118.224.10:53
+
+
+** server can't find camunda-zeebe.green-east.svc: NXDOMAIN
+
+/ # nc -zv camunda-zeebe-1.camunda-zeebe.green-east.svc 26502
+camunda-zeebe-1.camunda-zeebe.green-east.svc (10.92.0.4:26502) open
+ 
 ```
 
 
-```shell
-$ kubectl run dns-test --rm -it --image=busybox -- nslookup green-east.svc.cluster.local
-```
 
 > the communication failed, but the cluster is working correctly, so can communicate.
 
@@ -162,7 +175,7 @@ Create the cluster in Region 0 `blue-west`. The name blue-west is used in the IN
 $ kubectl config use-context gke_pierre-yves_us-east1_blue-west
 $ kubectl create namespace blue-west
 $ kubens blue-west
-$ helm upgrade --install --namespace blue-west camunda camunda/camunda-platform -f region0/camunda-value-88.yaml --skip-crds --version 13.1.2
+$ helm upgrade --install --namespace blue-west camunda camunda/camunda-platform -f region0/camunda-value-88.yaml --skip-crds --version 13.4.1
 ```
 
 Create the cluster in Region 1 `green-east`. The name green-east is used in the INITIAL_CONTACT point so, this is the name of the namespace.
@@ -171,7 +184,7 @@ Create the cluster in Region 1 `green-east`. The name green-east is used in the 
 $ kubectl config use-context gke_pierre-yves_us-east1_green-east
 $ kubectl create namespace green-east
 $ kubens green-east
-$ helm upgrade --install --namespace green-east camunda camunda/camunda-platform -f region1/camunda-value-88.yaml --skip-crds --version 13.1.2
+$ helm upgrade --install --namespace green-east camunda camunda/camunda-platform -f region1/camunda-value-88.yaml --skip-crds --version 13.4.1
 ```
 
 ## 3. Setup the timeout

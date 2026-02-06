@@ -14,5 +14,5 @@ spec:
           protocol: UDP
           targetPort: 53
     selector:
-        k8s-app: kube-dns-lb
+        k8s-app: kube-dns
     type: LoadBalancer
