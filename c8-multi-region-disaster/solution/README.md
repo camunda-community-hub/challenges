@@ -12,7 +12,7 @@ Deploy the process `SimpleRateProcess.bpmn`  and `AmountCountry.dmn`
 
 ![img.png](images/OperateTestProcess.png)
 
-# Run the benchmark too
+# Run the benchmark tool
 
 use the benchmark tool to generate some traffic in the cluster. This scenario generate 5 process instance per seconds
 
@@ -25,7 +25,7 @@ Check Operate: it must have some data waiting in front of task
 
 Check Grafana: the throughput is visible. 
 
-![img.png](GrafanaThrougput.png)
+![img.png](images/GrafanaThrougput.png)
 
 In Grafana, the number of "not exported record" is zero
 
@@ -49,11 +49,11 @@ At this moment:
 
 Throughout fail down
 
-![img.png](GrafanaFailedThroughput.png)
+![img.png](images/GrafanaFailedThroughput.png)
 
 The number of not exported record have records, but then it's stable: ElasticSearch is not reachable, but no new creation is accepted
 
-![img.png](GrafanaFailedNotExportedRecords.png)
+![img.png](images/GrafanaFailedNotExportedRecords.png)
 
 Operate is still accessible, but the number of task is frozen.
 
@@ -63,7 +63,7 @@ Operate is still accessible, but the number of task is frozen.
 
 To have a running cluster on a single region, two options exist:
 * Downsize the replication factor, then surviving region can process. But the exporter is frozen, because the second ElasticSearch is not available. Via this way, the two ElasticSearch stay synchronized, and when the region is back, the exporter will restart.
-* use the Fail over procedure. This procedure downsize the cluster to one region, and remove the second exporter. The second Elasticsearch will not be synchronized, and the FailBack will integrate a resynchronization of the second ElasticSearch.
+* use the Fail-over procedure. This procedure downsize the cluster to one region, and remove the second exporter. The second Elasticsearch will not be synchronized, and the FailBack will integrate a resynchronization of the second ElasticSearch.
 
 
 As downsize, we will reduce the number of brokers, sending to the cluster the existing situation.
@@ -85,13 +85,13 @@ At this moment:
 * Exporter does not work (second ElasticSearch are not reachable), so the number of non exported records grows up.
 * The throughput may be affected: the complete Zeebe cluster groups all Leaders on one region, and pods may be overbooked.
 
-![img.png](GrafanaDegradedNotExportedRecords.png)
+![img.png](images/GrafanaDegradedNotExportedRecords.png)
 
 # Restart the second region
 
 
 1. Restart the pods in the green region.
-2. 
+
 ```shell
 $ kubectl config use-context gke_pierre-yves_us-east1_green-east
 
@@ -99,7 +99,7 @@ $ kubectl scale statefulset camunda-elasticsearch-master --replicas=1;kubectl sc
 ```
 
 2. Check advancement
-3. 
+
 Pods must be up and running before proceeding to the next step
 
 Execute this command to check the advancement

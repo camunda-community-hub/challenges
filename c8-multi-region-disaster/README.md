@@ -9,4 +9,6 @@ Operate, Tasklist will not show any new tasks.
 
 Restart the region 1. 
 
-Using the replication factor upgrade, re start the initial configuration.
+Using the replication factor upgrade, re-start the initial configuration.
+
+Check the [Solution](solution/README.md) for the detailed procedure

@@ -74,17 +74,24 @@ On `green-east`
 ```shell
 $ kubectl config use-context gke_pierre-yves_us-east1_green-east
 $ kubectl run dns-test --rm -it --image=busybox -- sh
+```
+
+Inside the busy box, try
+
+```shell
 /# ping 34.26.200.157
 PING 34.26.200.157 (34.26.200.157): 56 data bytes
 64 bytes from 34.26.200.157: seq=0 ttl=114 time=0.379 ms
+
+/# nslookup blue-west.svc.cluster.local
+
+/ # nc -zv camunda-zeebe-1.camunda-zeebe.blue-west.svc.cluster.local 26502
+
 /# exit
 ```
 
-The communcation is possible is open.
+The communication is possible is open.
 
-```shell
-$ kubectl run dns-test --rm -it --image=busybox -- nslookup blue-west.svc.cluster.local
-```
 
 On `blue-west`
 
@@ -108,8 +115,7 @@ Address:        34.118.224.10:53
 ** server can't find camunda-zeebe.green-east.svc: NXDOMAIN
 
 / # nc -zv camunda-zeebe-1.camunda-zeebe.green-east.svc 26502
-camunda-zeebe-1.camunda-zeebe.green-east.svc (10.92.0.4:26502) open
- 
+camunda-zeebe-1.camunda-zeebe.green-east.svc (10.92.0.4:26502) open 
 ```
 
 

@@ -11,8 +11,8 @@ $ kubectl config get-contexts
      gke_pierre-yves_us-east1_green-east
 $ kubectl config use-context gke_pierre-yves_us-east1_green-east
  
-$ kubectl apply -f zeebegateway-core-zeebe-loadbalancer.yaml
-$ kubectl apply -f internal-dns-lb.yaml
+$ kubectl apply -f zeebegateway-loadbalancer.yaml  -n kube-system
+$ kubectl apply -f dns-lb.yaml  -n kube-system
 $ kubectl get svc -n kube-system
 kube-dns-lb            LoadBalancer   34.118.235.184   34.26.200.157   53:30624/UDP    22h
 ```
@@ -22,8 +22,8 @@ same command.
 ```shell
 $ kubectl config use-context gke_pierre-yves_us-east1_blue-west
 
-$ kubectl apply -f zeebegateway-core-zeebe-loadbalancer.yaml
-$ kubectl apply -f internal-dns-lb.yaml
+$ kubectl apply -f zeebegateway-loadbalancer.yaml -n kube-system
+$ kubectl apply -f dns-lb.yaml -n kube-system
 $ kubectl get svc -n kube-system
 kube-dns-lb            LoadBalancer   34.118.235.184   35.237.32.136   53:30624/UDP    22h
 ```
@@ -42,7 +42,7 @@ In the `blue-west`, the `green-east` must be registered.
 
 Execute
 ```shell
-kubectl edit configmap kube-dns -n kube-system
+$ kubectl edit configmap kube-dns -n kube-system
 ```
 
 Set the file:

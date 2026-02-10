@@ -10,9 +10,3 @@ spec:
     - name: grpc
       port: 26500
       targetPort: 26500
-    - name: grpc
-      port: 26501
-      targetPort: 26501
-    - name: grpc
-      port: 26502
-      targetPort: 26502
