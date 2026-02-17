@@ -84,4 +84,4 @@ kubectl get pods -l app.kubernetes.io/instance=datadog
 # You would need the port number for your Camunda helm values.yaml
 ```
 Example:
-![statsD-dataDogk8s.png](../../images/statsD-dataDogk8s.png)
+![statsD-dataDogk8s.png](../images/statsD-dataDogk8s.png)

@@ -112,7 +112,7 @@ kubectl logs camunda-zeebe-0
 ```
 Example screenshot verification of micrometer successfully mounted inside ```lib``` folder:
 
-![statsD-micrometerMountVerification.png](../images/statsD-micrometerMountVerification.png)
+![statsD-micrometerMountVerification.png](images/statsD-micrometerMountVerification.png)
 
 When you inside the logs of "camunda-zeebe" pod, you should see this printout:
 ```bash
@@ -120,7 +120,7 @@ Downloaded:
 total 5.6M
 -rw-r--r-- 1 root root 5.6M Aug 11 17:37 micrometer-registry-statsd-1.14.10.jar
 ```
-![statsD-micrometerDownload.png](../images/statsD-micrometerMountVerification1.png)
+![statsD-micrometerDownload.png](images/statsD-micrometerMountVerification1.png)
 ---
 ### 🧠 Bonus Challenge
 Reflect on why this setup uses an initContainer with Maven instead of building a custom Zeebe image.
@@ -141,5 +141,5 @@ Next, take it a step further:
 To find the correct Micrometer dependency version for your Camunda setup:
 👉 Visit [Maven Central](https://central.sonatype.com/artifact/io.camunda/camunda-zeebe/dependencies) – camunda-zeebe
 Select the Camunda distribution version you’re using, then filter for “micrometer” in the dependencies list to locate the matching version of micrometer.
-![statsD-micrometerVersion.png](../images/statsD-micrometerVersion.png)
+![statsD-micrometerVersion.png](images/statsD-micrometerVersion.png)
 ---
