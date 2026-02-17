@@ -1,1 +1,12 @@
-init_config:instances:  - openmetrics_endpoint: "<your-monitoring-endpoint>"    namespace: "camunda_lhr"    metrics:      - "^zeebe_stream_processor_records_total$"      - "^zeebe_pending_incidents$"      - "^zeebe_health$"# <-- start broad to validate; then restrict to what you need    auth_type: "basic"    username: "<your-username-from-camunda-saas-monitoring>"    password: "<your-password-from-camunda-saas-monitoring>"
+init_config:
+
+instances:
+  - openmetrics_endpoint: "<your-monitoring-endpoint>"
+    namespace: "camunda_lhr"
+    metrics:
+      - "^zeebe_stream_processor_records_total$"
+      - "^zeebe_pending_incidents$"
+      - "^zeebe_health$"# <-- start broad to validate; then restrict to what you need
+    auth_type: "basic"
+    username: "<your-username-from-camunda-saas-monitoring>"
+    password: "<your-password-from-camunda-saas-monitoring>"
