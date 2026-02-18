@@ -87,6 +87,29 @@ kubectl -n camunda port-forward service/camunda-zeebe-gateway 26500:26500
 Try to access Operate via `localhost:8080`
 ![img.png](images/OrchestrationOperate.png)
 
+
+**How does it work?**
+
+Orchestration connect directly to the EntraId server. 
+It used the `orchesteration.security.oidc.clientId` and `orchesteration.security.oidc.audience` to get a token.
+
+THis token is not visible in the browser of in the trace, which is not simple 
+
+In the token's header, the field `kid` is present. This key must be present in the JWKS repository, This enforced the security: the token must be provided by the correct issuer.
+
+The JWKS repository is accessible by
+* the `well-known` configuration.
+The URL `<global.identity.auth.issuer>/.well-known/openid-configuration`.
+In our example, `https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0/.well-known/openid-configuration` is used.
+
+The JSON contains a `jwks-uri` field, which is the JWKS repository
+
+
+* Explicitly given via the variable `global.identity.auth.jwksUrl`
+
+When the token is authenticated. then Orchestration can verify the user connection.
+
+
 # Identify users in applications
 
 To allow a user in the application (Tasklist or Operate), two options are possible
