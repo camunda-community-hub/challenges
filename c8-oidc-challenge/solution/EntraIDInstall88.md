@@ -94,7 +94,7 @@ kubectl -n camunda port-forward service/camunda-zeebe-gateway 8080:8080
 kubectl -n camunda port-forward service/camunda-zeebe-gateway 26500:26500
 ```
 Try to access Operate via `localhost:8080`
-![img.png](images/OrchestrationOperate.png)
+![img.png](images/entraid/OrchestrationOperate.png)
 
 
 ## How does it work?
@@ -146,7 +146,7 @@ Both are via the Role Mapping function in Identity
 ## Role mapping for a user
 
 1. Identify the Object ID of the User in EntraID
-![img.png](images/RoleMappingUserObjectId.png)
+![img.png](images/entraid/RoleMappingUserObjectId.png)
 
 | Value         | Value      |
 |---------------|------------|
@@ -154,11 +154,11 @@ Both are via the Role Mapping function in Identity
 
 2. Create a role mapping
 
-![img.png](images/RoleMappingCreateUserMapping88.png)
+![img.png](images/entraid/RoleMappingCreateUserMapping88.png)
 
 3. Give the authorisation to the role mapping
 
-![img.png](images/RoleMappingCreateUserAuthorisation88.png)
+![img.png](images/entraid/RoleMappingCreateUserAuthorisation88.png)
 
 4. Connect to Operate works.
 
@@ -169,17 +169,17 @@ First, add the Security check in the application
 
 1. In the application registration, access `manage/token configuration`
 
-![img.png](images/RoleMappingAppRegistrationToken.png)
+![img.png](images/entraid/RoleMappingAppRegistrationToken.png)
 
 2. Click on `Add groups claim` and select `Security groups`
 
-![img.png](images/RoleMappingAddGroupsClaim.png)
+![img.png](images/entraid/RoleMappingAddGroupsClaim.png)
 
 3. Find a group ID. in `Groups`, search a group like `Postsales consulting`
-![img_1.png](images/RoleMappingSearchGroup.png)
+![img_1.png](images/entraid/RoleMappingSearchGroup.png)
 
 4. Identify the ObjectId
-![img.png](images/RoleMappingGroupObjectId.png)
+![img.png](images/entraid/RoleMappingGroupObjectId.png)
 
 | Value           | Value      |
 |-----------------|------------|
@@ -187,11 +187,11 @@ First, add the Security check in the application
 
 5. In the role, register the group
 
-![img.png](images/RolemappingGroupRegister.png)
+![img.png](images/entraid/RolemappingGroupRegister.png)
 
 6. Register the role in the authorisation
 
-![img.png](images/RoleMappingCreateAuthorization.png)
+![img.png](images/entraid/RoleMappingCreateAuthorization.png)
 
 7. Access the application with your user
 
@@ -321,7 +321,7 @@ orchestration:
 If the object is a username, add it in as admin role as a user
 
 
-![img.png](images/ReferenceClientAsUserInRole.png)
+![img.png](images/entraid/ReferenceClientAsUserInRole.png)
 
 6. Now, it's possible to deploy a process via the desktop modeler or the REST API
 
@@ -342,7 +342,7 @@ The OAuthScope comes from the camunda-value.yaml
 | OAuth audience |                                        | zeebe-api                                                                                |
 | OAuthScope     | global.identity.auth.zeebe.tokenScope  | 026...1c9/.default                                            |
 
-![img.png](images/DesktopModeler.png)
+![img.png](images/entraid/DesktopModeler.png)
 
 
 This is not enough: the object behind the token need to be authorized. See before to get the user ID
@@ -425,15 +425,15 @@ The worker reference a user. This user must have authorizations READ_PROCESS_DEF
 > * This value is considered to ba a USERID.
 > * This USERID must have the authorization to deploy processes.
 
-![img.png](images/WorkerAuthorizationProcessInstance.png)
+![img.png](images/entraid/WorkerAuthorizationProcessInstance.png)
 
 if the worker need to manipulate documents, it must have authorization too
 
-![img.png](images/WorkerAuthorizationDocument.png)
+![img.png](images/entraid/WorkerAuthorizationDocument.png)
 
 if the worker need to manipulate messages, give authorization
 
-![img.png](images/WorkerAuthorizationMessage.png)
+![img.png](images/entraid/WorkerAuthorizationMessage.png)
 
 ## unprotected API
 
@@ -601,16 +601,16 @@ $ kubectl -n camunda port-forward service/camunda-identity 8084:80
 
 Then use the url `localhost:9084` (or `localhost:9084/identity` if a contextPath is given)
 
-![img.png](images/ManagementIdentityRoles.png)
+![img.png](images/entraid/ManagementIdentityRoles.png)
 
 Access the Mapping tab
 
-![img.png](images/ManagementIdentityMappingRole.png)
+![img.png](images/entraid/ManagementIdentityMappingRole.png)
 
 
 Click on Edit on the Default role, and add in the role `Web Modeler`and `Òptimize` 
 
-![img.png](images/ManagementIdentityAddWebModelerOptimize.png)
+![img.png](images/entraid/ManagementIdentityAddWebModelerOptimize.png)
 
 > Management Identity does not cumulate roles. If you create a different mapping based on the same users, it will not cumumlate roles. Check existing mapping.
 
@@ -630,7 +630,7 @@ $ kubectl -n camunda port-forward service/camunda-web-modeler-webapp 8090:80
 
 
 If the webModeler loop on the token authentication, check the redirection 
-![img.png](images/WebModelerRedirection.png)
+![img.png](images/entraid/WebModelerRedirection.png)
 
 The redirection **must be** under the category  `single Page Application`
 
@@ -642,15 +642,15 @@ Visit https://docs.camunda.io/docs/self-managed/deployment/helm/configure/authen
 3. Create a project, and inside a project, a simple BPMN Diagram
 
 
-![img.png](images/WebModelerSimpleProject.png)
+![img.png](images/entraid/WebModelerSimpleProject.png)
 
 4. Deploy the diagram: name `Local Cluster` come from the variables.
 
-![img.png](images/WebModelerDeployAndRun.png)
+![img.png](images/entraid/WebModelerDeployAndRun.png)
 
 5. Verify the process appears on Operate
 
-![img.png](images/WebModelerViewInOperate.png)
+![img.png](images/entraid/WebModelerViewInOperate.png)
 
 
 ## Optimize
@@ -666,7 +666,7 @@ $ kubectl -n camunda port-forward service/camunda-optimize 8085:80
 
 3. Access `localhost:8085` (or `localhost:8085/optimize` if a context path is provided) 
 
-![img.png](images/Optimize.png)
+![img.png](images/entraid/Optimize.png)
 
 
 
@@ -690,15 +690,15 @@ global:
  
 Go to Identity, then select "tenant". Create a tenant `blue`
 
-![img.png](images/MultiTenancyCreateTenant.png)
+![img.png](images/entraid/MultiTenancyCreateTenant.png)
 
 Users has to be validated in that tenant. Go to Role, and add the role `admin`
 
-![img.png](images/MultyTenancyNlueRole.png)
+![img.png](images/entraid/MultyTenancyNlueRole.png)
 
 Check in Operate: the tenant `blue` is visible.
 
-![img_1.png](images/MultiTenancyOperate.png)
+![img_1.png](images/entraid/MultiTenancyOperate.png)
 
 ## Deploy process in a tenant via WebModeler
 
@@ -710,17 +710,17 @@ This client must have access in the tenant. Decode the token and get the `oid` v
 
 2. Add the user in the tenant
 
-![img.png](images/MultiTenancyBlueTenantAccess.png)
+![img.png](images/entraid/MultiTenancyBlueTenantAccess.png)
 
 3. in Authorization/Tenant, add the user
 
 > This step is not mandatory, but it's better to give access to the user in this authorization.
 
-![img.png](images/MultiTenancyBlueAuthorizationTenant.png)
+![img.png](images/entraid/MultiTenancyBlueAuthorizationTenant.png)
 
 4. In Authorization/Resource, add the user
 
-![img.png](images/MultiTenancyAuthorizationResource.png)
+![img.png](images/entraid/MultiTenancyAuthorizationResource.png)
 
 5. Deployment works : check the REST API
 
@@ -786,7 +786,7 @@ Last, it's important to stop the orchestration: the code has an uniq usage, and 
 
 The browser must return an error, which is perfect. The authorization code is in the URL.
 
-![img.png](images/DebugAjuthorizationCode.img)
+![img.png](images/entraid/DebugAjuthorizationCode.img)
 
 Code is
 ```
@@ -853,7 +853,7 @@ curl --location --request POST 'https://login.microsoftonline.com/cbd...ba9f/oau
 
 Copy the token in https://www.jwt.io/. See the detail in terms of object used by EntraId
 
-![img.png](images/MultiTenancyDebug.png)
+![img.png](images/entraid/MultiTenancyDebug.png)
 
 The result is something like 
 
@@ -923,7 +923,7 @@ The JSON contains a `jwks-uri` field, which is the JWKS repository
 
 Then, access it via a browser.
 
-![img.png](images/JWKSListOfkeys.png)
+![img.png](images/entraid/JWKSListOfkeys.png)
 
 The result contains a list of keys. Each key has a `kid`. The `kid` present in the token must be referenced in the list.
 
