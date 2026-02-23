@@ -6,7 +6,7 @@ Copy the Helm from the template in the documentation
 https://docs.camunda.io/docs/8.7/self-managed/identity/configuration/connect-to-an-oidc-provider/
 
 
-> Note: this section is use to connect the orchestration server. The Management Identity is after. 
+> Note: this section is used to connect the orchestration server. The Management Identity is after. 
  
 
 
@@ -14,6 +14,7 @@ https://docs.camunda.io/docs/8.7/self-managed/identity/configuration/connect-to-
 global:
   identity:
     auth:
+      authUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/oauth2/v2.0/authorize
       issuer: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
       # this is used for container to container communication
       issuerBackendUrl: https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0
@@ -52,22 +53,29 @@ orchestration:
         usernameClaim: oid
         groupsClaim: groups
         clientId: <Client ID from Step 2>
-        audience: <Client ID from Step 2>            
+        audience: <Client ID from Step 2> 
+    initialization:
+      defaultRoles:
+        admin:
+          users:
+            - <UserObjectId>
+          
+
 ```
 
 
 Replace all values:
 
-| Value                                        | Origin               | Value               |
-|----------------------------------------------|----------------------|---------------------|
-| <Microsoft Entra tenant ID>                  | TenantId             | cbd...ba9           |
-| <Audience from Step 2>                       | is the ClientId      | 026...1c9           |
-| <Initial claim value>                        | ObjectId of user     | ef6...312           |
-| <Client ID from Step 2>                      | ClientId             | 026...1c9           |
-| <Client secret from Step 5>                  | Value of the secret  | fzR...ueP.apy_Kc.7  |
-| <Client ID of Web Modeler's API from Step 2> | ClientId             | 026...1c9           |
-| <Client ID of Web Modeler's UI from Step 2>  | Value of the secret  | fzR...ueP.apy_Kc.7  |
-
+| Value                                         | Origin                 | Value              |
+|-----------------------------------------------|------------------------|--------------------|
+| <Microsoft Entra tenant ID>                   | TenantId               | cbd...ba9          |
+| <Audience from Step 2>                        | is the ClientId        | 026...1c9          |
+| <Initial claim value>                         | ObjectId of user       | ef6...312          |
+| <Client ID from Step 2>                       | ClientId               | 026...1c9          |
+| <Client secret from Step 5>                   | Value of the secret    | fzR...ueP.apy_Kc.7 |
+| <Client ID of Web Modeler's API from Step 2>  | ClientId               | 026...1c9          |
+| <Client ID of Web Modeler's UI from Step 2>   | Value of the secret    | fzR...ueP.apy_Kc.7 |
+| <UserObjectId>                                | Oid of the admin user  | ef6...312          |
 
 
 # Start the cluster
@@ -79,6 +87,7 @@ helm upgrade --install --namespace camunda camunda camunda/camunda-platform -f c
 
 # Connection
 
+## Check the connection
 port forward identity and operate.
 ```shell
 kubectl -n camunda port-forward service/camunda-zeebe-gateway 8080:8080
@@ -88,12 +97,23 @@ Try to access Operate via `localhost:8080`
 ![img.png](images/OrchestrationOperate.png)
 
 
-**How does it work?**
+## How does it work?
 
-Orchestration connect directly to the EntraId server. 
-It used the `orchesteration.security.oidc.clientId` and `orchesteration.security.oidc.audience` to get a token.
+Orchestration connect directly to the EntraId server.
+It used the `orchesteration.security.oidc.clientId` and `orchesteration.security.oidc.audience`.
 
-THis token is not visible in the browser of in the trace, which is not simple 
+Entra Id detect the user is not connected and display the login page, or use any method to authentify the user.
+Or the user is already connected.
+In all the situation, OIDC return and "authorization code" to the browser, and redirect to orchestration.
+
+Orchestration receive the "authorization code" and use the `tokenUrl` to get token.
+* id_token (who the user is),
+* access_token (JWT used as bearer for APIs),
+* optionally refresh_token.
+
+
+
+These tokens are not visible in the browser of in the trace, which is not simple 
 
 In the token's header, the field `kid` is present. This key must be present in the JWKS repository, This enforced the security: the token must be provided by the correct issuer.
 
@@ -107,7 +127,11 @@ The JSON contains a `jwks-uri` field, which is the JWKS repository
 
 * Explicitly given via the variable `global.identity.auth.jwksUrl`
 
-When the token is authenticated. then Orchestration can verify the user connection.
+When the token is validated. then Orchestration can verify the user connection.
+
+## If is not working
+
+Check the debugging session to run manually all steps
 
 
 # Identify users in applications
@@ -595,12 +619,15 @@ Click on Edit on the Default role, and add in the role `Web Modeler`and `Òptimi
 
 ## Web Modeler
 
-Forward the port
+ 
+
+1. Forward the port
 ```shell
 $ kubectl -n camunda port-forward service/camunda-web-modeler-webapp 8090:80
 ```
 
-2. Then use the url `localhost:9084` (or `localhost:9084/identity` if a contextPath is given)
+2. Add the redirect URL `localhost:9084` (or `localhost:9084/identity` if a contextPath is given)
+
 
 If the webModeler loop on the token authentication, check the redirection 
 ![img.png](images/WebModelerRedirection.png)
@@ -608,7 +635,11 @@ If the webModeler loop on the token authentication, check the redirection
 The redirection **must be** under the category  `single Page Application`
 
 
-3. Create a procject, and inside a project, a simple BPMN Diagram
+
+
+Visit https://docs.camunda.io/docs/self-managed/deployment/helm/configure/authentication-and-authorization/microsoft-entra/#redirect-uris-per-camunda-component 
+
+3. Create a project, and inside a project, a simple BPMN Diagram
 
 
 ![img.png](images/WebModelerSimpleProject.png)
@@ -629,11 +660,13 @@ The redirection **must be** under the category  `single Page Application`
 ```shell
 $ kubectl -n camunda port-forward service/camunda-optimize 8085:80
 ```
+2. Add the redirect URL `http://localhost:8085/api/authentication/callback` (or `http://localhost:8085/optimize/api/authentication/callback` if a contect path `optimize` is provided)
 
-2. Access `localhost:8085/optimize` 
+
+
+3. Access `localhost:8085` (or `localhost:8085/optimize` if a context path is provided) 
 
 ![img.png](images/Optimize.png)
-
 
 
 
@@ -724,7 +757,75 @@ Restart the worker
 
 ## Debugging
 
-According to https://docs.camunda.io/docs/8.6/apis-tools/operate-api/operate-api-authentication/
+Verify the token retrieved, and verify it. 
+
+## orchestration token
+
+The orchestration retrieve the token via an access code.
+It asked the SSO and get an authorization code. Then, from the authorization code, it access a token.
+
+1. Ask the authorization code
+
+Create the URL and ask it in a browser
+
+```
+https://login.microsoftonline.com/<Microsoft Entra tenant ID>/oauth2/v2.0/authorize?client_id=<ClientId>>&response_type=code&redirect_uri=<redirectUrl>&response_mode=query&scope=openid%20profile%20offline_access&state=12345
+
+```
+
+| Value                       | value.yaml                                                     | Origin       | Value                  |
+|-----------------------------|----------------------------------------------------------------|--------------|------------------------|
+| <Microsoft Entra tenant ID> | global.identity.auth.authUrl                                   | TenantId     | cbd...ba9              |
+| <ClientId>                  | orchestration.security.authorizations.oidc.clientId            | ClientId     | 026...1c9              | 
+| <ClientSecret>              | orchestration.security.authorizations.oidc.secret.inlineSecret | ClientId     | 026...1c9              | 
+| <redirectUrl>               | orchestration.security.authorizations.oidc.redirectUrl>        | RedirectUrl  | http://localhost:8080  | 
+
+It's important to use the url in a browser, to get back the result. Curl does not work, because when the URL is accessed, the SSO will redirect the browser to the login mechanism, and when the login is success, it will redirect to the redirectUrl.
+This redirect URL must be correct, else the SSO will refuse to redirect to this URL and you will not see the code.
+Last, it's important to stop the orchestration: the code has an uniq usage, and must be use quickly (in the minute). if the redict works, then orchestration will use the code to access token, and the code is not usefully: the second step will fail. 
+
+The browser must return an error, which is perfect. The authorization code is in the URL.
+
+![img.png](images/DebugAjuthorizationCode.img)
+
+Code is
+```
+http://localhost:8080/sso-callback?code=1.AYEAVGbUy3RPMkOkkGnw8HG6n004ePrOWoRNqt0A7FXqOcAAAACBAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAB8UZMcSWVCRB6TbQUW9exddmhgAGokgNIN3bA78YSaN-dB1pLPgCWk31XYE7t0tJtfARz7JnatguYN4KEaFqEelqUkTZjRvqqaVBXgNebMrvDHLR45xbX6sNd7jd1p5RzxLQ6STtwwbjnApxtGsh-42_CP9C3WzLic0gR0x3GHfazxtFPMqMF7zr6bjR2Voa8dORpZsjSNs-TejMl3rwO4kIbxfvhdol-1k1onQaXTKpkf5mtYUPo1uZp0FUECs4nwRsrw6upFzGGEU0udHFp5ip_8QxtO97F83Pnp9QVgiHib3CU1tsfzWN73j1F4IsY1CUjwxN8y2E6TwB0WVk8ba_rihyOkZMAJJi435DERatCuLLPse0VJ4QkXk3fAhItT9DsqRqkHMRAv8bG9904AFRUd2_zMK4XvH1chxoCYsv2-zWhxpxwZu5EF81gXWMgp70LjqGus8DnQTJbE8hkL3In9R1I21wsiB-QKy9plRdnrc4w_jNh4IFkf8gVMLJAEDkgY9KCl6akvz7VKpb9DBFpxL53xXvGcE4MixVUbi9oRFI4E4awQrOhLfZtyYhsn5ontXLU-AV4pGpNBI3UgQ_rP4oGLa8iSQHXuaem-b9YllLp4xN3PfVxUbjGPYnx4io4ckvVj_iDAdhv8D7sA8vccpaRYFDfoM-ln9wvjVUHe5NO3gdhYHxNlPoeJb886hhaynxdcQ8H7tgnkV0l_aK0bKy4LMWYUphA8Zsb3cfdswRP0Esvprg2xZr9jEZLS8yNZdqXiKLzXZ_hqZqVWxGuX7HLEgcpCkc6ooxucmA1vsFflfO1HzdDKpicV1VYto8KBCGIG-nRQgNWIX61hveATbZSSdC58eN53nbLBllTlwYaMjGBk4WCQeN6TOBGvSBdAHLfZE4bN2pmSvmqGlIDxtX78T9PCiJHu8OieFhHNPFhhwvHEbbZuvi0TX0HJ3YAUVgdaX2RFguOQwyfCY5z_qKHC95hvK4yVmBLjwME9AkBv2DLqH98F3etjEiU1MVSIO36Ec2cx8h9A1UaBVmianXsnnGCaZjK4vD5EZ_VcaCR-G7jF1CuPmtcjJ3D8Mc4ntDUD0Z1ML6uGAn6AQFd9_5XnZjSig2-TcjwGFaOyElClf2QpdPn11CN6ku-42ilmILJL2s0FmLUDkgufZXlfDsxIirID5_2CuCaPIBfuvt08vyquWOb69P3BWKssIbiTBD2RPzEkpDCv-csrTElgVmmTLPG2fti7u4H0cgqWPtMtd6mI1CvrWWSfHAFqtBP6gqD6eF7O4vqMusbOMuw&state=12345&session_state=002199aa-cf96-e0d0-0c43-51757fda033b#
+```
+
+2. use the authorization code to get tokens
+
+Use the 
+
+```shell
+
+curl -X POST "https://login.microsoftonline.com/<Microsoft Entra tenant ID>/oauth2/v2.0/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=<ClientId>" \
+  -d "scope=openid profile" \
+  -d "code=<Code Retrieved Step 1>" \
+  -d "redirect_uri=<redirectUrl>" \
+  -d "grant_type=authorization_code" \
+  -d "client_secret=<ClientSecret>"
+```
+
+> The code must be use quickly, in the minute.
+
+```yaml
+
+{
+  "token_type":"Bearer",
+  "scope":"openid profile email",
+  "expires_in":3838,
+  "ext_expires_in":3838,
+  "access_token":"eyJ...ckg",
+  "id_token":"eyJ...Cxg"}
+```
+
+
+
+## M2M token
+
 
 1. Ask for a token via this call
 
@@ -748,7 +849,9 @@ curl --location --request POST 'https://login.microsoftonline.com/cbd...ba9f/oau
 {"token_type":"Bearer","expires_in":3599,"ext_expires_in":3599,"access_token":"eyJ0eXAiO.....xxuH9RS6pH_zscNSMff_wVJE7fvqSkyi_T5pgM3AJj9yuTeYPuJ6HC6_AKkqsA_gVVxPqnKG8GFTn2TXaPYRdhfwBc5DwZIPF3qIbM49xQAq141yTSumfe-1d2f5iZzmdFh32OHLKBr4A_ybj_pfZOjW-Sg"}
 ```
 
-2. Copy the token in https://www.jwt.io/. See the detail in terms of object used by EntraId
+## Decode a token
+
+Copy the token in https://www.jwt.io/. See the detail in terms of object used by EntraId
 
 ![img.png](images/MultiTenancyDebug.png)
 
@@ -800,39 +903,28 @@ The header contains two important information: `alg` (algorithm use to decode) a
 
 * `token.alg` (header) == `RS256`
 
-**Check PID**
-To check the KID, use the URL behind the `global.identity.auth.jwksUrl`
+## Check KID
+
+To check the KID, the JWKS repository must be accessed.
+
+The JWKS repository is accessible by
+* the `well-known` configuration.
+  The URL `<global.identity.auth.issuer>/.well-known/openid-configuration`.
+  In our example, `https://login.microsoftonline.com/<Microsoft Entra tenant ID>/v2.0/.well-known/openid-configuration` is used.
+
+The JSON contains a `jwks-uri` field, which is the JWKS repository
+
+
+* Explicitly given via the variable `global.identity.auth.jwksUrl`
 
 ```shell
- curl https://login.microsoftonline.com/cbd<TenantId>a9f/discovery/v2.0/keys
+ curl https://login.microsoftonline.com/<TenantId>/discovery/v2.0/keys
 ```
-or access it via a browser.
+
+Then, access it via a browser.
 
 ![img.png](images/JWKSListOfkeys.png)
 
-The result contains a list of keys. Each key has a `kid`. The `kid` present in the tocken must be referenced in the list.
+The result contains a list of keys. Each key has a `kid`. The `kid` present in the token must be referenced in the list.
 
-
-** Control the token**
-
-In the command used to get the token :
-
-```shell
-
-curl --location --request POST '${TOKENURL}' \
---header 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode "client_id=${CLIENT_ID}" \
---data-urlencode "client_secret=${CLIENT_SECRET}" \
---data-urlencode "scope=${SCOPE}" \
---data-urlencode 'grant_type=client_credentials'
-```
-
-
-* `TOKENURL` is the same as (value.yaml) `global.liense.identity.auth.tokenUrl`
-* `CLIENT_ID` is the same as (value.yaml) `orchestration.security.authentication.oidc.clientId`
-* `CLIENT_SECRET` :is the same as (value.yaml) `orchestration.security.authentication.oidc.secret` (different method to set up the secret)
-
-> note: the secret used may be different in the token creation and in the cluster - this is what I have on my cluster
-
-* `SCOPE` in EntraID must be "<CLIENTID>/.default" . It is used to build the audience in the token (see the previous verification)
-
+> ATTENTION: Camunda manage only one JWKS repository. All tokens generated contains a kid. All kids must be visible in the JWKS.
