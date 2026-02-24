@@ -71,7 +71,7 @@ The PEA-identity.yaml is something like
 GitHub action accesses the PEA from the outside of the cluster. Connection information is not shared at this level.
 
 ```shell
-$ kubectl create -f k8s/pea-public-loadbalancer.yaml
+$ kubectl create -f k8s/pea-public-core-zeebe-loadbalancer.yaml
 ```
 
 This command deploys a service with a public address. THis is mandatory then GitHub can access PEA to deploy and execute scenario
