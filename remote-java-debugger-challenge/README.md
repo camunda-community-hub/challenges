@@ -109,3 +109,5 @@ This is only an example for verification. You can use other classes and other Ca
 1. Set a breakpoint at the start of the `getCamundaAuthentication()` method in `DefaultCamundaAuthenticationProvider.java`.
 2. Open the browser and log in to Camunda.
 3. The breakpoint should trigger during login and show the authentication process.
+
+Reference screenshot: [solution/DefaultCamundaAuthenticationProvider breakpoint.png](solution/DefaultCamundaAuthenticationProvider%20breakpoint.png)
