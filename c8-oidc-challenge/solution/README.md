@@ -8,12 +8,15 @@ First, the EntraId must be configured to accept the authentication:  See [EntraI
 
 
 
-# 8.7.x installation
-The 8.7 installation is visible here: [Install87.md](EntraIDInstall87)
+## 8.7.x installation
+The 8.7 installation is accessible here: [Install87.md](EntraIDInstall87)
 
-# 8.8.x installation
+## 8.8.x installation
 
 The 8.8 installation is accessible here: [Install88.md](EntraIDInstall88)
 
-in 8.8, Camunda architeture change to have an "orchestration" server which group Zeebe/Identity/Operate/Tasklist.
+in 8.8, Camunda architecture change to have an "orchestration" server which group Zeebe/Identity/Operate/Tasklist.
 
+# Ping Federate
+
+An 8.8 installation is accessible here: [PindFederateInstall88.md](PindFederateInstall88.md)

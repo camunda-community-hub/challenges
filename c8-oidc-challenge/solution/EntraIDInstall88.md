@@ -786,7 +786,7 @@ Last, it's important to stop the orchestration: the code has an uniq usage, and 
 
 The browser must return an error, which is perfect. The authorization code is in the URL.
 
-![img.png](images/entraid/DebugAjuthorizationCode.img)
+![img.png](images/entraid/DebugAuthorizationCode.img)
 
 Code is
 ```
