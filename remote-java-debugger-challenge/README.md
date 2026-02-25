@@ -1,6 +1,6 @@
 # Remote Java Debugger Challenge
 
-This challenge is about connecting a remote Java debugger to a Camunda 8 cluster and validating the full debugging flow end-to-end.
+This challenge is about connecting a remote Java debugger to a Camunda 8 cluster and validating the end-to-end debugging flow.
 
 ## Challenge steps
 
@@ -15,4 +15,4 @@ Attach your IDE debugger to the cluster and confirm that execution pauses on you
 
 ## Solution
 
-See the implementation guide in [solution/README.md](solution/README.md).
+Check the [solution/README.md](solution/README.md) for the step-by-step implementation guide.

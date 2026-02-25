@@ -93,7 +93,7 @@ Reference: [Remote JVM Debug.png](images/Remote%20JVM%20Debug.png)
 
 ## 2) Debug OIDC connection
 
-OIDC is the first and most complete scenario.
+OIDC is the first implemented scenario.
 
 ### Prerequisite
 
@@ -132,7 +132,7 @@ Possible next scenarios:
 - Debug connector runtime/pod
 - Debug process-instance creation flow
 
-When adding a new scenario, keep this structure:
+When adding a new scenario, use this structure:
 
 1. **Prerequisite**: Reuse section `1) Configure the cluster to accept a debugger connection` in this file and specify the scenario values file.
 2. **Where to put the breakpoint**: Define the class/method and why this breakpoint is relevant.
