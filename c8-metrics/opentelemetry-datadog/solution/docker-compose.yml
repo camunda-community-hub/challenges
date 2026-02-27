@@ -1,0 +1,45 @@
+services:
+  dd-agent:
+    image: gcr.io/datadoghq/agent:7
+    container_name: dd-agent
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    environment:
+      DD_API_KEY: ${DD_API_KEY}
+      DD_SITE: ${DD_SITE}
+      DD_DOGSTATSD_NON_LOCAL_TRAFFIC: "true"
+      DD_OTLP_CONFIG_RECEIVER_PROTOCOLS_HTTP_ENDPOINT: "0.0.0.0:4318"
+
+      # Workaround for OTLP ingest bug with /host/proc in Docker
+      HOST_PROC: /proc
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    ports:
+      - "8126:8126"
+      - "4318:4318"
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    environment:
+      CAMUNDA_METRICS_USERNAME: ${CAMUNDA_METRICS_USERNAME}
+      CAMUNDA_METRICS_PASSWORD: ${CAMUNDA_METRICS_PASSWORD}
+
+    volumes:
+      - ./otel-collector-config.yaml:/conf/config.yaml:ro
+
+    command: ["--config=/conf/config.yaml"]
+
+    depends_on:
+      - dd-agent
