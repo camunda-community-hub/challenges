@@ -9,11 +9,11 @@ First, the EntraId must be configured to accept the authentication:  See [EntraI
 
 
 ## 8.7.x installation
-The 8.7 installation is accessible here: [Install87.md](EntraIDInstall87)
+The 8.7 installation is accessible here: [EntraIDInstall87.md](EntraIDInstall87.md)
 
 ## 8.8.x installation
 
-The 8.8 installation is accessible here: [Install88.md](EntraIDInstall88)
+The 8.8 installation is accessible here: [EntraIDInstall88.md](EntraIDInstall88.md)
 
 in 8.8, Camunda architecture change to have an "orchestration" server which group Zeebe/Identity/Operate/Tasklist.
 
