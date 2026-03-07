@@ -1,0 +1,102 @@
+# kubectl create namespace green-east;helm upgrade --install --namespace green-east camunda camunda/camunda-platform -f region1/camunda-value-88_green.yaml --skip-crds --version 13.4.1
+# kubectl config set-context --current --namespace=green-east
+# kubectl config use-context gke_pierre-yves_us-east1_green-east
+# kubectl -n green-east port-forward service/camunda-zeebe-gateway 9080:8080
+
+# helm uninstall camunda; kubectl delete -n  green-east pvc -l app.kubernetes.io/instance=camunda
+global:
+  license:
+    key: >
+      --------------- BEGIN CAMUNDA LICENSE KEY ---------------
+      X6CnH...
+      ---------------  END CAMUNDA LICENSE KEY  ---------------
+  multitenancy:
+    enabled: false
+
+  multiregion:
+    # number of regions that this Camunda Platform instance is stretched across
+    regions: 2
+    # unique id of the region. Should start at 0 for easy computation. With 2 regions, you would have region 0 and 1.
+    regionId: 1
+identityKeycloak:
+  enabled: false
+
+identity:
+  enabled: false
+
+identityPostgresql :
+  enabled: false
+
+
+webModeler:
+  enabled: false
+  restapi:
+    mail:
+      fromAddress: "pierre-yves.monnet@camunda.com"
+operate:
+  enabled: true
+
+tasklist:
+  enabled: true
+
+connectors:
+  enabled: false
+
+# we are in region blue
+orchestration:
+
+  clusterSize: "4"
+  partitionCount: "5"
+  replicationFactor: "4"
+
+  security:
+    authorizations:
+      enabled: false
+    authentication:
+      method: basic
+    initialization:
+      users:
+        - username: demo
+          password: demo
+          name: Demo User
+          email: demo@example.org
+  backpressure:
+    algorithm: aimd
+    aimd:
+      requestTimeout: 2000ms
+
+  env:
+    - name: ZEEBE_BROKER_DATA_SNAPSHOTPERIOD
+      value: "5m"
+    - name: ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK
+      value: "0.85"
+    - name: ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK
+      value: "0.87"
+    - name: ZEEBE_BROKER_CLUSTER_INITIALCONTACTPOINTS
+      value: "camunda-zeebe-0.camunda-zeebe.green-east.svc.cluster.local:26502,
+             camunda-zeebe-1.camunda-zeebe.green-east.svc.cluster.local:26502,
+             camunda-zeebe-0.camunda-zeebe.blue-west.svc.cluster.local:26502,
+             camunda-zeebe-1.camunda-zeebe.blue-west.svc.cluster.local:26502"
+
+    - name: ZEEBE_BROKER_EXPORTERS_CAMUNDAREGION0_CLASSNAME
+      value: io.camunda.exporter.CamundaExporter
+    - name: ZEEBE_BROKER_EXPORTERS_CAMUNDAREGION0_ARGS_CONNECT_URL
+      value: http://camunda-elasticsearch-master-hl.green-east.svc.cluster.local:9200
+    - name: ZEEBE_BROKER_EXPORTERS_CAMUNDAREGION1_CLASSNAME
+      value: io.camunda.exporter.CamundaExporter
+    - name: ZEEBE_BROKER_EXPORTERS_CAMUNDAREGION1_ARGS_CONNECT_URL
+      value: http://camunda-elasticsearch-master-hl.blue-west.svc.cluster.local:9200
+    - name: ZEEBE_BROKER_CLUSTER_MEMBERSHIP_PROBETIMEOUT
+      value: 2s
+    - name: ZEEBE_BROKER_CLUSTER_MEMBERSHIP_PROBEINTERVAL
+      value: 10s
+
+
+elasticsearch:
+  enabled: true
+  master:
+    replicaCount: 1
+
+
+prometheusServiceMonitor:
+  enabled: false

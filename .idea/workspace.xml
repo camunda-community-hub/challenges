@@ -4,37 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="975bbaf2-05d7-4ae9-a160-a127eee8700a" name="Changes" comment="statsD-micrometer-datadog-integration">
-      <change afterPath="$PROJECT_DIR$/c8-metrics/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/c8-metrics/opentelemetry-datadog/solution/.env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/c8-metrics/opentelemetry-datadog/solution/.env_final" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/c8-metrics/opentelemetry-datadog/solution/SOLUTION.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/c8-metrics/opentelemetry-datadog/solution/docker-compose.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/c8-metrics/opentelemetry-datadog/solution/otel-collector-config.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/SOLUTION.md" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/solution/SOLUTION.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/conf-final.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/solution/conf-final.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/docker-compose-final.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/solution/docker-compose-final.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/image/Craft_metrics_zeeb_health.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/image/Craft_metrics_zeeb_health.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/image/Create_datadog_dashboard.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/image/Create_datadog_dashboard.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/image/Create_datadog_table.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/image/Create_datadog_table.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/image/Datadog_docker_agent_ui.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/image/Datadog_docker_agent_ui.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/image/Docker_check_result.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/image/Docker_check_result.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/image/Graph_Result.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/image/Graph_Result.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/image/Monitoring-endpoint.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/image/Monitoring-endpoint.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/image/Set_graph_condition.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/image/Set_graph_condition.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/image/Set_graph_configuration.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/image/Set_graph_configuration.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/saas/image/Set_graph_name.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/openmetric-datadog/image/Set_graph_name.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/self-managed/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/statsd-datadog/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/self-managed/SOLUTION.md" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/statsd-datadog/solution/SOLUTION.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/self-managed/datadog/DATADOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/statsd-datadog/solution/setup-datadog-agent/DATADOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/self-managed/datadog/datadog-agent.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/statsd-datadog/solution/setup-datadog-agent/datadog-agent.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/self-managed/images/statsD-dataDogk8s.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/statsd-datadog/images/statsD-dataDogk8s.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/self-managed/images/statsD-micrometerMountVerification.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/statsd-datadog/images/statsD-micrometerMountVerification.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/self-managed/images/statsD-micrometerMountVerification1.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/statsd-datadog/images/statsD-micrometerMountVerification1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/self-managed/images/statsD-micrometerVersion.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/statsd-datadog/images/statsD-micrometerVersion.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/self-managed/images/statsD-result.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/statsd-datadog/images/statsD-result.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datadog-metrics/solution/self-managed/solution-values.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-metrics/statsd-datadog/solution/solution-values.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="c3cece68-6f52-4a5a-8ebf-5757220ddde8" name="Changes" comment="Fix link" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,12 +24,12 @@
     &quot;assignee&quot;: &quot;jtruon&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/camunda-community-hub/challenges.git&quot;,
-    &quot;accountId&quot;: &quot;7d7a63b7-ca46-47c9-875a-c1551377ea09&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/camunda-community-hub/challenges.git",
+    "accountId": "8c9a0a2d-8c4e-45cb-ac62-cd47a54dfa52"
   }
-}</component>
+}]]></component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -68,6 +38,7 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2wEoEuPkajvA3aEQ2Cjfe6OwdSE" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -80,7 +51,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "c8-metrics",
+    "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/joey.truong/Documents/GitHub/challenges/datadog-metrics/solution/opentelemetry",
@@ -90,7 +61,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "configurable.group.tools",
+    "settings.editor.selected.configurable": "vcs.Git",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
@@ -110,19 +81,6 @@
       <recent name="$PROJECT_DIR$/c8-metrics/solution/openmetric-datadog/solution" />
       <recent name="$PROJECT_DIR$/c8-metrics/solution/opentelemetry-datadog/solution" />
     </key>
-  </component>
-  <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="challenges" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="challenges" />
-      <option name="filePath" />
-      <method v="2" />
-    </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>

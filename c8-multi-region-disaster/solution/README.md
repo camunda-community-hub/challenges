@@ -71,7 +71,9 @@ As downsize, we will reduce the number of brokers, sending to the cluster the ex
 Via this command, the cluster will automatically adapt the replication factor: there is only 2 actives brokers, the replication will be down to 2.
 
 ```shell
-curl -u demo:demo \
+$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
+
+$ curl -u demo:demo \
 --request POST 'http://localhost:9600/actuator/cluster/brokers?force=true' \
 -H 'Content-Type: application/json' \
 -d '["0","2"]'
@@ -102,16 +104,32 @@ $ kubectl scale statefulset camunda-elasticsearch-master --replicas=1;kubectl sc
 
 Pods must be up and running before proceeding to the next step
 
+```shell
+$ kubectl get pods -w
+NAME                             READY   STATUS    RESTARTS   AGE
+camunda-elasticsearch-master-0   1/1     Running   0          2m44s
+camunda-zeebe-0                  0/1     Running   0          2m43s
+camunda-zeebe-1                  0/1     Running   0          2m43s
+```
+
+> Pods will never become "READY" : they don't host any brokers at this moment.
+
 Execute this command to check the advancement
 
+> This command can be executed on blue or green region
+
 ```shell
+$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
+
 $ curl -u demo:demo http://localhost:8080/v2/topology | jq '.brokers[] | {nodeId, host, port}'
 ```
 
 It's possible to check the topology
 
 ```shell
-$  curl -u demo:demo 'http://localhost:8080/v2/topology' | jq
+$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
+
+$ curl -u demo:demo 'http://localhost:8080/v2/topology' | jq
 {
   "brokers": [
     {
@@ -206,10 +224,20 @@ $  curl -u demo:demo 'http://localhost:8080/v2/topology' | jq
 Brokers 1 and 3 are back in the cluster, but does not host any representative. The replication factor is still 2.
 
 
+At this moment:
+* Zeebe is fully operational, but use only half of broker
+* both Elasticsearch are accessible, exporters works, Operate and Tasklist are fully operational
+
+
 3. Add brokers in the cluster
 
+> This command can be executed in region blue or green
+ 
+
 ```shell
-curl -u demo:demo \
+$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
+
+$ curl -u demo:demo \
 -X 'PATCH' 'http://localhost:9600/actuator/cluster' \
 -H 'accept: application/json' \
 -H 'Content-Type: application/json' \
@@ -223,14 +251,17 @@ curl -u demo:demo \
 Check the advancement of the action
 
 ```shell
-curl -u demo:demo 'http://localhost:9600/actuator/cluster' | jq .pendingChange
+$ curl -u demo:demo 'http://localhost:9600/actuator/cluster' | jq .pendingChange
 ```
 
 4. Restart all pods
 
-Operation never finished. To restart the cluster, stop all camnuda-zeebe pods. Kubernetes will start them immediately
+Operation never finished. To restart the cluster, stop all camnuda-zeebe pods. Kubernetes will start them immediately.
+Pods are killed in the restarted region (green), so no impact on the througput on the running region (blue)
 
 ```shell
+$ kubectl config use-context gke_pierre-yves_us-east1_green-east
+
 $ kubernetes delete pod camunda-zeebe-0 camunda-zeebe-1
 ```
 
@@ -245,8 +276,12 @@ https://camunda.slack.com/archives/C08MRKHJ0CD/p1770417475388699
 
 5. Set back the replication factor to 4
 
+> This command can be executed in region blue or green
+
 ```shell
-curl -u demo:demo \
+$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
+
+$ curl -u demo:demo \
   -X 'PATCH' 'http://localhost:9600/actuator/cluster' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
@@ -261,8 +296,13 @@ curl -u demo:demo \
 This command may take time, it depends on the data to transfer.
 Check the advancement of the action
 
+> This command can be executed in region blue or green
+
+
 ```shell
-curl -u demo:demo 'http://localhost:9600/actuator/cluster' | jq .pendingChange
+$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
+
+$ curl -u demo:demo 'http://localhost:9600/actuator/cluster' | jq .pendingChange
 ```
 
 
@@ -272,6 +312,9 @@ There is two topology:
 
 * the description in terms of brokers
 Run the command
+
+> This command can be executed in region blue or green
+
 
 ```shell
 $ curl -u demo:demo http://localhost:8080/v2/topology | jq '.brokers[] | {nodeId, host, port}'

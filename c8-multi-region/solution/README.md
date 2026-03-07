@@ -129,6 +129,8 @@ Attention, each cluster must be in different namespace: the namespace must be di
 
 ## 1. Edit camunda-value.yaml
 
+See [camunda-value-blue.yaml](kubedns/camunda-value-blue.yaml) and [camunda-value-green.yaml](kubedns/camunda-value-green.yaml) example
+
 Add the multi region setting
 
 ```yaml
@@ -165,35 +167,25 @@ orchestration:
       camunda-zeebe-1.camunda-zeebe.green-east.svc.cluster.local:26502,
       camunda-zeebe-0.camunda-zeebe.blue-west.svc.cluster.local:26502,
       camunda-zeebe-1.camunda-zeebe.blue-west.svc.cluster.local:26502"
-    - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH0_CLASSNAME
-      value: io.camunda.zeebe.exporter.ElasticsearchExporter
-    - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH0_ARGS_URL
+```
+
+## 3. Set exporter      
+
+In both region, export to region blue and region green
+
+```yaml
+    - name: ZEEBE_BROKER_EXPORTERS_CAMUNDAREGION0_CLASSNAME
+      value: io.camunda.exporter.CamundaExporter
+    - name: ZEEBE_BROKER_EXPORTERS_CAMUNDAREGION0_ARGS_CONNECT_URL
       value: http://camunda-elasticsearch-master-hl.green-east.svc.cluster.local:9200
-    - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH1_CLASSNAME
-      value: io.camunda.zeebe.exporter.ElasticsearchExporter
-    - name: ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH1_ARGS_URL
+    - name: ZEEBE_BROKER_EXPORTERS_CAMUNDAREGION1_CLASSNAME
+      value: io.camunda.exporter.CamundaExporter
+    - name: ZEEBE_BROKER_EXPORTERS_CAMUNDAREGION1_ARGS_CONNECT_URL
       value: http://camunda-elasticsearch-master-hl.blue-west.svc.cluster.local:9200
 ```
 
-Create the cluster in Region 0 `blue-west`. The name blue-west is used in the INITIAL_CONTACT point so, this is the name of the namespace.
 
-```shell
-$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
-$ kubectl create namespace blue-west
-$ kubens blue-west
-$ helm upgrade --install --namespace blue-west camunda camunda/camunda-platform -f region0/camunda-value-88.yaml --skip-crds --version 13.4.1
-```
-
-Create the cluster in Region 1 `green-east`. The name green-east is used in the INITIAL_CONTACT point so, this is the name of the namespace.
-
-```shell
-$ kubectl config use-context gke_pierre-yves_us-east1_green-east
-$ kubectl create namespace green-east
-$ kubens green-east
-$ helm upgrade --install --namespace green-east camunda camunda/camunda-platform -f region1/camunda-value-88.yaml --skip-crds --version 13.4.1
-```
-
-## 3. Setup the timeout
+## 4. Set up the timeout
 
 Latency between region may be important, and when a broker cannot contact another broker on the second region. Increase the timeout
 
@@ -214,4 +206,30 @@ Latency between region may be important, and when a broker cannot contact anothe
 - name: ZEEBE_BROKER_CLUSTER_REQUESTTIMEOUT
   value: 45s
 ```
+
+
+## 5. Create the cluster
+
+Create the cluster in Region 0 `blue-west`. The name blue-west is used in the INITIAL_CONTACT point so, this is the name of the namespace.
+
+```shell
+$ kubectl config use-context gke_pierre-yves_us-east1_blue-west
+$ kubectl create namespace blue-west
+$ kubens blue-west
+$ helm upgrade --install --namespace blue-west camunda camunda/camunda-platform -f camunda-value-blue.yaml --skip-crds --version 13.4.1
+```
+
+Create the cluster in Region 1 `green-east`. The name green-east is used in the INITIAL_CONTACT point so, this is the name of the namespace.
+
+```shell
+$ kubectl config use-context gke_pierre-yves_us-east1_green-east
+$ kubectl create namespace green-east
+$ kubens green-east
+$ helm upgrade --install --namespace green-east camunda camunda/camunda-platform -f camunda-value-green.yaml --skip-crds --version 13.4.1
+```
+
+# Verify the cluster 
+
+In one region, connect to Operate. In the configuration, we configure a basic authentication, with the user demo/demo.
+
 
