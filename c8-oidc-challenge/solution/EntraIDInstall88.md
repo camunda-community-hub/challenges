@@ -928,3 +928,6 @@ Then, access it via a browser.
 The result contains a list of keys. Each key has a `kid`. The `kid` present in the token must be referenced in the list.
 
 > ATTENTION: Camunda manage only one JWKS repository. All tokens generated contains a kid. All kids must be visible in the JWKS.
+
+### Scenario Debugging
+Audience claim is not valid/mismatch: [aud_claim_is_not_valid](debug/aud_claim_is_not_valid.md)
