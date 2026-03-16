@@ -13,17 +13,11 @@ The connector return a list of holidays
 
 * [office to PDF](https://marketplace.camunda.com/en-US/apps/427521/office-to-pdf)
 
-The connector transform a Office document to a PDF, and store it in the Temporary folder of the machine
+The connector transform an Office document to a PDF, and store it in the Temporary folder of the machine
 
 ![Office to PDF](doc/OfficeToPDFConnector.png)
 
-* [mail Thymeleaf Connector](https://marketplace.camunda.com/en-US/apps/430240/mail-thymeleaf-connector)
 
-The connector create a email from a template, and send it as mail. The Google email SMTP can be used 
-
-![Mail Thymeleaf Connector.png](doc/MailThymeleafConnector.png)
-
-On a self-manage cluster, it's necessary to deploy this connector from the marketplace.
 Three solutions are expected.
 
 Then, deploy the same process on a Cloud, and use one solution to run the process.
@@ -62,4 +56,6 @@ Start a process instance in the `LoanApplication`. This process instance is paus
 
 A solution path is given under the folder "solution".
 
-
+* This solution use the [CherryRuntime.md](solution/CherryRuntime.md)
+* This solution upload connector on the Connector Runtime [ConnectorRuntime.md](solution/ConnectorRuntime.md)
+* A [Specific Image.md](solution/SpecificImage.md) can be used to deploy connectors 

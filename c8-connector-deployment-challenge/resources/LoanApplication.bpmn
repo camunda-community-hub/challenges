@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1bvi78j" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.34.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1bvi78j" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.45.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
   <bpmn:process id="loanApplication" name="loanApplication" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_02tr0gn</bpmn:outgoing>
@@ -7,7 +7,7 @@
     <bpmn:sequenceFlow id="Flow_02tr0gn" sourceRef="StartEvent_1" targetRef="Activity_1snvjcp" />
     <bpmn:sequenceFlow id="Flow_0b2io2b" sourceRef="Activity_1sdldk3" targetRef="Activity_02olnii" />
     <bpmn:userTask id="Activity_18biasc" name="Goal!">
-      <bpmn:incoming>Flow_1okpb8g</bpmn:incoming>
+      <bpmn:incoming>Flow_1p5eccz</bpmn:incoming>
       <bpmn:outgoing>Flow_0sh635z</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:endEvent id="Event_04njy74">
@@ -26,7 +26,7 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="c-pdf-convert-to" />
         <zeebe:ioMapping>
-          <zeebe:input source="=&#34;{ \&#34;storageDefinition\&#34;: \&#34;URL\&#34;, \&#34;content\&#34;: \&#34;https://github.com/camunda-community-hub/challenges/blob/main/c8-connector-deployment-challenge/resources/resources/Congratulations.docx\&#34;}&#34;" target="sourceFileVariable" />
+          <zeebe:input source="=&#34;{ \&#34;storageDefinition\&#34;: \&#34;URL\&#34;, \&#34;content\&#34;: \&#34;https://github.com/camunda-community-hub/challenges/raw/refs/heads/main/c8-connector-deployment-challenge/resources/Congratulations.docx\&#34;}&#34;" target="sourceFileVariable" />
           <zeebe:input source="Congratulations" target="destinationFileName" />
           <zeebe:input source="true" target="destinationStorageDefinition_optional" />
           <zeebe:input source="TEMPFOLDER" target="destinationStorageDefinition" />
@@ -60,39 +60,12 @@
       <bpmn:incoming>Flow_1pagnh9</bpmn:incoming>
       <bpmn:outgoing>Flow_0b2io2b</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0swf9zv" name="Thymleaf" zeebe:modelerTemplate="ch.brix.camunda.connectors.mail-thymeleaf-connector:1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/png;base64,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">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ch.brix.camunda.connectors.mail-thymeleaf-connector:1" />
-        <zeebe:ioMapping>
-          <zeebe:input source="US" target="locale" />
-          <zeebe:input source="challenge@camunda.com" target="from" />
-          <zeebe:input source="userinfo.email" target="to" />
-          <zeebe:input source="YES" target="separate" />
-          <zeebe:input source="Congratulation {0} {1} to pass the challenge" target="subject" />
-          <zeebe:input source="=userinfo.firstName" target="replacement0" />
-          <zeebe:input source="=userinfo.lastName" target="replacement1" />
-          <zeebe:input source="congratulation" target="template" />
-          <zeebe:input source="=userinfo" target="variables" />
-        </zeebe:ioMapping>
-        <zeebe:taskHeaders />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1p5eccz</bpmn:incoming>
-      <bpmn:outgoing>Flow_1okpb8g</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1okpb8g" sourceRef="Activity_0swf9zv" targetRef="Activity_18biasc" />
-    <bpmn:sequenceFlow id="Flow_1p5eccz" sourceRef="Activity_02olnii" targetRef="Activity_0swf9zv" />
+    <bpmn:sequenceFlow id="Flow_1p5eccz" sourceRef="Activity_02olnii" targetRef="Activity_18biasc" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="loanApplication">
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="152" y="102" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1agm2sw_di" bpmnElement="Activity_18biasc">
-        <dc:Bounds x="1020" y="80" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_04njy74_di" bpmnElement="Event_04njy74">
-        <dc:Bounds x="1172" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1ide2nc_di" bpmnElement="Activity_1snvjcp">
         <dc:Bounds x="250" y="80" width="100" height="80" />
@@ -104,9 +77,12 @@
       <bpmndi:BPMNShape id="Activity_1gkpn43_di" bpmnElement="Activity_1sdldk3">
         <dc:Bounds x="410" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ndrqtc_di" bpmnElement="Activity_0swf9zv">
-        <dc:Bounds x="790" y="80" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_1agm2sw_di" bpmnElement="Activity_18biasc">
+        <dc:Bounds x="760" y="80" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04njy74_di" bpmnElement="Event_04njy74">
+        <dc:Bounds x="912" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_02tr0gn_di" bpmnElement="Flow_02tr0gn">
         <di:waypoint x="188" y="120" />
@@ -117,20 +93,16 @@
         <di:waypoint x="550" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0sh635z_di" bpmnElement="Flow_0sh635z">
-        <di:waypoint x="1120" y="120" />
-        <di:waypoint x="1172" y="120" />
+        <di:waypoint x="860" y="120" />
+        <di:waypoint x="912" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1pagnh9_di" bpmnElement="Flow_1pagnh9">
         <di:waypoint x="350" y="120" />
         <di:waypoint x="410" y="120" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1okpb8g_di" bpmnElement="Flow_1okpb8g">
-        <di:waypoint x="890" y="120" />
-        <di:waypoint x="1020" y="120" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1p5eccz_di" bpmnElement="Flow_1p5eccz">
         <di:waypoint x="650" y="120" />
-        <di:waypoint x="790" y="120" />
+        <di:waypoint x="760" y="120" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

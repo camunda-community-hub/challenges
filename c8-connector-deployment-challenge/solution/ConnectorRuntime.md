@@ -18,20 +18,46 @@ Marketplace: [office to PDF](https://marketplace.camunda.com/en-US/apps/427521/o
 
   ![Office to PDF](../doc/OfficeToPDFConnector.png)
 
+Looking in the realease section on the GitHub, a JAR file is present
+https://github.com/camunda-community-hub/camunda-8-connector-officetopdf/releases
 
-ToDo: how to deploy this in the connectorRuntime.
-Connector runtime scan a directory at startup, and if the JAR is deployed in this path, it will be loaded.
+The release 1.1 exist, and the JAR file can be uploaded at https://github.com/camunda-community-hub/camunda-8-connector-officetopdf/releases/download/1.1.0/office-to-pdf-1.1.0-with-dependencies.jar
 
-1/ the path is not documented, must be search
+The principle is to add an initContainer in the connectorRuntime. The initContainer will upload the JAR file on the local directory
 
-2/ What is the best way to mount this path? Via a configMap maybe?
+This folder is monitored at startup by the connectorRuntime, and any JAR is loaded, being introspected. and any connector present in the JAR are started.
 
+Visit https://docs.camunda.io/docs/8.6/self-managed/setup/guides/running-custom-connectors/#modify-connectors-config
 
-# Email Thymeleaf
+```yaml
+connectors:
+  initContainers:
+    - name: office-to-pdf-downloader
+      image: appropriate/curl
+      securityContext:
+        runAsUser: 1000
+        runAsNonRoot: true      
+      args:
+        - "-L"
+        - "-o"
+        - "/opt/custom/office-to-pdf-1.1.0-with-dependencies.jar"
+        - "https://github.com/camunda-community-hub/camunda-8-connector-officetopdf/releases/download/1.1.0/office-to-pdf-1.1.0-with-dependencies.jar"
+      volumeMounts:
+        - name: custom-connectors
+          mountPath: /opt/custom
 
-Marketplace: [mail Thymeleaf Connector](https://marketplace.camunda.com/en-US/apps/430240/mail-thymeleaf-connector)
+  extraVolumes:
+    - name: custom-connectors
+      emptyDir: {}
 
-![MailThymeleafConnector.png](../doc/MailThymeleafConnector.png)
+  extraVolumeMounts:
+    - name: custom-connectors
+      mountPath: /opt/custom/office-to-pdf-1.1.0-with-dependencies.jar
+      subPath: office-to-pdf-1.1.0-with-dependencies.jar
+```
 
-The way to use the connector is not documented, so how to deploy it and how to use it?
+# Execute it and verify the result in Operate
 
+Deploy the process LoanApplication, and create a process instance.
+
+![Operate](../resources/ConnectorRuntimeOperate.png)
