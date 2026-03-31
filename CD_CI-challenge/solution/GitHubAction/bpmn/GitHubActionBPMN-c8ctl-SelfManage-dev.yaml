@@ -1,0 +1,26 @@
+name: Camunda Deploy Dev
+
+on:
+  workflow_dispatch: {}              # manual trigger for testing
+  push:
+    branches:
+      - dev
+    paths:
+      - "bpmn/**"
+      - "dmn/**"
+      - "forms/**"
+      - ".github/workflows/GitHubActionBPMN-c8ctl-SelfManage-dev.yaml"
+
+jobs:
+  deploy-dev:
+    uses: ./.github/workflows/GitHubActionBPMN-c8ctl-SelfManage.yaml
+    with:
+      environment: dev
+      project_dir: .
+      resource_paths: "bpmn dmn forms"
+    secrets:
+      CAMUNDA_BASE_URL: ${{ secrets.DEV_CAMUNDA_BASE_URL }}
+      CAMUNDA_CLIENT_ID: ${{ secrets.DEV_CAMUNDA_CLIENT_ID }}
+      CAMUNDA_CLIENT_SECRET: ${{ secrets.DEV_CAMUNDA_CLIENT_SECRET }}
+      CAMUNDA_OAUTH_URL: ${{ secrets.DEV_CAMUNDA_OAUTH_URL }}
+      CAMUNDA_TOKEN_AUDIENCE: ${{ secrets.DEV_CAMUNDA_TOKEN_AUDIENCE }}
