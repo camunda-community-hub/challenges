@@ -30,12 +30,12 @@ When you push a new version of a BPMN process, or a new process, this process is
 
 
 
-| Solution      | Saas                                               | Self Manage                                                     |
-|---------------|----------------------------------------------------|-----------------------------------------------------------------|
-| GitHub action | [Saas](GitHubAction/bpmn/GitHubActionBPMNSaaS.md)  | [Self Manage](GitHubAction/bpmn/GitHubActionBPMNSelfManage.md)  |
-| Jenkins       |                                                    |                                                                 |
-| Process       |                                                    |                                                                 |
 
+| Solution      | Saas                                               | Self Manage                                                     | c8ctl                                                                      |
+|---------------|----------------------------------------------------|-----------------------------------------------------------------|----------------------------------------------------------------------------|
+| GitHub action | [Saas](GitHubAction/bpmn/GitHubActionBPMNSaaS.md)  | [Self Manage](GitHubAction/bpmn/GitHubActionBPMNSelfManage.md)  | [c8ctl](GitHubAction/bpmn/GitHubActionBPMN-c8ctl-SelfManage.md) |
+| Jenkins       |                                                    |                                                                 |                                                                            |
+| Process       |                                                    |                                                                 |                                                                            |
 
 # Chapter 2: Worker Continuous deployment
 
