@@ -1,0 +1,71 @@
+name: _camunda deploy (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+      project_dir:
+        type: string
+        required: false
+        default: .
+      resource_paths:
+        type: string
+        required: false
+        default: "bpmn dmn forms"
+    secrets:
+      CAMUNDA_BASE_URL:
+        required: true
+      CAMUNDA_CLIENT_ID:
+        required: true
+      CAMUNDA_CLIENT_SECRET:
+        required: true
+      CAMUNDA_OAUTH_URL:
+        required: true
+      CAMUNDA_TOKEN_AUDIENCE:
+        required: true
+
+jobs:
+  deploy-workflows:
+    # runs-on: ubuntu-latest
+    runs-on: [self-hosted, dev]
+
+    permissions:
+      contents: read
+
+    defaults:
+      run:
+        working-directory: ${{ inputs.project_dir }}
+
+    env:
+      ENVIRONMENT: ${{ inputs.environment }}
+      RESOURCE_PATHS: ${{ inputs.resource_paths }}
+
+      CAMUNDA_BASE_URL: ${{ secrets.CAMUNDA_BASE_URL }}
+      CAMUNDA_AUTH_STRATEGY: OAUTH
+      CAMUNDA_CLIENT_ID: ${{ secrets.CAMUNDA_CLIENT_ID }}
+      CAMUNDA_CLIENT_SECRET: ${{ secrets.CAMUNDA_CLIENT_SECRET }}
+      CAMUNDA_OAUTH_URL: ${{ secrets.CAMUNDA_OAUTH_URL }}
+      CAMUNDA_TOKEN_AUDIENCE: ${{ secrets.CAMUNDA_TOKEN_AUDIENCE }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+
+      - name: Install c8ctl CLI
+        run: npm install -g @camunda8/cli
+
+      - name: Deploy Camunda resources
+        run: |
+          echo "Deploying to environment=${ENVIRONMENT}"
+          echo "CAMUNDA_BASE_URL=${CAMUNDA_BASE_URL}"
+          # OPTIONAL: Trust local mkcert CA so Node/c8ctl accepts your TLS cert (Uncomment for self-host github runner)
+          export NODE_EXTRA_CA_CERTS="$(mkcert -CAROOT)/rootCA.pem"
+          # Deploy all configured resource paths (e.g. bpmn dmn forms)
+          c8ctl deploy ${RESOURCE_PATHS}
