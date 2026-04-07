@@ -1,6 +1,11 @@
 # Kube DNS 
 
-We setup kube-dns automatically through a python script to route traffic to the distant cluster based on the namespace. This requires to have different namespaces in each cluster.
+![DNS_chaining.png](../images/DNS_chaining.png)
+
+The principe is to give a public IP address to each cluster, then to register this IP address on the DNS.
+When a pod want to access `zeebe-0.blue-west`, the local DNS route the request to the blue DNS via the public IP address. The blue DNS host the blue domain, then it can direct to the pod in the cluster.
+
+This requires to have different namespaces in each cluster, to identify the pod name by the namespace.
 
 ## Dns Load balancer
 
