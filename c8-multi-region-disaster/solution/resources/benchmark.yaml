@@ -52,8 +52,8 @@ spec:
             memory: 1Gi
         volumeMounts:
         - name: payload
-          mountPath: payload.json
-          subPath: payload.json
+          mountPath: payload-bankofandora.json
+          subPath: payload-bankofandora.json
           readOnly: true
       volumes:
       - name: payload
