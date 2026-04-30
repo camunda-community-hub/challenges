@@ -6,6 +6,7 @@ Load test challenge: from a specification, identify the correct cluster configur
 Check the [Specification. md](doc/Specification.md) file to see the target. Your goal is to set up a cluster that can handle this load.
 
 The specification is complex and does not have a very high throughput. This example will help you practice the tooling, understand the bottleneck, and adjust the configuration.
+
 # Tooling
 Set up a load environment. It would help if you chose a way to simulate the load. You have different options:
 * Develop your application. Create a software-injecting process instance

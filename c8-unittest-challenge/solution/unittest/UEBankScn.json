@@ -1,0 +1,121 @@
+{
+  "name": "UE Bank",
+  "processId": "Tran_BOA",
+  "serverType": "Camunda_8",
+  "typeScenario": "UNIT",
+  "versionTest" : "1.1",
+  "description": "Go by the UE Bank process",
+  "executions": [
+    {
+      "name": "National Transaction",
+      "policy" : "STOPATFIRSTERROR",
+      "waitForOperateImport": 5,
+      "steps": [
+        {
+          "type": "STARTEVENT",
+          "taskId": "Start_Transaction",
+          "processId": "Tran_BOA",
+          "variables": {
+            "identification": "Jan.Fisher",
+            "amount": 3530.44
+          }
+        },
+        {
+          "taskId": "Activity_CheckIdentity",
+          "jobType": "check-identity",
+          "type": "SERVICETASK",
+          "description": "Pass the identity"
+        },
+        {
+          "taskId": "Activity_CheckTransaction",
+          "jobType": "check-transaction",
+          "type": "SERVICETASK",
+          "description": "Pass the Check transaction",
+          "variables": {
+            "transaction": "UE"
+          }
+        },
+        {
+          "taskId": "Activity_ValidateUEBank",
+          "jobType": "validate-UE-bank",
+          "type": "SERVICETASK",
+          "description": "Flow go to the National transaction",
+          "variables": {
+            "transactionStatus": "DONE",
+            "listAccreditionsOrg" : ["BNP", "Deutsche Bank"]
+          }
+        },
+        {
+          "taskId": "Activity_VerifyUEBlackAccount",
+          "jobType": "verify-accreditation-org",
+          "type": "SERVICETASK",
+          "description": "Validate bank",
+          "numberOfExecutions": 2,
+          "variables": {
+          }
+        },
+        {
+          "taskId": "Activity_UE_Transaction",
+          "jobType": "ue-transaction",
+          "type": "SERVICETASK",
+          "description": "Do UE Transaction",
+          "variables": {
+          }
+        },
+        {
+          "taskId": "Activity_NotifyCustomerSuccess",
+          "jobType": "notify-customer",
+          "type": "SERVICETASK",
+          "description": "Customer is notified with the success of the transaction"
+        }
+      ],
+      "verifications": {
+        "activities": [
+          {
+            "taskId": "Activity_CheckIdentity",
+            "type": "TASK",
+            "description": "Pass the identity"
+          },
+          {
+            "taskId": "Activity_CheckTransaction",
+            "type": "TASK",
+            "description": "Pass the Check transaction"
+          },
+          {
+            "taskId": "Activity_ValidateUEBank",
+            "type": "TASK",
+            "description": "Flow go to the National transaction"
+          },
+          {
+            "taskId": "Activity_VerifyUEBlackAccount",
+            "type": "TASK",
+            "description": "Verify Black Account",
+            "numberOfTasks": 2
+          },
+          {
+            "taskId": "Activity_UE_Transaction",
+            "type": "TASK",
+            "description": "Verify Black Account"
+          },
+          {
+            "taskId": "Activity_NotifyCustomerSuccess",
+            "type": "TASK",
+            "description": "Customer is notified with the success of the transaction"
+          },
+          {
+            "type": "ENDEVENT",
+            "taskId": "End_Transaction"
+          }
+        ],
+        "variables": [
+          {
+            "description": "Transaction is validate",
+            "name": "transactionStatus",
+            "value": "DONE"
+          }
+        ],
+        "performances": []
+      }
+    }
+  ]
+}

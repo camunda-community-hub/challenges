@@ -1,0 +1,100 @@
+{
+  "name": "Sensitive Transaction",
+  "processId": "Tran_BOA",
+  "serverType": "Camunda_8",
+  "typeScenario": "UNIT",
+  "versionTest": "1.0",
+  "description": "Sensitive path",
+  "executions": [
+    {
+      "name": "National Transaction",
+      "policy": "STOPATFIRSTERROR",
+      "waitForOperateImport": 5,
+      "steps": [
+        {
+          "type": "STARTEVENT",
+          "taskId": "Start_Transaction",
+          "processId": "Tran_BOA",
+          "variables": {
+            "identification": "Jan.Fisher",
+            "amount": 3530.44
+          }
+        },
+        {
+          "taskId": "Activity_CheckIdentity",
+          "jobType": "check-identity",
+          "type": "SERVICETASK",
+          "description": "Pass the identity"
+        },
+        {
+          "taskId": "Activity_CheckTransaction",
+          "jobType": "check-transaction",
+          "type": "SERVICETASK",
+          "description": "Pass the Check transaction",
+          "variables": {
+            "transaction": "sensitive"
+          }
+        },
+        {
+          "taskId": "Activity_ReviewSensitive",
+          "type": "USERTASK",
+          "description": "Human review",
+          "variables": {
+            "reviewAccepted": true
+          }
+        },
+        {
+          "taskId": "Activity_SensitiveTransaction",
+          "jobType": "sensitive-transaction",
+          "type": "SERVICETASK",
+          "description": "Flow go to the Sensitive transaction",
+          "variables": {
+            "transactionStatus": "DONE"
+          }
+        },
+        {
+          "taskId": "Activity_NotifyCustomerSuccess",
+          "jobType": "notify-customer",
+          "type": "SERVICETASK",
+          "description": "Customer is notified with the success of the transaction"
+        }
+      ],
+      "verifications": {
+        "activities": [
+          {
+            "taskId": "Activity_CheckIdentity",
+            "type": "TASK",
+            "description": "Pass the identity"
+          },
+          {
+            "taskId": "Activity_CheckTransaction",
+            "type": "TASK",
+            "description": "Pass the Check transaction"
+          },
+          {
+            "taskId": "Activity_SensitiveTransaction",
+            "type": "TASK",
+            "description": "Flow go to the National transaction"
+          },
+          {
+            "taskId": "Activity_NotifyCustomerSuccess",
+            "type": "TASK",
+            "description": "Customer is notified with the success of the transaction"
+          },
+          {
+            "type": "ENDEVENT",
+            "taskId": "End_Transaction"
+          }
+        ],
+        "variables": [
+          {
+            "description": "Transaction is validate",
+            "name": "transactionStatus",
+            "value": "DONE"
+          }
+        ],
+        "performances": []
+      }
+    }
+  ]
+}

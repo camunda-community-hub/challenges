@@ -4,7 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c3cece68-6f52-4a5a-8ebf-5757220ddde8" name="Changes" comment="Update disaster challenge" />
+    <list default="true" id="c3cece68-6f52-4a5a-8ebf-5757220ddde8" name="Changes" comment="Rename to CI_CD">
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/BankOfAndora.bpmn" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/images/BankOfAndora_benchmark.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/solution/PEA_DefaultServer.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/solution/PEA_HomePage.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/solution/PEA_NationalScnListDetail.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/solution/PEA_NationalTransaction Result.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/solution/PEA_UploadNationalScn.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/solution/PerformanceScn.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/solution/SOLUTION.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/solution/unittest/InternationalScn.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/solution/unittest/NationalScn.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/solution/unittest/SensitiveScn.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c8-unittest-challenge/solution/unittest/UEBankScn.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c8-loadtest-challenge/BankOfAndora.bpmn" beforeDir="false" afterPath="$PROJECT_DIR$/c8-loadtest-challenge/BankOfAndora.bpmn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c8-loadtest-challenge/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/c8-loadtest-challenge/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c8-loadtest-challenge/solution/test_benchmark/BankOfAndora_benchmark.bpmn" beforeDir="false" afterPath="$PROJECT_DIR$/c8-loadtest-challenge/solution/test_benchmark/BankOfAndora_benchmark.bpmn" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,7 +74,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/joey.truong/Documents/GitHub/challenges/datadog-metrics/solution/opentelemetry&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/dev/intellij/consulting/challenges/c8-unittest-challenge/solution/unittest&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -68,18 +88,18 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/datadog-metrics/solution/opentelemetry" />
-      <recent name="$PROJECT_DIR$/statsd-micrometer/solution/saas/image" />
-      <recent name="$PROJECT_DIR$/statsd-micrometer/solution/saas" />
-      <recent name="$PROJECT_DIR$/es-api-key-challenge/solution/plugin" />
-      <recent name="$PROJECT_DIR$/c8-loadtest-challenge/solution/test_1" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-unittest-challenge\solution\unittest" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-unittest-challenge\solution" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-unittest-challenge" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-loadtest-challenge\solution\test_benchmark" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-loadtest-challenge\solution\images" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\dev\intellij\consulting\challenges\c8-unittest-challenge\solution\unittest" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-loadtest-challenge\solution\images" />
       <recent name="$PROJECT_DIR$/c8-metrics/opentelemetry-datadog/image" />
       <recent name="$PROJECT_DIR$/c8-metrics" />
       <recent name="$PROJECT_DIR$/c8-metrics/solution/datadog/solution" />
-      <recent name="$PROJECT_DIR$/c8-metrics/solution/openmetric-datadog/solution" />
-      <recent name="$PROJECT_DIR$/c8-metrics/solution/opentelemetry-datadog/solution" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -120,6 +140,12 @@
       <workItem from="1772031096296" duration="4000" />
       <workItem from="1772130211344" duration="8740000" />
       <workItem from="1772845166575" duration="1375000" />
+      <workItem from="1775581726614" duration="56736000" />
+      <workItem from="1776293502068" duration="487000" />
+      <workItem from="1776351798716" duration="13081000" />
+      <workItem from="1777039286311" duration="579000" />
+      <workItem from="1777307822123" duration="1953000" />
+      <workItem from="1777335048166" duration="9978000" />
     </task>
     <task id="LOCAL-00001" summary="istio technical challenge">
       <option name="closed" value="true" />
@@ -153,7 +179,31 @@
       <option name="project" value="LOCAL" />
       <updated>1772847363330</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Add drawing">
+      <option name="closed" value="true" />
+      <created>1775581976873</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1775581976873</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Add drawing">
+      <option name="closed" value="true" />
+      <created>1775602243451</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1775602243451</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Rename to CI_CD">
+      <option name="closed" value="true" />
+      <created>1777566662294</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1777566662294</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -175,6 +225,8 @@
     <MESSAGE value="istio technical challenge - initial commit" />
     <MESSAGE value="statsD-micrometer-datadog-integration" />
     <MESSAGE value="Update disaster challenge" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update disaster challenge" />
+    <MESSAGE value="Add drawing" />
+    <MESSAGE value="Rename to CI_CD" />
+    <option name="LAST_COMMIT_MESSAGE" value="Rename to CI_CD" />
   </component>
 </project>

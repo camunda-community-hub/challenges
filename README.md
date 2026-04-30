@@ -60,7 +60,7 @@ Implement a robust **CI/CD pipeline** for Camunda 8:
 - Integrate tests to run nightly or on push.
 - Ensure platform consistency across all environments.
 
-Visit immediately the [CD CI](CD_CI-challenge/README.md) path
+Visit immediately the [CD CI](CI_CD-challenge/README.md) path
 
 
 ---
