@@ -1,0 +1,11 @@
+camunda:
+  client:
+    mode: self-managed
+    zeebe:
+      enabled: true
+      grpc-address: http://localhost:26500
+      preferRestOverGrpc: false
+      execution-threads: 100
+      defaults:
+        max-jobs-active: 100
+

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loanscore
+  labels:
+    app: loanscore
+spec:
+  selector:
+    matchLabels:
+      app: loanscore
+  # 34
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: loanscore
+    spec:
+      containers:
+        - name: loanscore
+          image: ghcr.io/pierre-yves-monnet/c8-automate-test:latest
+          # must be set to always: then any kubectl apply will reload the latest image
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >-
+                -Dcamunda.client.zeebe.grpc-address=http://camunda-zeebe-gateway:26500
+                -Dcamunda.client.mode=self-managed
+                -Dcamunda.client.auth.client-id=zeebe
+                -Dcamunda.client.auth.client-secret=FsWEvP8S96
+                -Dcamunda.client.auth.token-url=http://35.237.139.124:8080/auth/realms/camunda-platform/protocol/openid-connect/token
+                -Dautomator.startup.logLevel=MAIN
