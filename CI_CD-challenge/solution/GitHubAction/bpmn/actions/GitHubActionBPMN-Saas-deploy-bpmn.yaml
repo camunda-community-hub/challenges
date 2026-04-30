@@ -1,0 +1,65 @@
+name: 'Deploy updated BPMNs to Zeebe SaaS'
+on:
+  push:
+    paths:
+      - 'src/main/resources/*.bpmn'
+      - 'src/main/resources/*.dmn'
+      - 'src/main/resources/*.form'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  deploy-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: file-changes
+        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96  # v47.0.6
+        with:
+          files: |
+            src/main/resources/*.bpmn
+            src/main/resources/*.dmn
+
+      - name: Debug changed files
+        run: |
+          echo "Added:    ${{ steps.file-changes.outputs.added_files }}"
+          echo "Modified: ${{ steps.file-changes.outputs.modified_files }}"
+
+      - name: Get Bearer Token
+        uses: fjogeleit/http-request-action@v2
+        id: zeebeBearer
+        with:
+          url: 'https://login.cloud.camunda.io/oauth/token'
+          method: 'POST'
+          customHeaders: '{"Content-Type": "application/x-www-form-urlencoded"}'
+          data: 'grant_type=client_credentials&audience=zeebe.camunda.io&client_id=${{ secrets.ZEEBE_CLIENT_ID }}&client_secret=${{ secrets.ZEEBE_CLIENT_SECRET }}'
+
+      - name: Deploy added & modified files to Zeebe
+        env:
+          ACCESS_TOKEN: ${{ fromJson(steps.zeebeBearer.outputs.response).access_token }}
+          CLUSTER_REGION: ${{ secrets.CLUSTER_REGION }}
+          CLUSTER_ID: ${{ secrets.CLUSTER_ID }}
+          ADDED_FILES: ${{ steps.file-changes.outputs.added_files }}
+          MODIFIED_FILES: ${{ steps.file-changes.outputs.modified_files }}
+        run: |
+          deploy_file() {
+            local file="$1"
+            echo "Deploying: $file"
+            curl -X POST "https://${CLUSTER_REGION}.zeebe.camunda.io/${CLUSTER_ID}/v2/deployments" \
+              -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+              -F "resources=@${GITHUB_WORKSPACE}/${file}"
+          }
+
+          for file in $ADDED_FILES; do
+            deploy_file "$file"
+          done
+
+          for file in $MODIFIED_FILES; do
+            deploy_file "$file"
+          done

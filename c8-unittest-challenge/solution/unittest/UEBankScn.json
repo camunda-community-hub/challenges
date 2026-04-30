@@ -9,7 +9,7 @@
     {
       "name": "National Transaction",
       "policy" : "STOPATFIRSTERROR",
-      "waitForOperateImport": 5,
+      "waitForOperateImport": 10,
       "steps": [
         {
           "type": "STARTEVENT",
