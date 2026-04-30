@@ -73,7 +73,7 @@ Create a file name `saas-deploy-bpmn.yaml` inside
 
 ![img.png](images/SaaS-GitHub-Workflow.png)
 
-Use the [saas-deploy-bpmn.yaml](saas-deploy-bpmn.yaml) file provided.
+Use the [saas-deploy-bpmn.yaml](actions/saas-deploy-bpmn.yaml) file provided.
 
 # 4. Change something in the workflow and push it
 

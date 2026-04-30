@@ -152,7 +152,7 @@ Create a file name `sm-deploy-bpmn.yaml` inside
 
 ![img.png](images/SM-GitHub-Workflow.png)
 
-Use the [sm-deploy-bpmn.yaml](saas-deploy-bpmn.yaml) file provided.
+Use the [sm-deploy-bpmn.yaml](actions/saas-deploy-bpmn.yaml) file provided.
 
 Adapt the file if you use a Client ID / CLient Secret
 
