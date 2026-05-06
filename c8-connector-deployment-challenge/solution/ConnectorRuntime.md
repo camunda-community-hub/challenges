@@ -18,7 +18,7 @@ Marketplace: [office to PDF](https://marketplace.camunda.com/en-US/apps/427521/o
 
   ![Office to PDF](../doc/OfficeToPDFConnector.png)
 
-Looking in the realease section on the GitHub, a JAR file is present
+Looking in the release section on the GitHub, a JAR file is present
 https://github.com/camunda-community-hub/camunda-8-connector-officetopdf/releases
 
 The release 1.1 exist, and the JAR file can be uploaded at https://github.com/camunda-community-hub/camunda-8-connector-officetopdf/releases/download/1.1.0/office-to-pdf-1.1.0-with-dependencies.jar
