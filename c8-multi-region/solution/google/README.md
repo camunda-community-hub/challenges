@@ -43,11 +43,11 @@ Any firewall must be open between the two cluters
 ## Google
 In GKE, select the firewall and create a rule to allow cluster `blue` to communicate to cluster `green` in both direction.
 
-![img.png](../../c8-multi-region/solution/images/GKE_Firewall.png)
+![img.png](images/GKE_Firewall.png)
 
 Create a `Firewall rule`:
 
-![img.png](../../c8-multi-region/solution/images/GKE_FirewallRule.png)
+![img.png](images/GKE_FirewallRule.png)
 
 Set
 
@@ -62,7 +62,7 @@ Set
 
 
 Result is
-![Firewall Configuration](../../c8-multi-region/solution/images/GKE_FirewallConfiguration.png)
+![Firewall Configuration](images/GKE_FirewallConfiguration.png)
 
 Click on `Create`
 
