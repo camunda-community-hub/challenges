@@ -4,7 +4,12 @@ Create a multi regions cluster. Multi region can be two or more regions.
 
 Different architecture are possible.
 
-Check the [Solution](solution/README.md) for the detail of implementation.
+## Solutions
+
+| Cloud | Approach | Guide |
+|---|---|---|
+| Azure (AKS) | CoreDNS proxy + static public IPs | [solution/azure/coredns/Solution.md](solution/azure/coredns/Solution.md) |
+| Google (GKE) | KubeDNS stub domains + VPC-native networking | [solution/google/kubedns/KubeDns.md](solution/google/kubedns/KubeDns.md) |
 
 # Dual region
 Visit (https://docs.camunda.io/docs/self-managed/concepts/multi-region/dual-region/)
