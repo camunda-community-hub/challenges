@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: benchmark
+  labels:
+    app: benchmark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: benchmark
+  template:
+    metadata:
+      labels:
+        app: benchmark
+    spec:
+      containers:
+        - name: benchmark
+          image: camundacommunityhub/camunda-8-benchmark:main
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_OPTIONS
+              value: >-
+                -Dcamunda.client.mode=selfmanaged
+                -Dcamunda.client.zeebe.grpc-address=http://camunda-zeebe-gateway:26500
+                -Dcamunda.client.zeebe.prefer-rest-over-grpc=false
+                -Dcamunda.client.zeebe.request-timeout=600s
+                -Dzeebe.client.default-job-worker-stream-enabled=true
+                -Dzeebe.client.worker.max-jobs-active=200
+                -Dbenchmark.maxBackpressurePercentage=1.0
+                -Dbenchmark.taskCompletionDelay=10
+                -Dbenchmark.bpmnProcessId=Tran_BOA_Benchmark
+                -Dbenchmark.jobType=benchmark-task
+                -Dbenchmark.multipleJobTypes=8
+                -Dbenchmark.payloadPath=file:/payload-bankofandora.json
+                -Dbenchmark.autoDeployProcess=false
+                -Dbenchmark.warmupPhaseDurationMillis=1000
+                -Dbenchmark.startRateAdjustmentStrategy=backpressure
+                -Dbenchmark.startPiPerSecond=222
+                -Dbenchmark.startPiIncreaseFactor=0
+          resources:
+            limits:
+              cpu: 1
+              memory: 4Gi
+            requests:
+              cpu: 1
+              memory: 1Gi
+          volumeMounts:
+            - name: payload-bankofandora
+              mountPath: /payload-bankofandora.json
+              subPath: payload-bankofandora.json
+              readOnly: true
+      volumes:
+        - name: payload-bankofandora
+          configMap:
+            name: payload-bankofandora
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camunda-8-benchmark-worker
+  labels:
+    app: camunda-8-benchmark-worker
+spec:
+  selector:
+    matchLabels:
+      app: camunda-8-benchmark-worker
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camunda-8-benchmark-worker
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8088"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: camunda-8-benchmark-worker
+          image: camundacommunityhub/camunda-8-benchmark:main
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_OPTIONS
+              value: >-
+                -Dzeebe.client.broker.gateway-address=camunda-zeebe-gateway:26500
+                -Dzeebe.client.security.plaintext=true
+                -Dzeebe.client.worker.max-workers-active=500
+                -Dbenchmark.startProcesses=false
+                -Dbenchmark.startWorkers=true
+                -Dbenchmark.jobType=benchmark-task
+                -Dbenchmark.multipleJobTypes=4              
+                -Dbenchmark.payloadPath=file:/payload-bankofandora.json
+                -Dbenchmark.autoDeployProcess=false
+          resources:
+            limits:
+              cpu: 2
+              memory: 4Gi
+            requests:
+              cpu: 1
+              memory: 1Gi
+          volumeMounts:
+            - name: payload-bankofandora
+              mountPath: /payload-bankofandora.json
+              subPath: payload-bankofandora.json
+              readOnly: true
+      volumes:
+        - name: payload-bankofandora
+          configMap:
+            name: payload-bankofandora

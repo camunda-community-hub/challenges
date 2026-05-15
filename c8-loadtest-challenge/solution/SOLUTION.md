@@ -9,112 +9,118 @@ This challenge aims to find the correct configuration to handle the load test of
 According to the specifications:
 Number of service tasks per second:
 
-| label                                 |          Value |
-|---------------------------------------|---------------:|
-| Number of PI/hour                     |   800,000 PI/h |
-| Number of PI/s                        |       223 PI/s |
-| Number of service task/PI             |    5 + 1*2 = 7 |
-| Number of service tasks/s             |  1,561 Tasks/s |
-| Number of service tasks/partition (*) |            150 |
-| Number of partitions                  |             11 |
+| label                                 |         Value |
+|---------------------------------------|--------------:|
+| Number of PI/hour                     |  800,000 PI/h |
+| Number of PI/s                        |      223 PI/s |
+| Number of service task/PI             |   5 + 1*2 = 7 |
+| Number of service tasks/s             | 1,561 Tasks/s |
+| Number of service tasks/partition (*) |           150 |
+| Number of partitions                  |            11 |
 
-
-(*) Where come this number? SaaS environment explain a Large Saas Environment can handle 500 services tasks per second, with 3 partitions.
+(*) Where come this number? SaaS environment explain a Large Saas Environment can handle 500 services tasks per second,
+with 3 partitions.
 Visit https://docs.camunda.io/docs/components/best-practices/architecture/sizing-your-environment/#camunda-8-saas
-So, the metric is 500/3 = 166 services task/partition. We use 150 as a conservative way. We will see during this load test that multiple factors impact the number of partitions. 
+So, the metric is 500/3 = 166 services task/partition. We use 150 as a conservative way. We will see during this load
+test that multiple factors impact the number of partitions.
 But this value is a good starting point.
-
 
 So, the idea is to start with 11 partitions.
 
 Next steps consist of identifying the number of worker threads.
 
 The method is the following:
+
 * calculate the CAPACITY of one thread
 * calculate the LOAD of the worker
 
-
-The calculation is based on a period of time. The minute is a good candidate if the service task run under the minute. Else, choose a larger base, like the hour.
+The calculation is based on a period of time. The minute is a good candidate if the service task run under the minute.
+Else, choose a larger base, like the hour.
 
 In hour situation, all service task is around the second, so we consider the minute as a good candidate.
 
-The CAPACITY is the work one thread can handle. For example, if a task need 20 seconds to proceed, the capacity for a thread in a minute is 3: the thread can run 3 tasks in the minute
-How to calculate that? 
+The CAPACITY is the work one thread can handle. For example, if a task need 20 seconds to proceed, the capacity for a
+thread in a minute is 3: the thread can run 3 tasks in the minute
+How to calculate that?
 
 ````
 Capacity/minute = 60 / DurationOfOneTaskInSecond
 ````
 
-The LOAD is the work the cluster need to provide. For example, if there is 20 tasks to execute per second, that's mean the load is 20*60 tasks per minute.
+The LOAD is the work the cluster need to provide. For example, if there is 20 tasks to execute per second, that's mean
+the load is 20*60 tasks per minute.
 
 ````
 Load/minute = numberOfTask in the minute 
 ````
 
-The number of threads is then the Load/Capacity. If you have to perform 5 task per minute, and one thread can handle 3 tasks per minute, you need 2 threads
+The number of threads is then the Load/Capacity. If you have to perform 5 task per minute, and one thread can handle 3
+tasks per minute, you need 2 threads
 
-At the end, number of worker is an estimation. In Camunda 8, a worker can host multiple threads. It's really depends on the work itself, and the implementation.
-A service which need to turn a JPEG image is very CPU consuming, and maybe the worker can handle only 10 threads before it overload the CPU of the pod.
-On the other range, when the worker just send a REST API to an external service, the worker can handle 300 threads, and if it implement the Reactiv programmation, maybe 1000 jobs at a time.
-
+At the end, number of worker is an estimation. In Camunda 8, a worker can host multiple threads. It's really depends on
+the work itself, and the implementation.
+A service which need to turn a JPEG image is very CPU consuming, and maybe the worker can handle only 10 threads before
+it overload the CPU of the pod.
+On the other range, when the worker just send a REST API to an external service, the worker can handle 300 threads, and
+if it implement the Reactiv programmation, maybe 1000 jobs at a time.
 
 Capacity per worker:
 
-| Service                  |  Execution (ms) | Capacity/mn |
-|--------------------------|----------------:|------------:|
-| check-identity           |              30 |        2000 |
-| check-transaction        |             100 |         600 |
-| national-transaction     |            1200 |          50 |
-| validate-UE-bank         |             300 |          20 |
-| ue-transaction           |            1300 |          46 | 
-| wyse-registration        |            1200 |          50 |
-| wyse-transaction         |            1400 |          42 |
-| notify-customer          |              80 |         750 |
-| undo-transaction         |            4300 |          13 |
+| Service              | Execution (ms) | Capacity/mn |
+|----------------------|---------------:|------------:|
+| check-identity       |             30 |        2000 |
+| check-transaction    |            100 |         600 |
+| national-transaction |           1200 |          50 |
+| validate-UE-bank     |            300 |          20 |
+| ue-transaction       |           1300 |          46 | 
+| wyse-registration    |           1200 |          50 |
+| wyse-transaction     |           1400 |          42 |
+| notify-customer      |             80 |         750 |
+| undo-transaction     |           4300 |          13 |
 
 Load per worker:
 
-| Service                  | Nb tasks/process |Number of task/s |  Load/mn |
-|--------------------------|-----------------:|----------------:|---------:|
-| check-identity           |                1 |             223 |    13380 |
-| check-transaction        |                1 |             223 |    13380 |
-| national-transaction     |                1 |             223 |    13380 |
-| validate-UE-bank         |                1 |             223 |    13380 |
-| verify-accreditation-org |                2 |             446 |    26760 |
-| ue-transaction           |                1 |             223 |    13380 |
-| wyse-registration        |                1 |             223 |    13380 |
-| wyse-transaction         |                1 |             223 |    13380 |
-| notify-customer          |                1 |             223 |    13380 |
-| undo-transaction         |                1 |             223 |    13380 |
-
+| Service                  | Nb tasks/process | Number of task/s | Load/mn |
+|--------------------------|-----------------:|-----------------:|--------:|
+| check-identity           |                1 |              223 |   13380 |
+| check-transaction        |                1 |              223 |   13380 |
+| national-transaction     |                1 |              223 |   13380 |
+| validate-UE-bank         |                1 |              223 |   13380 |
+| verify-accreditation-org |                2 |              446 |   26760 |
+| ue-transaction           |                1 |              223 |   13380 |
+| wyse-registration        |                1 |              223 |   13380 |
+| wyse-transaction         |                1 |              223 |   13380 |
+| notify-customer          |                1 |              223 |   13380 |
+| undo-transaction         |                1 |              223 |   13380 |
 
 Calculation:
 For an average, we use the value of 250 threads per worker.
 
-
-| Service                  | Capacity/mn |   Load/mn | Nb threads (Load/Capacity) | Workers |
-|--------------------------|------------:|----------:|---------------------------:|--------:|
-| check-identity           |        2000 |     13380 |                       6.69 |       1 |
-| check-transaction        |         600 |     13380 |                       22.3 |       1 |
-| national-transaction     |          50 |     13380 |                      267.6 |       2 |
-| validate-UE-bank         |          20 |     13380 |                       66.9 |       1 |
-| verify-accreditation-org |         150 |     26760 |                      178.4 |       1 |
-| ue-transaction           |          46 |     13380 |                      289.9 |       2 |
-| wyse-registration        |          50 |     13380 |                      267.6 |       2 |
-| wyse-transaction         |          42 |     13380 |                      312.2 |       2 |
-| notify-customer          |         750 |     13380 |                      17.84 |       1 |
-| undo-transaction         |          13 |     13380 |                      958.9 |       4 |
-
+| Service                  | Capacity/mn | Load/mn | Nb threads (Load/Capacity) | Workers |
+|--------------------------|------------:|--------:|---------------------------:|--------:|
+| check-identity           |        2000 |   13380 |                       6.69 |       1 |
+| check-transaction        |         600 |   13380 |                       22.3 |       1 |
+| national-transaction     |          50 |   13380 |                      267.6 |       2 |
+| validate-UE-bank         |          20 |   13380 |                       66.9 |       1 |
+| verify-accreditation-org |         150 |   26760 |                      178.4 |       1 |
+| ue-transaction           |          46 |   13380 |                      289.9 |       2 |
+| wyse-registration        |          50 |   13380 |                      267.6 |       2 |
+| wyse-transaction         |          42 |   13380 |                      312.2 |       2 |
+| notify-customer          |         750 |   13380 |                      17.84 |       1 |
+| undo-transaction         |          13 |   13380 |                      958.9 |       4 |
 
 # Goal
+
 We want to run a small test:
 
 Running a 3-minute test, and a warmup 1 mn, we expect
+
 * To create 223*60*(3+1)=53520
 * To process 223*60*3=40140 PI
 * To reach 1561 tasks/s
 
 # Scenario
+
 The `process-execution-automator` is used to run a load test.
 
 One Kubernetes deployment is started for each service task.
@@ -125,7 +131,8 @@ According to the rule “one pod host 250 threads worker”, ue-transaction will
 
 ## Enable metrics
 
-Create the Grafana environment in the `camunda-8-helm-profiles` (https://github.com/camunda-community-hub/camunda-8-helm-profiles)
+Create the Grafana environment in the
+`camunda-8-helm-profiles` (https://github.com/camunda-community-hub/camunda-8-helm-profiles)
 
 ````shell
 cd metrics
@@ -137,9 +144,10 @@ metrics-grafana-loadbalancer   LoadBalancer   10.32.12.168   34.148.16.113   80:
 
 Open a browser, access the external IP ( http://34.148.16.113), Login: camunda/camunda
 
-# Execute the scenario
+# Prepare the cluster
 
 ## 1. Create the cluster
+
 Deploy the cluster (replace _1 by the correct test execution)
 
 ````shell
@@ -147,18 +155,102 @@ kubectl create namespace camunda
 helm install --namespace camunda  camunda camunda/camunda-platform -f test_1/C8_BankOfAndora-1.yaml
 ````
 
-
-
 ## 2. Upload the process from the modeler
 
 Upload the process
+
 ````shell
 kubectl port-forward svc/camunda-zeebe-gateway 26500:26500 -n camunda
 ````
 
 On the modeler, deploy the process `BankOfAndora.bpmn`
 
-## 3. Load the scenario
+# Choose the tool
+
+Two tools exists to run a load test: the **Benchmark** and the **Process Execution Automator**
+
+## The Benchmark tool
+
+GitHub: https://github.com/camunda-community-hub/camunda-8-benchmark
+
+This tool is mainly used to validate and estimate the capacity of a cluster. It created process with a payload, and can
+increase the creation frequency to search the limit of the cluster.
+
+It can simulate service tasks, but based on the reactive programming model : one pod can handle without issue 1000
+service tasks/second. To do that, it require to change the service task topic.
+
+This tool is used to search the limit, using a simple process.
+
+## Process Execution automator
+
+GitHub: https://github.com/camunda-community-hub/process-execution-automator
+The goal is to run a load test on a customer process, without changing topic on service task. It can inject multiple
+payload, to validate different path in the process.
+
+It has different implementation of service task: for example, a "classical" implementation can't manage 1000 services
+task/seconds, which implies to start multiple pods. This result to increase the pressure on Zeebe.
+It's common to have a cluster calibrate with the Benchmark tool, with a limited number of pods for service, which is not
+large enough for the real cluster.
+
+The tool can simulate user task too.
+
+Last but not least, the tool can manage unit test, to validate specifications and performance on a unit test.
+
+## Conclusion
+
+Comparatifs
+
+|                                             | Benchmark | Process Execution Automator | 
+|---------------------------------------------|:---------:|:---------------------------:|
+| Load test                                   |   ✅ Yes   |            ✅ Yes            |
+| Warmup period                               |   ✅ Yes   |            ✅ Yes            |
+| Increase throughput                         |   ✅ Yes   |            ❌ No             |
+| Use customer process without modification   |   ❌ No    |            ✅ Yes            |
+| Payload at creation                         |   ✅ Yes   |            ✅ Yes            |
+| Random payload                              |   ❌ No    |            ✅ Yes            |
+| less than one creation per s (ex 1 per 30s) |   ❌ No    |            ✅ Yes            |
+| Batch or creation (ex 100/10s)              |   ❌ No    |            ✅ Yes            |
+| Multiple payloads with probability          |   ❌ No    |            ✅ Yes            |
+| Service task simulation                     |   ✅ Yes   |            ✅ Yes            |
+| Reactive programming implementation         |   ✅ Yes   |            ✅ Yes            |
+| Classical implementation                    |   ❌ No    |            ✅ Yes            |
+| User task                                   |   ❌ No    |            ✅ Yes            |
+| Unit Test                                   |   ❌ No    |            ✅ Yes            |
+| Unit Test performance                       |   ❌ No    |            ✅ Yes            |
+| CD/CI Integration                           |   ❌ No    |            ✅ Yes            |
+| User interface                              |   ❌ No    |            ✅ Yes            |
+
+In the following, one test is provided with the benchmark. Then all other test run using the Process Execution Automator
+to stay on the customer process, using the Classical implementation to simulate the real number of pods needed for the
+system.
+
+
+# Using Benchmark
+Load the payload in a config map
+
+```shell
+kubectl create configmap payload-bankofandora --from-file=test_benchmark/payload-bankofandora.json -n camunda
+```
+
+Deploy the process `test_benchmark/BankOfAndora_benchmark.bpmn`. In this process, all services's task topic are renamed.
+
+Run the test via
+
+```shell
+kubectl apply -f test_benchmark/benchmark_BankOfAndora.yaml -n camunda
+```
+
+Check Operate
+![Operate with Benchmark](images/Benchmark_Operate.png)
+
+Stop the test
+```shell
+kubectl delete -f test_benchmark/benchmark_BankOfAndora.yaml -n camunda
+```
+
+# Using Process Execution Automator
+
+## 1. Load the scenario
 
 Load the scenario in a config map
 
@@ -167,7 +259,8 @@ cd solution
 kubectl create configmap bankscn --from-file=SCN_BankOfAndora.json
 ````
 
-## 4. Start the test
+## 2. Start the test
+
 Start the test:
 
 ````shell
@@ -177,12 +270,15 @@ kubectl logs -f pa-creation-55f4467c96-z5j5j
 ````
 
 and to stop it, use
+
 ````shell
 kubectl delete -f test_1/LoadTest_BankOfAndora-1.yaml
 ````
 
 # Test 1
+
 Create the cluster with 11 partitions:
+
 ````yaml
 global:
   identity:
@@ -224,14 +320,13 @@ prometheusServiceMonitor:
   enabled: true
 ````
 
-
 Install it:
+
 ````shell
 kubectl create namespace camunda
 
 helm install --namespace camunda camunda camunda/camunda-platform -f test_1/C8_BankOfAndora-1.yaml
 ````
-
 
 Run the different port-forward on Zeebe
 Result:
@@ -252,11 +347,11 @@ Result:
 | Process    | 40140 |   9319 |
 | Throughput |  1561 |    250 |
 
-
-There is a lot of backpressure, and the task `checkTransition` is a bottleneck, with more than 96790 jobs waiting here. 
+There is a lot of backpressure, and the task `checkTransition` is a bottleneck, with more than 96790 jobs waiting here.
 
 # Test 2
-To avoid backpressure, let's increase the number of partitions to 15. 
+
+To avoid backpressure, let's increase the number of partitions to 15.
 The number of workers behind `checkTransition` has increased to 3.
 
 ````shell
@@ -265,6 +360,7 @@ kubectl create namespace camunda
 
 helm install --namespace camunda camunda camunda/camunda-platform -f test_2/C8_BankOfAndora-2.yaml
 ````
+
 Start the test
 
 ````shell
@@ -274,7 +370,20 @@ kubectl get pods | grep crea
 kubectl logs -f pa-creation-55f4467c96-z5j5j
 ````
 
-At the end, stop the test by 
+Process Execution Automator embeded an UI. Port forward the creation pod
+
+```yaml
+ kubectl port-forward -n camunda pod/<PEA pod> 8381:8381
+```
+
+Access test result, and monitor the advancement
+
+![PEA_TestResult.png](images/PEA_TestResult.png)
+
+Note: the scenario onboarded is visible too
+![PEA_Scenario.png](images/PEA_Scenario.png)
+
+At the end, stop the test by
 
 ````shell
 kubectl delete -f test_2/LoadTest_BankOfAndora-2.yaml
@@ -292,10 +401,11 @@ Result
 | Process    | 40140 |   5792 |
 | Throughput |  1561 |   1200 |
 
-There is still some backpressure. The `checkTransition` is no longer a bottleneck, but now the next task appears as bottleneck
-
+There is still some backpressure. The `checkTransition` is no longer a bottleneck, but now the next task appears as
+bottleneck
 
 # Test 3
+
 Still some backpressure: increase the number of partitions to 18. Increase the ES CPU to 5
 
 Increase the number of workers:
@@ -317,6 +427,7 @@ Start the test
 kubectl create configmap bankscn --from-file=SCN_BankOfAndora.json
 kubectl create -f test_3/LoadTest_BankOfAndora-3.yaml
 ````
+
 Stop the test by
 
 ````shell
@@ -325,10 +436,10 @@ kubectl delete -f test_3/LoadTest_BankOfAndora-3.yaml
 
 Result
 Have some overload during the creation
-2024-06-06T00:45:13.247Z  INFO 1 --- [      Tran_BOA3] o.c.a.e.flow.RunScenarioFlowStartEvent   : Step #29-STARTEVENT Tran_BOA(StartEvent)] Create (real/scenario)[1769/2223 OVERLOAD] Failed[0] in 10995 ms
+2024-06-06T00:45:13.247Z INFO 1 --- [      Tran_BOA3] o.c.a.e.flow.RunScenarioFlowStartEvent   : Step #29-STARTEVENT
+Tran_BOA(StartEvent)] Create (real/scenario)[1769/2223 OVERLOAD] Failed[0] in 10995 ms
 
 ![test_3_Grafana_backpressure.png](images/test_3_Grafana_backpressure.png)
-
 
 The backpressure is now tackled, but the number of process instances created does not follow correctly now.
 Still, some tasks stay in the process.
@@ -340,7 +451,6 @@ Creation: set the number of threads to 120 (+20)
 check-transaction to 4 (+1)
 Validate-ue-bank to 4 (+2)
 Verify-acreditation to 4 (+2)
-
 
 ````shell
 kubectl create namespace camunda
@@ -354,6 +464,7 @@ Start the test
 kubectl create configmap bankscn --from-file=SCN_BankOfAndora.json
 kubectl create -f test_4/LoadTest_BankOfAndora-4.yaml
 ````
+
 Stop the test by
 
 ````shell
@@ -373,12 +484,13 @@ Result
 | Process    | 40140 | More than 10000 |
 | Throughput |  1561 |            1600 |
 
-The goal is now reach! But there is one concern. Operate does not show the same result as Grafana. 
-After stopping the test, still after 10 mn, Operate value still change. 
+The goal is now reach! But there is one concern. Operate does not show the same result as Grafana.
+After stopping the test, still after 10 mn, Operate value still change.
 This is a sign Operate import is far away the reality
 
-
 # Test 5 - Scale Operate
+
+> This test is valid for Camunda 8.7 or before. After 8.8 there is no Operate Importer. 
 
 Check first the Number Of Record not exported
 
@@ -388,10 +500,10 @@ It must be stable.
 
 Does the operate follow the throughput?
 
-
 To investigate that situation, MonitorApplication helps
 
 Run the command as a pod
+
 ```
 kubectl create -f camunda-8-monitor-exporters.yaml
 ```
@@ -401,6 +513,7 @@ A new pod is created.Identify it, and access the log
 ```
 kubectl get pods
 ```
+
 Search the pods `camunda-8-monitor-exporters-*`
 
 ```
@@ -408,7 +521,6 @@ kubectl logs -f camunda-8-monitor-exportersxxxxxxxx
 ```
 
 Output is something like:
-
 
 ```
 :       2024-12-06 19:59:27 | ZeebeSequence        | ZeebeDelta           | OperateSequence      | OperateDelta         | SequenceDelta        | Status               | ZeebeThroughput      | OperateThroughput
@@ -418,14 +530,15 @@ Output is something like:
 : JOB                       |   159877786772254519 |                28862 |   236438980437034323 |                 1600 |   -76561193664779804 | inpr;INC. 27,262     |    108,232 rec/mn    |      6,000 rec/mn
 ```
 
-It's clear that Zeebe produce more data than Operate can process. The Zeebe throughput is about 473, 726 records per minutes, when Operation import only 3,750 records per minute. Note this is a photography at a moment.
+It's clear that Zeebe produce more data than Operate can process. The Zeebe throughput is about 473, 726 records per
+minutes, when Operation import only 3,750 records per minute. Note this is a photography at a moment.
 
 The second parameter is the backlog: it's only 125, 327 at this moment, but it was increasing (INC. tag).
 
+This is acceptable if Zeebe face a peak, and after a while, stop to export. Then Operate importer can speed up the
+throughput. We know this should be the standard througput for multiple hour, so actions must be taken here.
 
-This is acceptable if Zeebe face a peak, and after a while, stop to export. Then Operate importer can speed up the throughput. We know this should be the standard througput for multiple hour, so actions must be taken here.
-
-## Multi-threaded the operate importer
+## Multithreaded the operate importer
 
 Change the Operate configuration:
 
@@ -441,8 +554,8 @@ operate:
 
 Run the same test again.
 
-
-Operations are better: the delta at the end of the execution is about -193654783973520529 records (which is negative, which make no sense)
+Operations are better: the delta at the end of the execution is about -193654783973520529 records (which is negative,
+which make no sense)
 
 ````
 :       2024-12-06 21:36:53 | ZeebeSequence        | ZeebeDelta           | OperateSequence      | OperateDelta         | SequenceDelta        | Status               | ZeebeThroughput      | OperateThroughput
@@ -451,7 +564,6 @@ Operations are better: the delta at the end of the execution is about -193654783
 : VARIABLE                  |   191402984163564790 |                 4734 |   385057768140585522 |                 7800 |  -193654783977020732 | inpr;dec. -3,066     |     17,752 rec/mn    |     29,250 rec/mn
 : JOB                       |   191402984164138440 |                11451 |   385057768140623505 |                 8200 |  -193654783976485065 | inpr;INC. 3,251      |     42,941 rec/mn    |     30,750 rec/mn
 ````
-
 
 ## Deploy multiple Operate pods
 
@@ -468,7 +580,8 @@ operate:
 
 Start the three importers
 
-Run manual Operate deployment with 3 Operate imports. Since there are 18 partitions, running 3 importers means each Operate will deal with 18/3=6 partitions.
+Run manual Operate deployment with 3 Operate imports. Since there are 18 partitions, running 3 importers means each
+Operate will deal with 18/3=6 partitions.
 
 ```
 kubectl apply -f operate-importer-0.yaml -n camunda
@@ -492,6 +605,7 @@ Estimate the size of the data for one month, assuming the customer wants to keep
 Check if the sharding will be enough. The guideline from ElasticSearch is to keep a shard from 10 to 50 Gb
 
 ## Run a 10-minute load test
+
 This is necessary to populate the different indexes in ElasticSearch.
 
 ## Check the size on each index
@@ -503,6 +617,7 @@ kubectl port-forward svc/camunda-elasticsearch 9200:9200 -n camunda
 ```
 
 6.2 Check indexes
+
 ```shell
 $ curl -X GET localhost:9200/_cat/indices
 green open operate-flownode-instance-8.3.1_                        CrnBBtCkTfufbVPYe0J9pA 1 0  1419132  84776 363.8mb 363.8mb 363.8mb
@@ -523,20 +638,25 @@ For this exercise, we choose the first index, `operate-flownode-instance-8.3.1_`
 363.8 Mb was generated in 10 minutes. For one hour, it's 363/10*60.
 
 The business said we have to run 10 hours a day, and a process instance lives 5 days before completion.
-The calculation is 
+The calculation is
+
 ```
   Size = 363 / 10 * 60 (1 h) * 10 (10 h/day) * 5 (days)= 108900 Mb =106 Gb
 ```
+
 The best is to create a minimum of 3 shards for this index.
 
 ## Change the sharding
 
-Stop the importer from operating. For a 200 Gb index, it may take 2 hours to proceed. So, in that situation, it's better to stop the importer and let operate run.
+Stop the importer from operating. For a 200 Gb index, it may take 2 hours to proceed. So, in that situation, it's better
+to stop the importer and let operate run.
 
 To stop the importer, update the environment variable, and run a Helm upgrade.
+
 ```
 CAMUNDA_OPERATE_IMPORTERENABLED=false
 ```
+
 In the other situation, just stopping Operate is fine.
 
 6.3 Stop Operate
@@ -548,7 +668,6 @@ kubectl scale deployment camunda-operate --replicas=0
 ```
 
 6.4 Get the details of the index
-
 
 ```shell
 $ curl -X GET localhost:9200/operate-flownode-instance-8.3.1_?pretty=true
@@ -649,11 +768,11 @@ $ curl -X GET localhost:9200/operate-flownode-instance-8.3.1_?pretty=true
 
 Save the response on the main parameters
 
-| Parameter           | Section               |                                 Values |
-|---------------------|-----------------------|---------------------------------------:|
-| Aliases name        | `aliases`             |  operate-flownode-instance-8.3.1_alias |
-| Number of shards    | `number_of_shards`    |                                      1 |
-| Number of replicas  | `number_of_replicas`  |                                      0 |
+| Parameter          | Section              |                                Values |
+|--------------------|----------------------|--------------------------------------:|
+| Aliases name       | `aliases`            | operate-flownode-instance-8.3.1_alias |
+| Number of shards   | `number_of_shards`   |                                     1 |
+| Number of replicas | `number_of_replicas` |                                     0 |
 
 6.5 Move the index as read-only
 
@@ -668,6 +787,7 @@ $ curl -X PUT localhost:9200/operate-flownode-instance-8.3.1_/_settings \
 }
 '
 ```
+
 The response should be
 
 ```
@@ -677,7 +797,7 @@ The response should be
 6.6 Clone the index
 
 > Note: this information must be strictly identical on this index, not the moment to change the sharding
- 
+
 
 `Aliases`, `Number of shards`, and `Number of replicas` come from values saved before
 
@@ -697,11 +817,12 @@ $ curl -X PUT localhost:9200/operate-flownode-instance-8.3.1_/_clone/tmp_operate
     }
 '
 ```
+
 Response is
+
 ```
 {"acknowledged":true,"shards_acknowledged":true,"index":"tmp_operate-flownode-instance-8.3.1"}p
 ```
-
 
 6.7 Wait until the end of the operation
 
@@ -754,19 +875,22 @@ $ curl -X POST http://localhost:9200/tmp_operate-flownode-instance-8.3.1/_split/
 '
 ```
 
-Response is 
+Response is
+
 ```
 {"acknowledged":true,"shards_acknowledged":true,"index":"operate-flownode-instance-8.3.1_"}
 ```
 
 But the command is asynchronous.
 
-6.10 Monitor the advancement 
+6.10 Monitor the advancement
 
 ```shell
 $ curl -X GET "localhost:9200/_cat/recovery/operate-flownode-instance-8.3.1_/?format=json&s=target_node&active_only=true&pretty=true"
 ```
+
 Wait for the empty array answer
+
 ```
 [ ]
 ```
@@ -802,10 +926,10 @@ green  open   operate-flownode-instance-8.3.1_                        3BKYVlOmRK
 
 The `pri` column is the number of shards
 
-
 6.14 Scale up Operate
 
 ```shell
 kubectl scale deployment camunda-operate --replicas=1
 ```
+
 Check the log and verify if Operate is up and running. 

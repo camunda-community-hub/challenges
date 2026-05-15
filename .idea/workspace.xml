@@ -4,38 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c3cece68-6f52-4a5a-8ebf-5757220ddde8" name="Changes" comment="Solution for CoreDNS Azure initial commit">
+    <list default="true" id="c3cece68-6f52-4a5a-8ebf-5757220ddde8" name="Changes" comment="Unit test challenge">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CD_CI-challenge/solution/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/CD_CI-challenge/solution/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/google/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/CoreDns.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/Solution.md" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/Solution.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/camunda-lb-east.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/camunda-lb-east.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/camunda-lb-west.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/camunda-lb-west.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/camunda-value-blue.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/camunda-value-blue.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/camunda-value-green.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/camunda-value-green.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns-custom-east.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/coredns-custom-east.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns-custom-west.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/coredns-custom-west.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns-proxy-east.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/coredns-proxy-east.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns-proxy-west.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/coredns-proxy-west.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/images/Azure_NSG_FireWall_Blue_East_Result.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/images/Azure_NSG_FireWall_Blue_East_Result.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/images/Azure_NSG_FireWall_Create_Security_Rule.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/images/Azure_NSG_FireWall_Create_Security_Rule.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/images/Azure_NSG_FireWall_Green_West_Result.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/images/Azure_NSG_FireWall_Green_West_Result.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/images/Azure_NSG_FireWall_InboundRule.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/images/Azure_NSG_FireWall_InboundRule.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/images/Azure_NSG_Firewall.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/images/Azure_NSG_Firewall.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/images/Azure_NSG_Firewall_OutboundRule.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/images/Azure_NSG_Firewall_OutboundRule.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/images/Azure_NSG_Firewall_OutboundRule_Details.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/images/Azure_NSG_Firewall_OutboundRule_Details.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/azure/zeebegateway-loadbalancer.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/azure/coredns/zeebegateway-loadbalancer.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/images/DNS_chaining.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/google/images/DNS_chaining.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/images/GKE_Firewall.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/google/images/GKE_Firewall.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/images/GKE_FirewallConfiguration.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/google/images/GKE_FirewallConfiguration.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/images/GKE_FirewallRule.png" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/google/images/GKE_FirewallRule.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/kubedns/KubeDns.md" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/google/kubedns/KubeDns.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/kubedns/camunda-value-blue.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/google/kubedns/camunda-value-blue.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/kubedns/camunda-value-green.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/google/kubedns/camunda-value-green.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/kubedns/dns-lb.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/google/kubedns/dns-lb.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c8-multi-region/solution/kubedns/zeebegateway-loadbalancer.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/c8-multi-region/solution/google/kubedns/zeebegateway-loadbalancer.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +19,6 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -60,21 +29,18 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/camunda-community-hub/challenges.git&quot;,
-    &quot;accountId&quot;: &quot;7d7a63b7-ca46-47c9-875a-c1551377ea09&quot;
+    &quot;accountId&quot;: &quot;8c9a0a2d-8c4e-45cb-ac62-cd47a54dfa52&quot;
   }
 }</component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
 }</component>
-  <component name="McpProjectServerCommands">
-    <commands />
-    <urls />
-  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2wEoEuPkajvA3aEQ2Cjfe6OwdSE" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -82,17 +48,15 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;multi-region-azure&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/joey.truong/Documents/GitHub/challenges/c8-multi-region/solution/kubedns&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/dev/intellij/consulting/challenges/c8-unittest-challenge/solution/unittest&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -106,28 +70,29 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/c8-multi-region/solution/kubedns" />
-      <recent name="$PROJECT_DIR$/c8-multi-region/solution/kubedns/azure" />
-      <recent name="$PROJECT_DIR$/CD_CI-challenge/solution/GitHubAction/bpmn/c8ctl" />
-      <recent name="$PROJECT_DIR$/CD_CI-challenge/solution/GitHubAction/bpmn/c8ctl/image" />
-      <recent name="$PROJECT_DIR$/CD_CI-challenge/solution/c8ctl/GitHubAction" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-unittest-challenge\solution\unittest" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-unittest-challenge\solution" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-unittest-challenge" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-loadtest-challenge\solution\test_benchmark" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-loadtest-challenge\solution\images" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/c8-multi-region/solution/google" />
-      <recent name="$PROJECT_DIR$/c8-multi-region/solution/azure/CoreDNS" />
-      <recent name="$PROJECT_DIR$/c8-multi-region/solution" />
-      <recent name="$PROJECT_DIR$/c8-multi-region/solution/kubedns/azure" />
-      <recent name="$PROJECT_DIR$/CD_CI-challenge/solution/GitHubAction/bpmn" />
+      <recent name="C:\dev\intellij\consulting\challenges\CI_CD-challenge\solution\GitHubAction\bpmn\actions" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-unittest-challenge\solution\unittest" />
+      <recent name="C:\dev\intellij\consulting\challenges\c8-loadtest-challenge\solution\images" />
+      <recent name="$PROJECT_DIR$/c8-metrics/opentelemetry-datadog/image" />
+      <recent name="$PROJECT_DIR$/c8-metrics" />
     </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.31033.145" />
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
       </set>
     </attachedChunks>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="c3cece68-6f52-4a5a-8ebf-5757220ddde8" name="Changes" comment="Fix link" />
@@ -156,10 +121,13 @@
       <workItem from="1771946655717" duration="2279000" />
       <workItem from="1772031096296" duration="4000" />
       <workItem from="1772130211344" duration="8740000" />
-      <workItem from="1775571466529" duration="37292000" />
-      <workItem from="1777562652845" duration="2043000" />
-      <workItem from="1778167582036" duration="90000" />
-      <workItem from="1778865521064" duration="441000" />
+      <workItem from="1772845166575" duration="1375000" />
+      <workItem from="1775581726614" duration="56736000" />
+      <workItem from="1776293502068" duration="487000" />
+      <workItem from="1776351798716" duration="13081000" />
+      <workItem from="1777039286311" duration="579000" />
+      <workItem from="1777307822123" duration="1953000" />
+      <workItem from="1777335048166" duration="19664000" />
     </task>
     <task id="LOCAL-00001" summary="istio technical challenge">
       <option name="closed" value="true" />
@@ -185,15 +153,71 @@
       <option name="project" value="LOCAL" />
       <updated>1762534025929</updated>
     </task>
-    <task id="LOCAL-00004" summary="Solution for CoreDNS Azure initial commit">
+    <task id="LOCAL-00004" summary="Update disaster challenge">
       <option name="closed" value="true" />
-      <created>1775599844724</created>
+      <created>1772847363330</created>
       <option name="number" value="00004" />
       <option name="presentableId" value="LOCAL-00004" />
       <option name="project" value="LOCAL" />
-      <updated>1775599844724</updated>
+      <updated>1772847363330</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Add drawing">
+      <option name="closed" value="true" />
+      <created>1775581976873</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1775581976873</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Add drawing">
+      <option name="closed" value="true" />
+      <created>1775602243451</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1775602243451</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Rename to CI_CD">
+      <option name="closed" value="true" />
+      <created>1777566662294</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1777566662294</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Unit test challenge">
+      <option name="closed" value="true" />
+      <created>1777566886413</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1777566886413</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Rename, upgrade SaaS to last version (no more warning)">
+      <option name="closed" value="true" />
+      <created>1777588458923</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1777588458923</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Rename, upgrade SaaS to last version (no more warning)">
+      <option name="closed" value="true" />
+      <created>1777588486337</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1777588486337</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Unit test challenge">
+      <option name="closed" value="true" />
+      <created>1777588509647</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1777588509647</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -214,7 +238,11 @@
     <MESSAGE value="istio technical challenge" />
     <MESSAGE value="istio technical challenge - initial commit" />
     <MESSAGE value="statsD-micrometer-datadog-integration" />
-    <MESSAGE value="Solution for CoreDNS Azure initial commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Solution for CoreDNS Azure initial commit" />
+    <MESSAGE value="Update disaster challenge" />
+    <MESSAGE value="Add drawing" />
+    <MESSAGE value="Rename to CI_CD" />
+    <MESSAGE value="Rename, upgrade SaaS to last version (no more warning)" />
+    <MESSAGE value="Unit test challenge" />
+    <option name="LAST_COMMIT_MESSAGE" value="Unit test challenge" />
   </component>
 </project>

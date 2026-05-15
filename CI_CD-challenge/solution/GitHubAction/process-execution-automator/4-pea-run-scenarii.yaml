@@ -1,0 +1,25 @@
+name: '4-pea-run-scenarii'
+
+on:
+  workflow_run:
+    workflows: ["sm-deploy-bpmn", "2-worker-deploy_on-cluster", "3-pea-loadscenarii" ]
+    types:
+      - completed
+
+jobs:
+  execute-test:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: run all scenarii
+        run: |
+          STATUS=$(curl -s -o response.txt -w "%{http_code}" -X POST "${{ secrets.PEA_REST_ADDRESS }}/pea/api/unittest/runall?wait=true&failonerror=true&server=Camunda8Topaz")
+          echo "HTTP Status: $STATUS"
+          
+          if [[ "$STATUS" -ge 400 ]]; then
+            echo "❌ API call failed with status $STATUS"
+            cat response.txt
+            exit 1
+          fi
+          
+

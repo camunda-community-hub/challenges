@@ -1,0 +1,126 @@
+{
+  "name": "National Transaction",
+  "processId": "Tran_BOA",
+  "serverType": "Camunda_8",
+  "typeScenario": "UNIT",
+  "executions": [
+    {
+      "name": "National Transaction",
+      "steps": [
+        {
+          "type": "STARTEVENT",
+          "taskId": "Start_Transaction",
+          "processId": "Tran_BOA",
+          "variables": {
+            "identification": "Jan.Fisher",
+            "amount": 3530.44
+          }
+        }
+      ],
+      "verifications": {
+        "activities": [
+          {
+            "taskId": "Activity_CheckIdentity",
+            "type": "TASK",
+            "description": "Pass the identity"
+          },
+          {
+            "taskId": "Activity_CheckTransaction",
+            "type": "TASK",
+            "description": "Pass the Check transaction"
+          },
+          {
+            "taskId": "Activity_NationalTransaction",
+            "type": "TASK",
+            "description": "Flow go to the National transaction"
+          },
+          {
+            "taskId": "Activity_NotifyCustomerSuccess",
+            "type": "TASK",
+            "description": "Customer is notified with the success of the transaction"
+          },
+          {
+            "type": "ENDEVENT",
+            "taskId": "End_Transaction"
+          }
+        ],
+        "variables": [
+          {
+            "description": "we accepted the application with this amount",
+            "name": "accepted",
+            "value": true
+          }
+        ],
+        "performances": [
+          {
+            "description": "From get Score to the End Event, less than 200 ms",
+            "fromFlowNode": "ActGetScore",
+            "fromMarker": "begin",
+            "toFlowNode": "EndAccepted",
+            "toMarker": "end",
+            "duration": "PT0.2S"
+          },
+          {
+            "description": "GetScore must be performed in less than 100 ms",
+            "fromFlowNode": "ActGetScore",
+            "fromMarker": "begin",
+            "toFlowNode": "ActGetScore",
+            "toMarker": "end",
+            "duration": "PT0.1S"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ScoreRejected",
+      "steps": [
+        {
+          "type": "STARTEVENT",
+          "taskId": "ScoreApplication",
+          "processId": "ScoreAcceptance",
+          "variables": {
+            "score": 67
+          }
+        },
+        {
+          "type": "USERTASK",
+          "taskId": "CallApplicant",
+          "processId": "ScoreAcceptance",
+          "variables": {
+            "phoneNumber": "(+1) 542 778 2352"
+          }
+        },
+        {
+          "type": "SERVICETASK",
+          "taskId": "ActSendRejection",
+          "topic": "send-rejection",
+          "waitingTime": "PT0S",
+          "modeExecution": "ASYNCHRONOUS",
+          "variablesOperation": {
+            "sendMessage": "now(LocalDateTime)"
+          }
+        }
+
+
+      ],
+      "verifications": {
+        "activities": [
+          {
+            "type": "SERVICETASK",
+            "taskId": "ActSendRejection"
+          },
+          {
+            "type": "ENDEVENT",
+            "taskId": "EndRejected"
+          }
+        ],
+        "variables": [
+          {
+            "name": "accepted",
+            "value": false
+          }
+        ]
+      }
+    }
+  ]
+}

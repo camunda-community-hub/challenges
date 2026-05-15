@@ -17,8 +17,8 @@ Deploy the process `SimpleRateProcess.bpmn`  and `AmountCountry.dmn`
 use the benchmark tool to generate some traffic in the cluster. This scenario generate 5 process instance per seconds
 
 ```shell
-$ kubectl create configmap payload --from-file=resources/payload.json -n blue-west
-$ kubectl apply -f resources/benchmark.yaml -n blue-west
+$ kubectl create configmap payload --from-file=resources/payload-bankofandora.json -n blue-west
+$ kubectl apply -f resources/benchmark_BankOfAndora.yaml -n blue-west
 ```
 
 Check Operate: it must have some data waiting in front of task
